@@ -1,0 +1,164 @@
+{
+  "id": "feat-concept-segmented-inference-runtime",
+  "record_type": "feature",
+  "title": "Segmented Concept inference runtime",
+  "kind": "feature",
+  "parent_id": "feat-concept-cross-module-cumsum-routes",
+  "status": "validating",
+  "summary": "Add a checkpoint-safe custom inference runtime with separate encoder, HLM and decoder cache domains and a GPU-only batched decode loop.",
+  "hypothesis": "ConceptLM can decode incrementally only if token and chunk-rate state are cached according to its segmented topology rather than stock OLMo assumptions.",
+  "design": "Load the original Megatron checkpoint strictly, maintain three coordinated cache domains, refresh HLM state at chunk boundaries and expose a batched GPU-only inferencer API.",
+  "baseline": null,
+  "delta": {
+    "summary": "Add a checkpoint-safe custom inference runtime with separate encoder, HLM and decoder cache domains and a GPU-only batched decode loop.",
+    "operations": [
+      {
+        "target": "inference.runtime",
+        "before": "training-only full-prefix Concept forward; stock runtime incompatible",
+        "after": "custom SegmentedConceptKV plus GPU-only batched token decode",
+        "rationale": "Respect encoder/HLM/decoder state boundaries without mutating the source checkpoint.",
+        "evidence_ids": [
+          "ev-concept-runtime-bringup",
+          "ev-concept-runtime-batched",
+          "ev-concept-runtime-code"
+        ]
+      }
+    ]
+  },
+  "implementation": {
+    "commits": [
+      {
+        "id": "inference-bringup",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/7802ff627c0abc4e1a489a34353ad8ebe7b52eea",
+        "summary": "Segmented cache prototype and benchmark harness.",
+        "evidence_ids": [
+          "ev-concept-runtime-bringup"
+        ]
+      },
+      {
+        "id": "inference-batched-decode",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/2119d24b231730b12953100e1e40bc2134993a18",
+        "summary": "GPU-only batched decode optimization.",
+        "evidence_ids": [
+          "ev-concept-runtime-batched"
+        ]
+      }
+    ],
+    "sessions": [],
+    "code_symbols": [
+      {
+        "id": "segmented-concept-kv",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/segmented_kv.py",
+        "summary": "SegmentedConceptKV and cache-domain state.",
+        "evidence_ids": [
+          "ev-concept-runtime-code"
+        ]
+      }
+    ],
+    "component_changes": []
+  },
+  "experiments": [
+    {
+      "id": "segmented-kv-reference",
+      "title": "Teacher-forced segmented-KV reference",
+      "status": "passed",
+      "summary": "Top-1 matched at all 32 checked positions for 12-, 256- and 1024-token prompts while the checkpoint metadata remained unchanged.",
+      "metrics": {
+        "prompt_lengths": "12,256,1024",
+        "checked_positions_each": 32,
+        "checkpoint_mutated": false,
+        "decode_speedup_1024": "1.075x"
+      },
+      "evidence_ids": [
+        "ev-concept-runtime-results"
+      ]
+    }
+  ],
+  "analysis": {
+    "outcome": "inconclusive",
+    "conclusion": "The custom runtime is operational and checkpoint-safe, but free generation is not bitwise equivalent for every prompt.",
+    "limitations": [
+      "A short-prompt free run diverged after numerical differences accumulated.",
+      "Stock vLLM serving remains unsupported."
+    ],
+    "evidence_ids": [
+      "ev-concept-runtime-bringup",
+      "ev-concept-runtime-batched",
+      "ev-concept-runtime-results",
+      "ev-concept-runtime-code"
+    ]
+  },
+  "evidence": [
+    {
+      "id": "ev-concept-runtime-bringup",
+      "type": "commit",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/7802ff627c0abc4e1a489a34353ad8ebe7b52eea",
+      "revision": "7802ff627c0abc4e1a489a34353ad8ebe7b52eea",
+      "summary": "Adds three-domain segmented KV cache inference and checkpoint-safe benchmarks."
+    },
+    {
+      "id": "ev-concept-runtime-batched",
+      "type": "commit",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/2119d24b231730b12953100e1e40bc2134993a18",
+      "revision": "2119d24b231730b12953100e1e40bc2134993a18",
+      "summary": "Moves decode into a GPU-only batched token loop and optimizes segmented cache updates."
+    },
+    {
+      "id": "ev-concept-runtime-results",
+      "type": "document",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/RESULTS_2026-07-17.md",
+      "revision": "6ae216283d88f8db0cb35e18c818018617b50f65",
+      "summary": "Teacher-forced top-1 matches at 12/256/1024 prompt lengths; short free generation is not bitwise equivalent."
+    },
+    {
+      "id": "ev-concept-runtime-code",
+      "type": "code_symbol",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/segmented_kv.py",
+      "revision": "6ae216283d88f8db0cb35e18c818018617b50f65",
+      "summary": "SegmentedConceptKV and ConceptKVCaches coordinate encoder, HLM and decoder cache domains."
+    }
+  ],
+  "depends_on": [
+    "feat-concept-chunk-representation",
+    "feat-concept-self-dd",
+    "feat-concept-cross-module-residual-read"
+  ],
+  "related_to": [
+    "feat-concept-stage1-scale-resume"
+  ],
+  "provenance": {
+    "sources": {
+      "work-repo": {
+        "state": "pinned",
+        "source_ids": [
+          "ev-concept-runtime-bringup",
+          "ev-concept-runtime-batched",
+          "ev-concept-runtime-results",
+          "ev-concept-runtime-code"
+        ],
+        "note": "Derived private work-repository evidence; never root or official OLMo-3 provenance."
+      }
+    },
+    "fields": {
+      "id": "work-repo",
+      "record_type": "work-repo",
+      "title": "work-repo",
+      "category": "work-repo",
+      "kind": "work-repo",
+      "parent_id": "work-repo",
+      "status": "work-repo",
+      "summary": "work-repo",
+      "hypothesis": "work-repo",
+      "design": "work-repo",
+      "baseline": "work-repo",
+      "delta": "work-repo",
+      "implementation": "work-repo",
+      "experiments": "work-repo",
+      "analysis": "work-repo",
+      "evidence": "work-repo",
+      "depends_on": "work-repo",
+      "related_to": "work-repo"
+    }
+  },
+  "category": "runtime"
+}

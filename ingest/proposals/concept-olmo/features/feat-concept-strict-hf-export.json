@@ -1,0 +1,118 @@
+{
+  "id": "feat-concept-strict-hf-export",
+  "record_type": "feature",
+  "title": "Strict model-only HF export",
+  "kind": "feature",
+  "parent_id": "feat-concept-cross-module-cumsum-routes",
+  "status": "validating",
+  "summary": "Export the custom ConceptLM model weights and configuration into a strict Hugging Face artifact without pretending it is a stock OLMo model.",
+  "hypothesis": "A model-only artifact can support downstream tooling if custom architecture identity and key validation remain explicit.",
+  "design": "Map the Megatron distributed checkpoint into custom ConceptLM HF keys, reject unexpected/missing model state and keep runtime compatibility probes separate.",
+  "baseline": null,
+  "delta": {
+    "summary": "Export the custom ConceptLM model weights and configuration into a strict Hugging Face artifact without pretending it is a stock OLMo model.",
+    "operations": [
+      {
+        "target": "inference.artifact_export",
+        "before": null,
+        "after": "strict custom ConceptLM Hugging Face model-only export",
+        "rationale": "Provide a portable artifact while preserving the non-stock compatibility boundary.",
+        "evidence_ids": [
+          "ev-concept-hf-export-commit",
+          "ev-concept-hf-export-code"
+        ]
+      }
+    ]
+  },
+  "implementation": {
+    "commits": [
+      {
+        "id": "strict-hf-export",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/56e4c613757570fa1090947633c4efe9245b6a89",
+        "summary": "Strict exporter and launcher.",
+        "evidence_ids": [
+          "ev-concept-hf-export-commit"
+        ]
+      }
+    ],
+    "sessions": [],
+    "code_symbols": [
+      {
+        "id": "export-hf",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/56e4c613757570fa1090947633c4efe9245b6a89/repo/experiments/vllm_inference/export_hf.py",
+        "summary": "Strict custom model export implementation.",
+        "evidence_ids": [
+          "ev-concept-hf-export-code"
+        ]
+      }
+    ],
+    "component_changes": []
+  },
+  "experiments": [],
+  "analysis": {
+    "outcome": "inconclusive",
+    "conclusion": "The exporter implementation is pinned, but no public artifact digest or independent reload report is available.",
+    "limitations": [
+      "The exported model artifact itself is not available by content hash.",
+      "The artifact does not make stock vLLM compatible with ConceptLM."
+    ],
+    "evidence_ids": [
+      "ev-concept-hf-export-commit",
+      "ev-concept-hf-export-code"
+    ]
+  },
+  "evidence": [
+    {
+      "id": "ev-concept-hf-export-commit",
+      "type": "commit",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/56e4c613757570fa1090947633c4efe9245b6a89",
+      "revision": "56e4c613757570fa1090947633c4efe9245b6a89",
+      "summary": "Adds strict model-only Hugging Face export and its launcher."
+    },
+    {
+      "id": "ev-concept-hf-export-code",
+      "type": "code_symbol",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/56e4c613757570fa1090947633c4efe9245b6a89/repo/experiments/vllm_inference/export_hf.py",
+      "revision": "56e4c613757570fa1090947633c4efe9245b6a89",
+      "summary": "Exporter validates expected model keys while preserving the custom ConceptLM compatibility boundary."
+    }
+  ],
+  "depends_on": [],
+  "related_to": [
+    "feat-concept-segmented-inference-runtime",
+    "feat-concept-stage1-scale-resume"
+  ],
+  "provenance": {
+    "sources": {
+      "work-repo": {
+        "state": "pinned",
+        "source_ids": [
+          "ev-concept-hf-export-commit",
+          "ev-concept-hf-export-code"
+        ],
+        "note": "Derived private work-repository evidence; never root or official OLMo-3 provenance."
+      }
+    },
+    "fields": {
+      "id": "work-repo",
+      "record_type": "work-repo",
+      "title": "work-repo",
+      "category": "work-repo",
+      "kind": "work-repo",
+      "parent_id": "work-repo",
+      "status": "work-repo",
+      "summary": "work-repo",
+      "hypothesis": "work-repo",
+      "design": "work-repo",
+      "baseline": "work-repo",
+      "delta": "work-repo",
+      "implementation": "work-repo",
+      "experiments": "work-repo",
+      "analysis": "work-repo",
+      "evidence": "work-repo",
+      "depends_on": "work-repo",
+      "related_to": "work-repo"
+    }
+  },
+  "category": "runtime"
+}

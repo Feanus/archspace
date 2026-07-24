@@ -1,0 +1,121 @@
+{
+  "id": "feat-concept-hlm-olmo3-layer-reuse",
+  "record_type": "feature",
+  "title": "OLMo3 TransformerBlock reuse in HLM",
+  "kind": "feature",
+  "parent_id": "feat-concept-hlm-predictor",
+  "status": "implementing",
+  "summary": "Run HLM layers through the configured OLMo3 TransformerBlock instead of a separate custom causal block.",
+  "hypothesis": "Sharing the backbone layer implementation may improve alignment, but it is a Feature only if the replacement changes structural semantics or numerical behavior.",
+  "design": "Clone the transformer config for HLM depth, instantiate TransformerBlock with the OLMo3 layer spec and forward HLM RoPE explicitly; retain this as a conditional proposal pending equivalence review.",
+  "baseline": null,
+  "delta": {
+    "summary": "Run HLM layers through the configured OLMo3 TransformerBlock instead of a separate custom causal block.",
+    "operations": [
+      {
+        "target": "concept.hlm.layer_implementation",
+        "before": "custom ConceptCausalBlock list with standalone LayerNorm",
+        "after": "TransformerBlock using the configured OLMo3 layer spec and final norm",
+        "rationale": "Record the replacement while preserving the explicit downgrade-to-evidence condition.",
+        "evidence_ids": [
+          "ev-concept-olmo-layer-commit",
+          "ev-concept-olmo-layer-code"
+        ]
+      }
+    ]
+  },
+  "implementation": {
+    "commits": [
+      {
+        "id": "olmo3-layer-reuse",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/7512755321ee4238b43ad08eb3ecfbc5fe2f2e6e",
+        "summary": "HLM TransformerBlock reuse.",
+        "evidence_ids": [
+          "ev-concept-olmo-layer-commit"
+        ]
+      }
+    ],
+    "sessions": [],
+    "code_symbols": [
+      {
+        "id": "concept-predictor-hlm-block",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/7512755321ee4238b43ad08eb3ecfbc5fe2f2e6e/repo/megatron/core/models/gpt/conceptlm_v21.py",
+        "summary": "ConceptPredictorV21.hlm_block and rotary forwarding.",
+        "evidence_ids": [
+          "ev-concept-olmo-layer-code"
+        ]
+      }
+    ],
+    "component_changes": []
+  },
+  "experiments": [],
+  "analysis": {
+    "outcome": "inconclusive",
+    "conclusion": "The implementation replacement is clear; whether it is a structural Feature or semantically equivalent implementation evidence is unresolved.",
+    "limitations": [
+      "No numerical parity or training A/B artifact.",
+      "Downgrade to D04b implementation evidence if algorithm review confirms structural and numerical equivalence."
+    ],
+    "evidence_ids": [
+      "ev-concept-olmo-layer-commit",
+      "ev-concept-olmo-layer-code"
+    ]
+  },
+  "evidence": [
+    {
+      "id": "ev-concept-olmo-layer-commit",
+      "type": "commit",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/7512755321ee4238b43ad08eb3ecfbc5fe2f2e6e",
+      "revision": "7512755321ee4238b43ad08eb3ecfbc5fe2f2e6e",
+      "summary": "Replaces the custom HLM causal block with Megatron TransformerBlock using the OLMo3 layer spec."
+    },
+    {
+      "id": "ev-concept-olmo-layer-code",
+      "type": "code_symbol",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/7512755321ee4238b43ad08eb3ecfbc5fe2f2e6e/repo/megatron/core/models/gpt/conceptlm_v21.py",
+      "revision": "7512755321ee4238b43ad08eb3ecfbc5fe2f2e6e",
+      "summary": "ConceptPredictorV21.hlm_block and HLM rotary embedding integration."
+    }
+  ],
+  "depends_on": [],
+  "related_to": [
+    "feat-concept-hlm-backbone-window"
+  ],
+  "provenance": {
+    "sources": {
+      "work-repo": {
+        "state": "pinned",
+        "source_ids": [
+          "ev-concept-olmo-layer-commit",
+          "ev-concept-olmo-layer-code"
+        ],
+        "note": "Derived private work-repository evidence; never root or official OLMo-3 provenance."
+      }
+    },
+    "fields": {
+      "id": "work-repo",
+      "record_type": "work-repo",
+      "title": "work-repo",
+      "category": "work-repo",
+      "kind": "work-repo",
+      "parent_id": "work-repo",
+      "status": "work-repo",
+      "summary": "work-repo",
+      "hypothesis": "work-repo",
+      "design": "work-repo",
+      "baseline": "work-repo",
+      "delta": "work-repo",
+      "implementation": "work-repo",
+      "experiments": "work-repo",
+      "analysis": "work-repo",
+      "evidence": "work-repo",
+      "depends_on": "work-repo",
+      "related_to": "work-repo",
+      "title_zh": "work-repo",
+      "summary_zh": "work-repo"
+    }
+  },
+  "title_zh": "HLM 层实现换成 OLMo3 标准 TransformerBlock",
+  "summary_zh": "将 HLM 每层从自定义 ConceptCausalBlock 替换为 OLMo3 layer spec 的标准 TransformerBlock，并统一 final norm；若确认结构语义与数值等价，应降级为 HLM 节点的实现 evidence。",
+  "category": "architecture"
+}

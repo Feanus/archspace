@@ -1,0 +1,157 @@
+{
+  "id": "feat-concept-product-vq",
+  "record_type": "feature",
+  "title": "Product-VQ concept discretization",
+  "kind": "feature",
+  "parent_id": "feat-concept-chunk-representation",
+  "status": "validating",
+  "summary": "Discretize continuous chunk concepts with product vector quantization using 32 codebooks of 128 entries.",
+  "hypothesis": "A discrete compositional concept bottleneck can improve high-level modeling while allowing VQ removal to recover the continuous representation.",
+  "design": "Normalize each concept, quantize it through 32 codebooks with 128 entries each and train the HLM against the quantized path; codebook parameters stay within this Feature.",
+  "baseline": null,
+  "delta": {
+    "summary": "Discretize continuous chunk concepts with product vector quantization using 32 codebooks of 128 entries.",
+    "operations": [
+      {
+        "target": "model.concept_quantization",
+        "before": "continuous chunk concept vectors without VQ",
+        "after": {
+          "method": "product vector quantization",
+          "codebooks": 32,
+          "codebook_size": 128
+        },
+        "rationale": "VQ is an optional structural layer whose removal returns the continuous parent state.",
+        "evidence_ids": [
+          "ev-product-vq-code"
+        ]
+      }
+    ]
+  },
+  "implementation": {
+    "commits": [
+      {
+        "id": "initial-logic-snapshot",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/a489526d1dff4161a60dccc5034c2d595f059d49",
+        "summary": "Shared aggregated history starting point; not a unique introduction commit for this Feature.",
+        "evidence_ids": [
+          "ev-product-vq-snapshot"
+        ]
+      }
+    ],
+    "sessions": [],
+    "code_symbols": [
+      {
+        "id": "conceptlm-v22-vq",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v22_vq.py",
+        "summary": "ConceptLMV22VQModel.__init__ and the VQ concept branch implement Product VQ and its losses.",
+        "evidence_ids": [
+          "ev-product-vq-code"
+        ]
+      }
+    ],
+    "component_changes": []
+  },
+  "experiments": [],
+  "analysis": {
+    "outcome": "inconclusive",
+    "conclusion": "Product VQ is independently identifiable, but no VQ-versus-continuous ablation result is committed.",
+    "limitations": [
+      "No isolated parent-relative ablation artifact is available.",
+      "The initial commit is shared with five other reviewed base mechanisms."
+    ],
+    "evidence_ids": [
+      "ev-product-vq-snapshot",
+      "ev-product-vq-code"
+    ]
+  },
+  "evidence": [
+    {
+      "id": "ev-product-vq-snapshot",
+      "type": "commit",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/a489526d1dff4161a60dccc5034c2d595f059d49",
+      "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+      "summary": "The first available repository commit is an aggregated ConceptLM V2/V2.1/V2.2-VQ snapshot; it supports six independently reviewed structures without exposing separate introduction commits or ablation results."
+    },
+    {
+      "id": "ev-product-vq-code",
+      "type": "code_symbol",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v22_vq.py",
+      "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+      "summary": "ConceptLMV22VQModel implements the 32-by-128 Product-VQ path and associated losses."
+    }
+  ],
+  "depends_on": [],
+  "related_to": [],
+  "provenance": {
+    "sources": {
+      "work-repo": {
+        "state": "pinned",
+        "source_ids": [
+          "ev-product-vq-snapshot",
+          "ev-product-vq-code"
+        ],
+        "note": "Derived private work-repository evidence; never root or official OLMo-3 provenance."
+      }
+    },
+    "fields": {
+      "id": "work-repo",
+      "record_type": "work-repo",
+      "title": "work-repo",
+      "category": "work-repo",
+      "kind": "work-repo",
+      "parent_id": "work-repo",
+      "status": "work-repo",
+      "summary": "work-repo",
+      "hypothesis": "work-repo",
+      "design": "work-repo",
+      "baseline": "work-repo",
+      "delta": "work-repo",
+      "implementation": "work-repo",
+      "experiments": "work-repo",
+      "analysis": "work-repo",
+      "evidence": "work-repo",
+      "depends_on": "work-repo",
+      "related_to": "work-repo",
+      "title_zh": "work-repo",
+      "summary_zh": "work-repo",
+      "validation_status": "work-repo",
+      "code_locators": "work-repo",
+      "validation": "work-repo"
+    }
+  },
+  "title_zh": "Product VQ 离散化",
+  "summary_zh": "在连续 concept 向量上叠加 Product VQ：向量切分为 32 段，每段在 128 词条码本中选择码字；码本数量和大小作为节点内参数。",
+  "category": "architecture",
+  "validation_status": "unverified",
+  "code_locators": [
+    {
+      "repository": "https://github.com/Liu-yuliang/concept_olmo",
+      "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+      "path": "repo/megatron/core/models/gpt/conceptlm_v22_vq.py",
+      "symbol": "ConceptLMV22VQModel.__init__ / ConceptLMV22VQModel._concept_branch_v21",
+      "role": "ConceptLMV22VQModel.__init__ and the VQ concept branch implement Product VQ and its losses.",
+      "url": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v22_vq.py"
+    }
+  ],
+  "validation": {
+    "comparison": "Continuous chunk concepts versus Product-VQ discretization with 32 codebooks of 128 entries.",
+    "conditions": [
+      "Retrospective code inspection at the shared initial snapshot a489526d1dff4161a60dccc5034c2d595f059d49.",
+      "No isolated parent-relative result artifact is available."
+    ],
+    "metrics": {},
+    "observations": [
+      "Product VQ is independently identifiable, but no VQ-versus-continuous ablation result is committed."
+    ],
+    "artifacts": [],
+    "conclusion": "Product VQ is independently identifiable, but no VQ-versus-continuous ablation result is committed.",
+    "limitations": [
+      "No isolated parent-relative ablation artifact is available.",
+      "The initial commit is shared with five other reviewed base mechanisms."
+    ],
+    "evidence_ids": [
+      "ev-product-vq-snapshot",
+      "ev-product-vq-code"
+    ]
+  }
+}

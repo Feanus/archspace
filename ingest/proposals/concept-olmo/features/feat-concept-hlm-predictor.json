@@ -1,0 +1,118 @@
+{
+  "id": "feat-concept-hlm-predictor",
+  "record_type": "feature",
+  "title": "HLM concept predictor",
+  "kind": "feature",
+  "parent_id": "feat-concept-segmented-topology",
+  "status": "validating",
+  "summary": "Add a concept-rate autoregressive Transformer that predicts the next concept vector.",
+  "hypothesis": "Autoregressive prediction over the lower-rate concept sequence can provide useful high-level supervision and states for token decoding.",
+  "design": "Instantiate ConceptPredictorV2 over concept states with its own causal layers, normalization and prediction heads; attention-window and layer-implementation variants evolve beneath this node.",
+  "baseline": null,
+  "delta": {
+    "summary": "Add a concept-rate autoregressive Transformer that predicts the next concept vector.",
+    "operations": [
+      {
+        "target": "concept.hlm.module",
+        "before": "no concept-rate autoregressive predictor",
+        "after": "ConceptPredictorV2 HLM tower with causal layers, final norm and prediction heads",
+        "rationale": "The HLM is independently configurable and is the semantic parent of D07 and D08.",
+        "evidence_ids": [
+          "ev-hlm-predictor-code"
+        ]
+      }
+    ]
+  },
+  "implementation": {
+    "commits": [
+      {
+        "id": "initial-logic-snapshot",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/a489526d1dff4161a60dccc5034c2d595f059d49",
+        "summary": "Shared aggregated history starting point; not a unique introduction commit for this Feature.",
+        "evidence_ids": [
+          "ev-hlm-predictor-snapshot"
+        ]
+      }
+    ],
+    "sessions": [],
+    "code_symbols": [
+      {
+        "id": "concept-predictor-v2",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v2.py",
+        "summary": "ConceptPredictorV2 implements the concept-rate autoregressive HLM tower.",
+        "evidence_ids": [
+          "ev-hlm-predictor-code"
+        ]
+      }
+    ],
+    "component_changes": []
+  },
+  "experiments": [],
+  "analysis": {
+    "outcome": "inconclusive",
+    "conclusion": "The HLM module is implemented, but no isolated ablation establishes its effect.",
+    "limitations": [
+      "No isolated parent-relative ablation artifact is available.",
+      "The initial commit is shared with five other reviewed base mechanisms."
+    ],
+    "evidence_ids": [
+      "ev-hlm-predictor-snapshot",
+      "ev-hlm-predictor-code"
+    ]
+  },
+  "evidence": [
+    {
+      "id": "ev-hlm-predictor-snapshot",
+      "type": "commit",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/a489526d1dff4161a60dccc5034c2d595f059d49",
+      "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+      "summary": "The first available repository commit is an aggregated ConceptLM V2/V2.1/V2.2-VQ snapshot; it supports six independently reviewed structures without exposing separate introduction commits or ablation results."
+    },
+    {
+      "id": "ev-hlm-predictor-code",
+      "type": "code_symbol",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v2.py",
+      "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+      "summary": "ConceptPredictorV2 implements the concept-rate autoregressive predictor."
+    }
+  ],
+  "depends_on": [],
+  "related_to": [],
+  "provenance": {
+    "sources": {
+      "work-repo": {
+        "state": "pinned",
+        "source_ids": [
+          "ev-hlm-predictor-snapshot",
+          "ev-hlm-predictor-code"
+        ],
+        "note": "Derived private work-repository evidence; never root or official OLMo-3 provenance."
+      }
+    },
+    "fields": {
+      "id": "work-repo",
+      "record_type": "work-repo",
+      "title": "work-repo",
+      "category": "work-repo",
+      "kind": "work-repo",
+      "parent_id": "work-repo",
+      "status": "work-repo",
+      "summary": "work-repo",
+      "hypothesis": "work-repo",
+      "design": "work-repo",
+      "baseline": "work-repo",
+      "delta": "work-repo",
+      "implementation": "work-repo",
+      "experiments": "work-repo",
+      "analysis": "work-repo",
+      "evidence": "work-repo",
+      "depends_on": "work-repo",
+      "related_to": "work-repo",
+      "title_zh": "work-repo",
+      "summary_zh": "work-repo"
+    }
+  },
+  "title_zh": "HLM concept 预测模块",
+  "summary_zh": "在概念流中加入负责预测下一个 concept 的小型自回归 Transformer；其序列单元是 concept 向量，序列长度约为 token 流的四分之一。",
+  "category": "architecture"
+}

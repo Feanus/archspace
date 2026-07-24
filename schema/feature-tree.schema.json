@@ -1,0 +1,695 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://internspace.local/schema/feature-tree.schema.json",
+  "title": "InternSpace Feature Tree v1",
+  "description": "Canonical contract for one rooted tree whose records are all Features.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "tree_id", "features"],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "tree_id": {
+      "const": "internspace-feature-tree"
+    },
+    "features": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/feature"
+      }
+    }
+  },
+  "$defs": {
+    "featureId": {
+      "type": "string",
+      "pattern": "^feat-[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+    },
+    "localId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+    },
+    "evidenceId": {
+      "type": "string",
+      "pattern": "^ev-[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+    },
+    "evidenceIds": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/evidenceId"
+      }
+    },
+    "provenanceEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "source_ids", "note"],
+      "properties": {
+        "state": {
+          "enum": ["pinned", "documented", "inferred", "unresolved"]
+        },
+        "source_ids": {
+          "$ref": "#/$defs/evidenceIds"
+        },
+        "note": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "fieldProvenanceMap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "record_type",
+        "title",
+        "kind",
+        "parent_id",
+        "status",
+        "summary",
+        "hypothesis",
+        "design",
+        "baseline",
+        "delta",
+        "implementation",
+        "experiments",
+        "analysis",
+        "evidence",
+        "depends_on",
+        "related_to"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/localId" },
+        "record_type": { "$ref": "#/$defs/localId" },
+        "title": { "$ref": "#/$defs/localId" },
+        "title_zh": { "$ref": "#/$defs/localId" },
+        "category": { "$ref": "#/$defs/localId" },
+        "validation_status": { "$ref": "#/$defs/localId" },
+        "kind": { "$ref": "#/$defs/localId" },
+        "parent_id": { "$ref": "#/$defs/localId" },
+        "status": { "$ref": "#/$defs/localId" },
+        "summary": { "$ref": "#/$defs/localId" },
+        "summary_zh": { "$ref": "#/$defs/localId" },
+        "hypothesis": { "$ref": "#/$defs/localId" },
+        "design": { "$ref": "#/$defs/localId" },
+        "baseline": { "$ref": "#/$defs/localId" },
+        "delta": { "$ref": "#/$defs/localId" },
+        "implementation": { "$ref": "#/$defs/localId" },
+        "code_locators": { "$ref": "#/$defs/localId" },
+        "experiments": { "$ref": "#/$defs/localId" },
+        "validation": { "$ref": "#/$defs/localId" },
+        "analysis": { "$ref": "#/$defs/localId" },
+        "evidence": { "$ref": "#/$defs/localId" },
+        "depends_on": { "$ref": "#/$defs/localId" },
+        "related_to": { "$ref": "#/$defs/localId" },
+        "structural_review": { "$ref": "#/$defs/localId" }
+      }
+    },
+    "fieldProvenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sources", "fields"],
+      "properties": {
+        "sources": {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": {
+            "$ref": "#/$defs/localId"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/provenanceEntry"
+          }
+        },
+        "fields": {
+          "$ref": "#/$defs/fieldProvenanceMap"
+        }
+      }
+    },
+    "baselineClaim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "provenance"],
+      "properties": {
+        "value": {
+          "type": ["string", "null"]
+        },
+        "provenance": { "$ref": "#/$defs/localId" }
+      }
+    },
+    "baseline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model_family",
+        "model_scale",
+        "repository",
+        "revision",
+        "configuration",
+        "checkpoint",
+        "license"
+      ],
+      "properties": {
+        "model_family": { "$ref": "#/$defs/baselineClaim" },
+        "model_scale": { "$ref": "#/$defs/baselineClaim" },
+        "repository": { "$ref": "#/$defs/baselineClaim" },
+        "revision": { "$ref": "#/$defs/baselineClaim" },
+        "configuration": { "$ref": "#/$defs/baselineClaim" },
+        "checkpoint": { "$ref": "#/$defs/baselineClaim" },
+        "license": { "$ref": "#/$defs/baselineClaim" }
+      }
+    },
+    "deltaOperation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target", "before", "after", "rationale", "evidence_ids"],
+      "properties": {
+        "target": {
+          "type": "string",
+          "minLength": 1
+        },
+        "before": {},
+        "after": {},
+        "rationale": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence_ids": {
+          "$ref": "#/$defs/evidenceIds"
+        }
+      }
+    },
+    "delta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["summary", "operations"],
+      "properties": {
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "operations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/deltaOperation"
+          }
+        }
+      }
+    },
+    "implementationReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "locator", "summary", "evidence_ids"],
+      "properties": {
+        "id": { "$ref": "#/$defs/localId" },
+        "locator": {
+          "type": ["string", "null"]
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence_ids": {
+          "$ref": "#/$defs/evidenceIds"
+        }
+      }
+    },
+    "componentChange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "component", "change", "before", "after", "evidence_ids"],
+      "properties": {
+        "id": { "$ref": "#/$defs/localId" },
+        "component": {
+          "type": "string",
+          "minLength": 1
+        },
+        "change": {
+          "type": "string",
+          "minLength": 1
+        },
+        "before": {},
+        "after": {},
+        "evidence_ids": {
+          "$ref": "#/$defs/evidenceIds"
+        }
+      }
+    },
+    "implementation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["commits", "sessions", "code_symbols", "component_changes"],
+      "properties": {
+        "commits": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/implementationReference" }
+        },
+        "sessions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/implementationReference" }
+        },
+        "code_symbols": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/implementationReference" }
+        },
+        "component_changes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/componentChange" }
+        }
+      }
+    },
+    "codeLocator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "revision", "path", "symbol", "role", "url"],
+      "properties": {
+        "repository": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^https://(?![^/]*@)[^\\s?#]+(?:/[^\\s?#]+)+/?$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[^\\s]+$"
+        },
+        "symbol": {
+          "type": "string",
+          "minLength": 1
+        },
+        "role": {
+          "type": "string",
+          "minLength": 1
+        },
+        "url": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^https://(?![^/]*@)[^\\s?#]+(?:/[^\\s?#]+)+$"
+        }
+      }
+    },
+    "artifactLocator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "locator", "revision"],
+      "properties": {
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "locator": {
+          "type": "string",
+          "minLength": 1
+        },
+        "revision": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "metricValue": {
+      "type": ["number", "integer", "string", "boolean", "null"]
+    },
+    "experiment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "status", "summary", "metrics", "evidence_ids"],
+      "properties": {
+        "id": { "$ref": "#/$defs/localId" },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "enum": ["planned", "running", "passed", "failed", "inconclusive"]
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "metrics": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/metricValue"
+          }
+        },
+        "evidence_ids": {
+          "$ref": "#/$defs/evidenceIds"
+        }
+      }
+    },
+    "analysis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["outcome", "conclusion", "limitations", "evidence_ids"],
+      "properties": {
+        "outcome": {
+          "enum": ["supported", "partially_supported", "not_supported", "inconclusive"]
+        },
+        "conclusion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "evidence_ids": {
+          "$ref": "#/$defs/evidenceIds"
+        }
+      }
+    },
+    "validationSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "comparison",
+        "conditions",
+        "metrics",
+        "observations",
+        "artifacts",
+        "conclusion",
+        "limitations",
+        "evidence_ids"
+      ],
+      "properties": {
+        "comparison": {
+          "type": "string",
+          "minLength": 1
+        },
+        "conditions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "metrics": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/metricValue"
+          }
+        },
+        "observations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/artifactLocator"
+          }
+        },
+        "conclusion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "evidence_ids": {
+          "$ref": "#/$defs/evidenceIds"
+        }
+      },
+      "anyOf": [
+        { "properties": { "metrics": { "minProperties": 1 } } },
+        { "properties": { "observations": { "minItems": 1 } } }
+      ]
+    },
+    "structuralReview": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decision", "semantic_equivalence", "review_owner", "downgrade_condition"],
+      "properties": {
+        "decision": {
+          "enum": ["accepted", "conditional", "evidence_only"]
+        },
+        "semantic_equivalence": {
+          "enum": ["different", "equivalent", "unresolved"]
+        },
+        "review_owner": {
+          "type": "string",
+          "minLength": 1
+        },
+        "downgrade_condition": {
+          "type": ["string", "null"]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "decision": { "const": "conditional" } },
+            "required": ["decision"]
+          },
+          "then": {
+            "properties": {
+              "semantic_equivalence": { "const": "unresolved" },
+              "downgrade_condition": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "decision": { "const": "evidence_only" } },
+            "required": ["decision"]
+          },
+          "then": {
+            "properties": {
+              "semantic_equivalence": { "const": "equivalent" }
+            }
+          }
+        }
+      ]
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "locator", "revision", "summary"],
+      "properties": {
+        "id": { "$ref": "#/$defs/evidenceId" },
+        "type": {
+          "enum": ["document", "commit", "session", "code_symbol", "paper", "experiment", "artifact", "test"]
+        },
+        "locator": {
+          "type": "string",
+          "minLength": 1
+        },
+        "revision": {
+          "type": ["string", "null"]
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "feature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "record_type",
+        "title",
+        "kind",
+        "parent_id",
+        "status",
+        "summary",
+        "hypothesis",
+        "design",
+        "baseline",
+        "delta",
+        "implementation",
+        "experiments",
+        "analysis",
+        "evidence",
+        "depends_on",
+        "related_to",
+        "provenance"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/featureId" },
+        "record_type": { "const": "feature" },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Stable original title; translation-only edits must not change Feature identity."
+        },
+        "title_zh": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Optional human-reviewable Chinese translation; consumers fall back to title when absent."
+        },
+        "category": {
+          "enum": ["architecture", "model_configuration", "training_configuration", "data", "runtime"],
+          "description": "Optional during v1 compatibility; reviewed new Features should classify the intervention."
+        },
+        "validation_status": {
+          "enum": ["validated", "mixed", "failed", "unverified"]
+        },
+        "kind": {
+          "enum": ["baseline", "feature"]
+        },
+        "parent_id": {
+          "anyOf": [
+            { "$ref": "#/$defs/featureId" },
+            { "type": "null" }
+          ]
+        },
+        "status": {
+          "enum": ["proposed", "implementing", "validating", "analyzed", "abandoned"]
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Stable original summary."
+        },
+        "summary_zh": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Optional human-reviewable Chinese translation; consumers fall back to summary when absent."
+        },
+        "hypothesis": {
+          "type": "string",
+          "minLength": 1
+        },
+        "design": {
+          "type": "string",
+          "minLength": 1
+        },
+        "baseline": {
+          "anyOf": [
+            { "$ref": "#/$defs/baseline" },
+            { "type": "null" }
+          ]
+        },
+        "delta": { "$ref": "#/$defs/delta" },
+        "implementation": { "$ref": "#/$defs/implementation" },
+        "code_locators": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/codeLocator" }
+        },
+        "experiments": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/experiment" }
+        },
+        "validation": { "$ref": "#/$defs/validationSummary" },
+        "analysis": {
+          "anyOf": [
+            { "$ref": "#/$defs/analysis" },
+            { "type": "null" }
+          ]
+        },
+        "evidence": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/evidence" }
+        },
+        "depends_on": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/featureId" }
+        },
+        "related_to": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/featureId" }
+        },
+        "structural_review": { "$ref": "#/$defs/structuralReview" },
+        "provenance": { "$ref": "#/$defs/fieldProvenance" }
+      }
+    },
+    "formalFeature": {
+      "allOf": [
+        { "$ref": "#/$defs/feature" },
+        {
+          "if": {
+            "properties": { "id": { "const": "feat-olmo3-standard" } },
+            "required": ["id"]
+          },
+          "else": {
+            "required": [
+              "title_zh",
+              "summary_zh",
+              "category",
+              "validation_status",
+              "code_locators",
+              "validation"
+            ],
+            "properties": {
+              "category": { "const": "architecture" },
+              "provenance": {
+                "allOf": [
+                  { "$ref": "#/$defs/fieldProvenance" },
+                  {
+                    "properties": {
+                      "fields": {
+                        "required": [
+                          "title_zh",
+                          "summary_zh",
+                          "category",
+                          "validation_status",
+                          "code_locators",
+                          "validation"
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "id": { "const": "feat-concept-hlm-olmo3-layer-reuse" } },
+            "required": ["id"]
+          },
+          "then": {
+            "required": ["structural_review"],
+            "properties": {
+              "validation_status": { "const": "unverified" },
+              "structural_review": {
+                "allOf": [
+                  { "$ref": "#/$defs/structuralReview" },
+                  {
+                    "properties": {
+                      "decision": { "const": "conditional" },
+                      "semantic_equivalence": { "const": "unresolved" }
+                    }
+                  }
+                ]
+              },
+              "provenance": {
+                "allOf": [
+                  { "$ref": "#/$defs/fieldProvenance" },
+                  {
+                    "properties": {
+                      "fields": {
+                        "required": ["structural_review"]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

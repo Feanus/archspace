@@ -1,0 +1,203 @@
+{
+  "id": "feat-concept-flash-decode-evaluation",
+  "record_type": "feature",
+  "title": "Flash Decode repair and evaluation",
+  "kind": "feature",
+  "parent_id": "feat-concept-segmented-inference-runtime",
+  "status": "analyzed",
+  "summary": "Repair missing HLM rotary inputs in Flash Decode, then evaluate speed, task accuracy and numerical/generation drift with deterministic sharded GSM8K.",
+  "hypothesis": "Flash Decode may improve throughput after the HLM RoPE fix, but must remain gated if numerical drift changes autoregressive trajectories.",
+  "design": "Add a dedicated diagnosis path, restore HLM rotary state, run matched Flash-off/on long-context and eight-shard GSM8K comparisons, and default Flash Decode off when equivalence is not supported.",
+  "baseline": null,
+  "delta": {
+    "summary": "Repair missing HLM rotary inputs in Flash Decode, then evaluate speed, task accuracy and numerical/generation drift with deterministic sharded GSM8K.",
+    "operations": [
+      {
+        "target": "inference.flash_decode",
+        "before": "HLM rotary input missing; unstable path without a task-level correctness gate",
+        "after": "rotary path repaired, deterministic A/B evaluation added, feature remains disabled by default",
+        "rationale": "Treat speed and correctness as separate claims and preserve the safer runtime default.",
+        "evidence_ids": [
+          "ev-concept-flash-rope-fix",
+          "ev-concept-flash-gsm8k",
+          "ev-concept-flash-results"
+        ]
+      }
+    ]
+  },
+  "implementation": {
+    "commits": [
+      {
+        "id": "flash-rope-fix",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/4dc4c2dda6db0879defb31019bc97366e20ac2ad",
+        "summary": "HLM RoPE repair and diagnostics.",
+        "evidence_ids": [
+          "ev-concept-flash-rope-fix"
+        ]
+      },
+      {
+        "id": "flash-gsm8k-eval",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/d57481c5f4b36e1d6846e01c18dd56cc077b3c0e",
+        "summary": "Sharded task evaluation.",
+        "evidence_ids": [
+          "ev-concept-flash-gsm8k"
+        ]
+      },
+      {
+        "id": "flash-workflow-doc",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/f17d00a49521219b210b4c18fd153915817e7196",
+        "summary": "Safe-default documentation.",
+        "evidence_ids": [
+          "ev-concept-flash-workflow"
+        ]
+      }
+    ],
+    "sessions": [],
+    "code_symbols": [
+      {
+        "id": "flash-diagnose",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/flash_decode_diagnose.py",
+        "summary": "Long-context numerical diagnosis.",
+        "evidence_ids": [
+          "ev-concept-flash-rope-fix"
+        ]
+      },
+      {
+        "id": "gsm8k-eval",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/gsm8k_eval.py",
+        "summary": "Deterministic sharded GSM8K evaluator.",
+        "evidence_ids": [
+          "ev-concept-flash-gsm8k"
+        ]
+      }
+    ],
+    "component_changes": []
+  },
+  "experiments": [
+    {
+      "id": "flash-gsm8k-paired",
+      "title": "Flash Decode GSM8K paired evaluation",
+      "status": "inconclusive",
+      "summary": "Aggregate strict accuracy was similar and makespan improved, but full generations and logits were not equivalent.",
+      "metrics": {
+        "strict_off": "522/1319",
+        "strict_on": "525/1319",
+        "paired_p_value": 0.8199,
+        "makespan_speedup": "1.106x",
+        "identical_generations": "817/1319",
+        "worst_relative_l2": 0.9201,
+        "minimum_cosine": 0.6655
+      },
+      "evidence_ids": [
+        "ev-concept-flash-results"
+      ]
+    }
+  ],
+  "analysis": {
+    "outcome": "partially_supported",
+    "conclusion": "The speed claim is supported, but numerical and generation equivalence is not; Flash Decode should remain off by default for output-sensitive use.",
+    "limitations": [
+      "One GSM8K A/B cannot establish universal quality neutrality.",
+      "Long-context top-1 agreement coexists with large relative-logit drift.",
+      "Flash Decode does not satisfy the random variable-length batch contract."
+    ],
+    "evidence_ids": [
+      "ev-concept-flash-rope-fix",
+      "ev-concept-flash-gsm8k",
+      "ev-concept-flash-workflow",
+      "ev-concept-flash-pr",
+      "ev-concept-flash-main-merge",
+      "ev-concept-flash-results"
+    ]
+  },
+  "evidence": [
+    {
+      "id": "ev-concept-flash-rope-fix",
+      "type": "commit",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/4dc4c2dda6db0879defb31019bc97366e20ac2ad",
+      "revision": "4dc4c2dda6db0879defb31019bc97366e20ac2ad",
+      "summary": "Restores HLM rotary inputs in the Flash Decode path and adds diagnosis tooling."
+    },
+    {
+      "id": "ev-concept-flash-gsm8k",
+      "type": "commit",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/d57481c5f4b36e1d6846e01c18dd56cc077b3c0e",
+      "revision": "d57481c5f4b36e1d6846e01c18dd56cc077b3c0e",
+      "summary": "Adds deterministic sharded Flash-on/off GSM8K evaluation."
+    },
+    {
+      "id": "ev-concept-flash-workflow",
+      "type": "commit",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/f17d00a49521219b210b4c18fd153915817e7196",
+      "revision": "f17d00a49521219b210b4c18fd153915817e7196",
+      "summary": "Documents safe defaults and the evidence-based Flash Decode decision."
+    },
+    {
+      "id": "ev-concept-flash-pr",
+      "type": "commit",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/pull/1/commits/9fdc384f139448aa5f915a2501d0e19aabd84372",
+      "revision": "9fdc384f139448aa5f915a2501d0e19aabd84372",
+      "summary": "PR #1 integration commit for the inference branch."
+    },
+    {
+      "id": "ev-concept-flash-main-merge",
+      "type": "commit",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/6ae216283d88f8db0cb35e18c818018617b50f65",
+      "revision": "6ae216283d88f8db0cb35e18c818018617b50f65",
+      "summary": "Immutable main merge revision observed for this analysis."
+    },
+    {
+      "id": "ev-concept-flash-results",
+      "type": "document",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/README.md",
+      "revision": "6ae216283d88f8db0cb35e18c818018617b50f65",
+      "summary": "Reports 522/1319 vs 525/1319 strict GSM8K, 1.106x makespan speedup, but only 817/1319 identical generations."
+    }
+  ],
+  "depends_on": [
+    "feat-concept-chunk-representation",
+    "feat-concept-self-dd",
+    "feat-concept-cross-module-residual-read"
+  ],
+  "related_to": [
+    "feat-concept-variable-length-batching",
+    "feat-concept-stage1-scale-resume"
+  ],
+  "provenance": {
+    "sources": {
+      "work-repo": {
+        "state": "pinned",
+        "source_ids": [
+          "ev-concept-flash-rope-fix",
+          "ev-concept-flash-gsm8k",
+          "ev-concept-flash-workflow",
+          "ev-concept-flash-pr",
+          "ev-concept-flash-main-merge",
+          "ev-concept-flash-results"
+        ],
+        "note": "Derived private work-repository evidence; never root or official OLMo-3 provenance."
+      }
+    },
+    "fields": {
+      "id": "work-repo",
+      "record_type": "work-repo",
+      "title": "work-repo",
+      "category": "work-repo",
+      "kind": "work-repo",
+      "parent_id": "work-repo",
+      "status": "work-repo",
+      "summary": "work-repo",
+      "hypothesis": "work-repo",
+      "design": "work-repo",
+      "baseline": "work-repo",
+      "delta": "work-repo",
+      "implementation": "work-repo",
+      "experiments": "work-repo",
+      "analysis": "work-repo",
+      "evidence": "work-repo",
+      "depends_on": "work-repo",
+      "related_to": "work-repo"
+    }
+  },
+  "category": "runtime"
+}

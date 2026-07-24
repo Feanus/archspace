@@ -1,0 +1,62 @@
+record_version: 1
+source_id: src-olmo3-standard
+feature_id: feat-olmo3-standard
+title: OLMo-3 standard baseline source pin
+status: unresolved
+last_checked_at: null
+
+facts:
+  model_family:
+    status: project_declared
+    value: OLMo-3
+    evidence:
+      - Project.md
+    note: The project fixes this display identity, but no authoritative external source is locally available yet.
+  model_scale:
+    status: unresolved
+    value: null
+    evidence: []
+  official_repository:
+    status: unresolved
+    url: null
+    evidence: []
+  immutable_revision:
+    status: unresolved
+    value: null
+    revision_type: null
+    evidence: []
+  config:
+    status: unresolved
+    uri: null
+    sha256: null
+    evidence: []
+  checkpoint:
+    status: unresolved
+    uri: null
+    sha256: null
+    evidence: []
+  license:
+    status: unresolved
+    identifier: null
+    uri: null
+    sha256: null
+    evidence: []
+
+authoritative_sources: []
+
+unresolved_fields:
+  - facts.model_family.authoritative_external_evidence
+  - facts.model_scale
+  - facts.official_repository
+  - facts.immutable_revision
+  - facts.config
+  - facts.checkpoint
+  - facts.license
+  - authoritative_sources
+
+pin_policy:
+  require_authoritative_sources: true
+  require_immutable_revision: true
+  require_sha256_for_artifacts: true
+  prohibit_inference: true
+  verifier: python3 sources/verify_olmo3_source.py --require-pinned

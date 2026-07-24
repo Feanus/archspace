@@ -1,0 +1,152 @@
+{
+  "id": "feat-olmo3-150b-training-recipe",
+  "record_type": "feature",
+  "title": "OLMo3 150B vanilla training recipe",
+  "kind": "feature",
+  "parent_id": "feat-olmo3-standard",
+  "status": "proposed",
+  "summary": "Define a reproducible 150B-token vanilla OLMo3 training schedule, batch, optimizer, checkpoint cadence and distributed resource contract.",
+  "hypothesis": "A shared validated recipe surface can make model-size experiments comparable by holding data, token budget and most training settings constant.",
+  "design": "Resolve global batch 512, sequence length 8192, 35,763 steps, Adam settings, cosine decay inputs, checkpoint interval, TP/PP/CP defaults and RJob resources through a versioned recipe with build/dry-run validation.",
+  "baseline": null,
+  "delta": {
+    "summary": "Define a reproducible 150B-token vanilla OLMo3 training schedule, batch, optimizer, checkpoint cadence and distributed resource contract.",
+    "operations": [
+      {
+        "target": "training.recipe",
+        "before": "No branch-local structured recipe for smaller vanilla OLMo3 presets",
+        "after": {
+          "target_tokens": 150000893952,
+          "global_batch_size": 512,
+          "micro_batch_size": 1,
+          "sequence_length": 8192,
+          "train_iters": 35763,
+          "optimizer": "adam",
+          "weight_decay": 0.1,
+          "clip_grad": 1.0,
+          "tp_pp_cp": "1/1/1"
+        },
+        "rationale": "Hold the training/data/resource contract explicit so size-specific model configurations can be reviewed independently.",
+        "evidence_ids": [
+          "ev-olmo3-recipe-initial",
+          "ev-olmo3-recipe-implementation"
+        ]
+      }
+    ]
+  },
+  "implementation": {
+    "commits": [
+      {
+        "id": "olmo3-recipe-initial",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/9125bb9dcd27c8c717cda66c1b4ccbf374b5e06b",
+        "summary": "Initial shared 1B/3B schedule and resource configuration.",
+        "evidence_ids": [
+          "ev-olmo3-recipe-initial"
+        ]
+      },
+      {
+        "id": "olmo3-recipe-refactor",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/e3a07a986ff7069d5ce4edd053ffe86d962f976a",
+        "summary": "Structured catalog/recipe/CLI with validation.",
+        "evidence_ids": [
+          "ev-olmo3-recipe-implementation",
+          "ev-olmo3-recipe-cli"
+        ]
+      }
+    ],
+    "sessions": [],
+    "code_symbols": [
+      {
+        "id": "olmo3-build-train-config",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/e3a07a986ff7069d5ce4edd053ffe86d962f976a/repo/examples/public_training_bench/olmo3_vanilla/recipe.py",
+        "summary": "build_train_config, build_launch_config and validate_config.",
+        "evidence_ids": [
+          "ev-olmo3-recipe-implementation"
+        ]
+      },
+      {
+        "id": "olmo3-recipe-cli",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/e3a07a986ff7069d5ce4edd053ffe86d962f976a/repo/examples/public_training_bench/olmo3_vanilla/cli.py",
+        "summary": "build/dry-run/launch command interface.",
+        "evidence_ids": [
+          "ev-olmo3-recipe-cli"
+        ]
+      }
+    ],
+    "component_changes": []
+  },
+  "experiments": [],
+  "analysis": {
+    "outcome": "inconclusive",
+    "conclusion": "The recipe is reproducibly specified and dry-run capable, but no parent-relative training outcome is committed.",
+    "limitations": [
+      "The branch is unmerged.",
+      "Dry-run/config validation is not training-effect evidence.",
+      "No completed 150B run or convergence comparison is available."
+    ],
+    "evidence_ids": [
+      "ev-olmo3-recipe-initial",
+      "ev-olmo3-recipe-implementation",
+      "ev-olmo3-recipe-cli"
+    ]
+  },
+  "evidence": [
+    {
+      "id": "ev-olmo3-recipe-initial",
+      "type": "commit",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/9125bb9dcd27c8c717cda66c1b4ccbf374b5e06b",
+      "revision": "9125bb9dcd27c8c717cda66c1b4ccbf374b5e06b",
+      "summary": "Defines the shared 150B-token schedule, batch, optimizer and resource defaults for 1B/3B vanilla training."
+    },
+    {
+      "id": "ev-olmo3-recipe-implementation",
+      "type": "code_symbol",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/e3a07a986ff7069d5ce4edd053ffe86d962f976a/repo/examples/public_training_bench/olmo3_vanilla/recipe.py",
+      "revision": "e3a07a986ff7069d5ce4edd053ffe86d962f976a",
+      "summary": "build_train_config/build_launch_config/validate_config resolve training, data, resources and parallelism."
+    },
+    {
+      "id": "ev-olmo3-recipe-cli",
+      "type": "code_symbol",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/e3a07a986ff7069d5ce4edd053ffe86d962f976a/repo/examples/public_training_bench/olmo3_vanilla/cli.py",
+      "revision": "e3a07a986ff7069d5ce4edd053ffe86d962f976a",
+      "summary": "CLI build/dry-run/launch surface for the resolved recipe."
+    }
+  ],
+  "depends_on": [],
+  "related_to": [],
+  "provenance": {
+    "sources": {
+      "work-repo": {
+        "state": "pinned",
+        "source_ids": [
+          "ev-olmo3-recipe-initial",
+          "ev-olmo3-recipe-implementation",
+          "ev-olmo3-recipe-cli"
+        ],
+        "note": "Derived private work-repository evidence; never root or official OLMo-3 provenance."
+      }
+    },
+    "fields": {
+      "id": "work-repo",
+      "record_type": "work-repo",
+      "title": "work-repo",
+      "category": "work-repo",
+      "kind": "work-repo",
+      "parent_id": "work-repo",
+      "status": "work-repo",
+      "summary": "work-repo",
+      "hypothesis": "work-repo",
+      "design": "work-repo",
+      "baseline": "work-repo",
+      "delta": "work-repo",
+      "implementation": "work-repo",
+      "experiments": "work-repo",
+      "analysis": "work-repo",
+      "evidence": "work-repo",
+      "depends_on": "work-repo",
+      "related_to": "work-repo"
+    }
+  },
+  "category": "training_configuration"
+}

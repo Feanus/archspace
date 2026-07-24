@@ -1,0 +1,99 @@
+{
+  "id": "feat-olmo3-standard",
+  "record_type": "feature",
+  "title": "OLMo-3 标准态",
+  "kind": "baseline",
+  "parent_id": null,
+  "status": "analyzed",
+  "summary": "InternSpace Feature Tree 的固定结构根，表示尚待精确 pin 定的 OLMo-3 标准态。",
+  "hypothesis": "固定一个可追溯的标准态，才能让每条 Feature 路径表达确定的增量累积。",
+  "design": "根只保存标准态身份和来源状态；规模、仓库 revision、配置与 checkpoint 未给定时保持 unresolved。",
+  "baseline": {
+    "model_family": {
+      "value": "OLMo-3",
+      "provenance": "contract"
+    },
+    "model_scale": {
+      "value": null,
+      "provenance": "unresolved-baseline"
+    },
+    "repository": {
+      "value": null,
+      "provenance": "unresolved-baseline"
+    },
+    "revision": {
+      "value": null,
+      "provenance": "unresolved-baseline"
+    },
+    "configuration": {
+      "value": null,
+      "provenance": "unresolved-baseline"
+    },
+    "checkpoint": {
+      "value": null,
+      "provenance": "unresolved-baseline"
+    },
+    "license": {
+      "value": null,
+      "provenance": "unresolved-baseline"
+    }
+  },
+  "delta": {
+    "summary": "根 Feature 定义比较基准，本身不表达相对父节点的变化。",
+    "operations": []
+  },
+  "implementation": {
+    "commits": [],
+    "sessions": [],
+    "code_symbols": [],
+    "component_changes": []
+  },
+  "experiments": [],
+  "analysis": null,
+  "evidence": [
+    {
+      "id": "ev-project-contract",
+      "type": "document",
+      "locator": "Project.md",
+      "revision": null,
+      "summary": "定义唯一根身份，并明确精确规模与 revision 当前尚未指定。"
+    }
+  ],
+  "depends_on": [],
+  "related_to": [],
+  "provenance": {
+    "sources": {
+      "contract": {
+        "state": "documented",
+        "source_ids": [
+          "ev-project-contract"
+        ],
+        "note": "由本仓库项目契约明确规定。"
+      },
+      "unresolved-baseline": {
+        "state": "unresolved",
+        "source_ids": [],
+        "note": "精确 OLMo-3 标准态来源尚未提供，不推断也不占位伪造。"
+      }
+    },
+    "fields": {
+      "id": "contract",
+      "record_type": "contract",
+      "title": "contract",
+      "kind": "contract",
+      "parent_id": "contract",
+      "status": "contract",
+      "summary": "contract",
+      "hypothesis": "contract",
+      "design": "contract",
+      "baseline": "contract",
+      "delta": "contract",
+      "implementation": "contract",
+      "experiments": "contract",
+      "analysis": "contract",
+      "evidence": "contract",
+      "depends_on": "contract",
+      "related_to": "contract"
+    }
+  }
+}

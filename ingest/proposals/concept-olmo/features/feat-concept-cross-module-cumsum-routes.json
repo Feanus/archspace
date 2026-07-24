@@ -1,0 +1,120 @@
+{
+  "id": "feat-concept-cross-module-cumsum-routes",
+  "record_type": "feature",
+  "title": "Cross-module cumsum routes",
+  "kind": "feature",
+  "parent_id": "feat-concept-cross-module-residual-read",
+  "status": "implementing",
+  "summary": "Expose cumsum states as single-source encoder/HLM/decoder route inputs instead of retaining multi-layer source histories.",
+  "hypothesis": "Cross-module residual reads can retain useful information while using one stable accumulated source per module.",
+  "design": "Add module route exports and update concept-read-encoder, decoder-read-encoder and decoder-read-concept source selection independently of same-module cumsum state.",
+  "baseline": null,
+  "delta": {
+    "summary": "Expose cumsum states as single-source encoder/HLM/decoder route inputs instead of retaining multi-layer source histories.",
+    "operations": [
+      {
+        "target": "concept.cross_module_routes.sources",
+        "before": "per-layer encoder/concept histories",
+        "after": "one cumsum route export per module",
+        "rationale": "D10 changes cross-module source semantics and therefore builds only on D06b.",
+        "evidence_ids": [
+          "ev-concept-cross-route-commit",
+          "ev-concept-cross-route-code"
+        ]
+      }
+    ]
+  },
+  "implementation": {
+    "commits": [
+      {
+        "id": "cross-module-cumsum-routes",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/28a1ec57c9a0e5eed1eb5224b2d0883cc560a51a",
+        "summary": "Cross-module source export integration.",
+        "evidence_ids": [
+          "ev-concept-cross-route-commit"
+        ]
+      }
+    ],
+    "sessions": [],
+    "code_symbols": [
+      {
+        "id": "module-route-export",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/28a1ec57c9a0e5eed1eb5224b2d0883cc560a51a/repo/megatron/core/models/gpt/conceptlm_v21.py",
+        "summary": "ConceptLMV21Model route-source builders and decoder source selection.",
+        "evidence_ids": [
+          "ev-concept-cross-route-code"
+        ]
+      }
+    ],
+    "component_changes": []
+  },
+  "experiments": [],
+  "analysis": {
+    "outcome": "inconclusive",
+    "conclusion": "The source-count and routing changes are explicit; no committed A/B outcome establishes their effect.",
+    "limitations": [
+      "The associated A/B launcher is evidence of intended validation, not a successful result."
+    ],
+    "evidence_ids": [
+      "ev-concept-cross-route-commit",
+      "ev-concept-cross-route-code"
+    ]
+  },
+  "evidence": [
+    {
+      "id": "ev-concept-cross-route-commit",
+      "type": "commit",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/28a1ec57c9a0e5eed1eb5224b2d0883cc560a51a",
+      "revision": "28a1ec57c9a0e5eed1eb5224b2d0883cc560a51a",
+      "summary": "Adds cross-module cumsum route sources between encoder, HLM concept and decoder."
+    },
+    {
+      "id": "ev-concept-cross-route-code",
+      "type": "code_symbol",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/28a1ec57c9a0e5eed1eb5224b2d0883cc560a51a/repo/megatron/core/models/gpt/conceptlm_v21.py",
+      "revision": "28a1ec57c9a0e5eed1eb5224b2d0883cc560a51a",
+      "summary": "Single-module route exports and decoder cross-read source selection."
+    }
+  ],
+  "depends_on": [],
+  "related_to": [
+    "feat-concept-cumsum-self-dd"
+  ],
+  "provenance": {
+    "sources": {
+      "work-repo": {
+        "state": "pinned",
+        "source_ids": [
+          "ev-concept-cross-route-commit",
+          "ev-concept-cross-route-code"
+        ],
+        "note": "Derived private work-repository evidence; never root or official OLMo-3 provenance."
+      }
+    },
+    "fields": {
+      "id": "work-repo",
+      "record_type": "work-repo",
+      "title": "work-repo",
+      "category": "work-repo",
+      "kind": "work-repo",
+      "parent_id": "work-repo",
+      "status": "work-repo",
+      "summary": "work-repo",
+      "hypothesis": "work-repo",
+      "design": "work-repo",
+      "baseline": "work-repo",
+      "delta": "work-repo",
+      "implementation": "work-repo",
+      "experiments": "work-repo",
+      "analysis": "work-repo",
+      "evidence": "work-repo",
+      "depends_on": "work-repo",
+      "related_to": "work-repo",
+      "title_zh": "work-repo",
+      "summary_zh": "work-repo"
+    }
+  },
+  "title_zh": "跨模块路由累积式改写",
+  "summary_zh": "将跨模块 residual-read 的 source 从来源模块逐层历史改为每个模块对外提供一个 cumsum 累积状态；它与 Self-DD 的累积式改写作用对象不同，可独立消融。",
+  "category": "architecture"
+}

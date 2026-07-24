@@ -1,0 +1,182 @@
+{
+  "id": "feat-concept-self-dd",
+  "record_type": "feature",
+  "title": "Self-DD intra-module cross-layer reads",
+  "kind": "feature",
+  "parent_id": "feat-olmo3-standard",
+  "status": "validating",
+  "summary": "Let layers inside a module read earlier layer outputs in addition to the immediately preceding state.",
+  "hypothesis": "Learned access to earlier layer states can improve information reuse beyond a strictly sequential residual stack.",
+  "design": "Use V21SelfDD and V21DepthDD to select and mix same-module history states independently of cross-module residual routes.",
+  "baseline": null,
+  "delta": {
+    "summary": "Let layers inside a module read earlier layer outputs in addition to the immediately preceding state.",
+    "operations": [
+      {
+        "target": "concept.self_dd",
+        "before": "each layer consumes only the immediately preceding hidden state",
+        "after": "V21SelfDD/V21DepthDD read and mix stacked earlier outputs within the same module",
+        "rationale": "Same-module history reads are independently switchable and are the direct parent of D09.",
+        "evidence_ids": [
+          "ev-self-dd-code",
+          "ev-depth-dd-code"
+        ]
+      }
+    ]
+  },
+  "implementation": {
+    "commits": [
+      {
+        "id": "initial-logic-snapshot",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/a489526d1dff4161a60dccc5034c2d595f059d49",
+        "summary": "Shared aggregated history starting point; not a unique introduction commit for this Feature.",
+        "evidence_ids": [
+          "ev-self-dd-snapshot"
+        ]
+      }
+    ],
+    "sessions": [],
+    "code_symbols": [
+      {
+        "id": "v21-self-dd",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v21.py",
+        "summary": "V21SelfDD controls same-module history reads.",
+        "evidence_ids": [
+          "ev-self-dd-code"
+        ]
+      },
+      {
+        "id": "v21-depth-dd",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v21.py",
+        "summary": "V21DepthDD mixes stacked previous-layer states.",
+        "evidence_ids": [
+          "ev-depth-dd-code"
+        ]
+      }
+    ],
+    "component_changes": []
+  },
+  "experiments": [],
+  "analysis": {
+    "outcome": "inconclusive",
+    "conclusion": "Self-DD is independently configured in code, but its isolated effect and the exact expansion of DD require algorithm-owner confirmation.",
+    "limitations": [
+      "No isolated parent-relative ablation artifact is available.",
+      "The initial commit is shared with five other reviewed base mechanisms."
+    ],
+    "evidence_ids": [
+      "ev-self-dd-snapshot",
+      "ev-self-dd-code",
+      "ev-depth-dd-code"
+    ]
+  },
+  "evidence": [
+    {
+      "id": "ev-self-dd-snapshot",
+      "type": "commit",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/a489526d1dff4161a60dccc5034c2d595f059d49",
+      "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+      "summary": "The first available repository commit is an aggregated ConceptLM V2/V2.1/V2.2-VQ snapshot; it supports six independently reviewed structures without exposing separate introduction commits or ablation results."
+    },
+    {
+      "id": "ev-self-dd-code",
+      "type": "code_symbol",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v21.py",
+      "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+      "summary": "V21SelfDD controls same-module history reads."
+    },
+    {
+      "id": "ev-depth-dd-code",
+      "type": "code_symbol",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v21.py",
+      "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+      "summary": "V21DepthDD mixes stacked previous-layer states."
+    }
+  ],
+  "depends_on": [],
+  "related_to": [
+    "feat-concept-segmented-topology"
+  ],
+  "provenance": {
+    "sources": {
+      "work-repo": {
+        "state": "pinned",
+        "source_ids": [
+          "ev-self-dd-snapshot",
+          "ev-self-dd-code",
+          "ev-depth-dd-code"
+        ],
+        "note": "Derived private work-repository evidence; never root or official OLMo-3 provenance."
+      }
+    },
+    "fields": {
+      "id": "work-repo",
+      "record_type": "work-repo",
+      "title": "work-repo",
+      "category": "work-repo",
+      "kind": "work-repo",
+      "parent_id": "work-repo",
+      "status": "work-repo",
+      "summary": "work-repo",
+      "hypothesis": "work-repo",
+      "design": "work-repo",
+      "baseline": "work-repo",
+      "delta": "work-repo",
+      "implementation": "work-repo",
+      "experiments": "work-repo",
+      "analysis": "work-repo",
+      "evidence": "work-repo",
+      "depends_on": "work-repo",
+      "related_to": "work-repo",
+      "title_zh": "work-repo",
+      "summary_zh": "work-repo",
+      "validation_status": "work-repo",
+      "code_locators": "work-repo",
+      "validation": "work-repo"
+    }
+  },
+  "title_zh": "Self-DD：模块内跨层读取",
+  "summary_zh": "在模块内部加入跨层读取：每层除接收上一层输出外，还可读取此前所有层输出；初始实现保存并堆叠完整层历史。",
+  "category": "architecture",
+  "validation_status": "unverified",
+  "code_locators": [
+    {
+      "repository": "https://github.com/Liu-yuliang/concept_olmo",
+      "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+      "path": "repo/megatron/core/models/gpt/conceptlm_v21.py",
+      "symbol": "V21SelfDD",
+      "role": "V21SelfDD controls same-module history reads.",
+      "url": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v21.py"
+    },
+    {
+      "repository": "https://github.com/Liu-yuliang/concept_olmo",
+      "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+      "path": "repo/megatron/core/models/gpt/conceptlm_v21.py",
+      "symbol": "V21DepthDD",
+      "role": "V21DepthDD mixes stacked previous-layer states.",
+      "url": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v21.py"
+    }
+  ],
+  "validation": {
+    "comparison": "Strictly sequential intra-module layers versus learned reads over earlier same-module layer states.",
+    "conditions": [
+      "Retrospective code inspection at the shared initial snapshot a489526d1dff4161a60dccc5034c2d595f059d49.",
+      "No isolated parent-relative result artifact is available."
+    ],
+    "metrics": {},
+    "observations": [
+      "Self-DD is independently configured in code, but its isolated effect and the exact expansion of DD require algorithm-owner confirmation."
+    ],
+    "artifacts": [],
+    "conclusion": "Self-DD is independently configured in code, but its isolated effect and the exact expansion of DD require algorithm-owner confirmation.",
+    "limitations": [
+      "No isolated parent-relative ablation artifact is available.",
+      "The initial commit is shared with five other reviewed base mechanisms."
+    ],
+    "evidence_ids": [
+      "ev-self-dd-snapshot",
+      "ev-self-dd-code",
+      "ev-depth-dd-code"
+    ]
+  }
+}

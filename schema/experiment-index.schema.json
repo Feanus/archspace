@@ -1,0 +1,195 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://internspace.local/schema/experiment-index.schema.json",
+  "title": "InternSpace Experiment Index v1",
+  "description": "Display-only experiment coverage records for Feature nodes. Experiments are not tree nodes and may cover multiple Features.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "experiment_index_id", "experiments"],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "experiment_index_id": {
+      "const": "internspace-experiment-index"
+    },
+    "experiments": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/experiment"
+      }
+    }
+  },
+  "$defs": {
+    "experimentId": {
+      "type": "string",
+      "pattern": "^exp-[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+    },
+    "featureId": {
+      "type": "string",
+      "pattern": "^feat-[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+    },
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "wandbUrl": {
+      "type": "string",
+      "pattern": "^https://wandb\\.ai(?:/[^?#\\s]*)?$"
+    },
+    "status": {
+      "enum": ["planned", "running", "completed", "failed", "inconclusive", "archived"]
+    },
+    "cursorType": {
+      "enum": ["none", "wandb-final", "wandb-replay", "live"]
+    },
+    "experimentType": {
+      "enum": ["training", "training_reference", "ablation", "evaluation", "smoke", "runtime"]
+    },
+    "metricValue": {
+      "type": ["number", "string", "boolean", "null"]
+    },
+    "finalMetrics": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[A-Za-z][A-Za-z0-9_.:/-]*$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/metricValue"
+      }
+    },
+    "replay": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["enabled", "source", "loss_trace"],
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "source": {
+          "type": ["string", "null"]
+        },
+        "loss_trace": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "locator", "summary"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^ev-[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+        },
+        "type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "label": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "locator": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "revision": {
+          "type": ["string", "null"]
+        },
+        "summary": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "checksum": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "experiment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "title_zh",
+        "type",
+        "status",
+        "cursor_type",
+        "covered_feature_ids",
+        "primary_feature_ids",
+        "summary",
+        "summary_zh",
+        "wandb_url",
+        "final_metrics",
+        "replay",
+        "evidence"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/experimentId"
+        },
+        "title": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "title_zh": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "type": {
+          "$ref": "#/$defs/experimentType"
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "cursor_type": {
+          "$ref": "#/$defs/cursorType"
+        },
+        "covered_feature_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/featureId"
+          }
+        },
+        "primary_feature_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/featureId"
+          }
+        },
+        "summary": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "summary_zh": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "wandb_url": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/wandbUrl"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "final_metrics": {
+          "$ref": "#/$defs/finalMetrics"
+        },
+        "replay": {
+          "$ref": "#/$defs/replay"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidence"
+          }
+        }
+      }
+    }
+  }
+}

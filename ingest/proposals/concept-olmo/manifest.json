@@ -1,0 +1,790 @@
+{
+  "proposal_version": "1.2.0",
+  "base_root_id": "feat-olmo3-standard",
+  "bundle": "../concept-olmo-feature-tree.json",
+  "features": [
+    {
+      "id": "feat-olmo3-150b-training-recipe",
+      "file": "features/feat-olmo3-150b-training-recipe.json",
+      "category": "training_configuration",
+      "parent_id": "feat-olmo3-standard",
+      "validation_status": "unverified",
+      "boundary_confidence": "medium",
+      "admission": "admitted",
+      "recommended_for_merge": false,
+      "has_effect_evidence": false,
+      "diff_ids": [
+        "D01"
+      ],
+      "decision_status": "pending",
+      "primary_locators": [
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "e3a07a986ff7069d5ce4edd053ffe86d962f976a",
+          "path": "repo/examples/public_training_bench/olmo3_vanilla/recipe.py",
+          "symbol": "build_train_config / build_launch_config / validate_config",
+          "parameter": "GLOBAL_BATCH_SIZE, TRAIN_ITERS, LR, TP_SIZE, PP_SIZE, CP_SIZE",
+          "role": "Resolve and validate the 150B training, optimizer, parallel and resource recipe.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/e3a07a986ff7069d5ce4edd053ffe86d962f976a/repo/examples/public_training_bench/olmo3_vanilla/recipe.py"
+        }
+      ],
+      "validation": {
+        "comparison": "No structured branch-local smaller-model training recipe versus a resolved 150B schedule.",
+        "conditions": "Code and dry-run contract review only; no training run artifact.",
+        "metrics": {},
+        "artifact_locators": [],
+        "conclusion": "Configuration is explicit but its training effect is unverified.",
+        "limitations": [
+          "Unmerged branch.",
+          "No completed run or parent-relative convergence/cost result."
+        ]
+      }
+    },
+    {
+      "id": "feat-olmo3-1b-dense-preset",
+      "file": "features/feat-olmo3-1b-dense-preset.json",
+      "category": "model_configuration",
+      "parent_id": "feat-olmo3-standard",
+      "validation_status": "unverified",
+      "boundary_confidence": "medium",
+      "admission": "admitted",
+      "recommended_for_merge": false,
+      "has_effect_evidence": false,
+      "diff_ids": [
+        "D02"
+      ],
+      "decision_status": "pending",
+      "primary_locators": [
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "e3a07a986ff7069d5ce4edd053ffe86d962f976a",
+          "path": "repo/examples/public_training_bench/olmo3_vanilla/catalog.py",
+          "symbol": "OLMO3_DENSE_PRESETS['1B']",
+          "parameter": null,
+          "role": "Define the 1B model dimensions.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/e3a07a986ff7069d5ce4edd053ffe86d962f976a/repo/examples/public_training_bench/olmo3_vanilla/catalog.py"
+        },
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "e3a07a986ff7069d5ce4edd053ffe86d962f976a",
+          "path": "repo/examples/public_training_bench/olmo3_vanilla/recipe.py",
+          "symbol": "RUNTIME_DEFAULTS['1B']",
+          "parameter": null,
+          "role": "Bind the 1B preset to LR and 32-H200 launch defaults.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/e3a07a986ff7069d5ce4edd053ffe86d962f976a/repo/examples/public_training_bench/olmo3_vanilla/recipe.py"
+        }
+      ],
+      "validation": {
+        "comparison": "Work-repository 7B comparison launcher versus 1B concrete dimensions and launch defaults.",
+        "conditions": "Catalog/recipe build and dry-run capability only.",
+        "metrics": {},
+        "artifact_locators": [],
+        "conclusion": "The 1B intervention is reproducible but has no effect evidence.",
+        "limitations": [
+          "Unmerged branch.",
+          "No training, quality, stability or cost artifact."
+        ]
+      }
+    },
+    {
+      "id": "feat-olmo3-3b-dense-preset",
+      "file": "features/feat-olmo3-3b-dense-preset.json",
+      "category": "model_configuration",
+      "parent_id": "feat-olmo3-standard",
+      "validation_status": "unverified",
+      "boundary_confidence": "medium",
+      "admission": "admitted",
+      "recommended_for_merge": false,
+      "has_effect_evidence": false,
+      "diff_ids": [
+        "D03"
+      ],
+      "decision_status": "pending",
+      "primary_locators": [
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "e3a07a986ff7069d5ce4edd053ffe86d962f976a",
+          "path": "repo/examples/public_training_bench/olmo3_vanilla/catalog.py",
+          "symbol": "OLMO3_DENSE_PRESETS['3B']",
+          "parameter": null,
+          "role": "Define the 3B model dimensions.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/e3a07a986ff7069d5ce4edd053ffe86d962f976a/repo/examples/public_training_bench/olmo3_vanilla/catalog.py"
+        },
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "e3a07a986ff7069d5ce4edd053ffe86d962f976a",
+          "path": "repo/examples/public_training_bench/olmo3_vanilla/recipe.py",
+          "symbol": "RUNTIME_DEFAULTS['3B']",
+          "parameter": null,
+          "role": "Bind the 3B preset to LR and 64-H200 launch defaults.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/e3a07a986ff7069d5ce4edd053ffe86d962f976a/repo/examples/public_training_bench/olmo3_vanilla/recipe.py"
+        }
+      ],
+      "validation": {
+        "comparison": "Work-repository 7B comparison launcher versus 3B concrete dimensions and launch defaults.",
+        "conditions": "Catalog/recipe build and dry-run capability only.",
+        "metrics": {},
+        "artifact_locators": [],
+        "conclusion": "The 3B intervention is reproducible but has no effect evidence.",
+        "limitations": [
+          "Unmerged branch.",
+          "No training, quality, stability or cost artifact."
+        ]
+      }
+    },
+    {
+      "id": "feat-concept-segmented-topology",
+      "file": "features/feat-concept-segmented-topology.json",
+      "category": "architecture",
+      "parent_id": "feat-olmo3-standard",
+      "validation_status": "unverified",
+      "boundary_confidence": "high",
+      "admission": "admitted",
+      "recommended_for_merge": true,
+      "has_effect_evidence": false,
+      "diff_ids": [
+        "D04a"
+      ],
+      "decision_status": "adjudicated",
+      "primary_locators": [
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+          "path": "repo/megatron/core/models/gpt/conceptlm_v2.py",
+          "symbol": "ConceptLMV2Model.__init__ / ConceptLMV2Model.forward",
+          "parameter": null,
+          "role": "Implement the segmented encoder, chunk, HLM, fusion and decoder topology.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v2.py"
+        }
+      ],
+      "validation": {
+        "comparison": "Standard single-stream OLMo3 Transformer versus the five-stage segmented topology.",
+        "conditions": "Retrospective inspection of the shared initial snapshot; no isolated A/B artifact.",
+        "metrics": {},
+        "artifact_locators": [],
+        "conclusion": "The topology is pinned and independently reviewable; its effect is unverified.",
+        "limitations": [
+          "Shared snapshot does not reveal a separate introduction time.",
+          "No isolated quality or efficiency result."
+        ]
+      }
+    },
+    {
+      "id": "feat-concept-hlm-predictor",
+      "file": "features/feat-concept-hlm-predictor.json",
+      "category": "architecture",
+      "parent_id": "feat-concept-segmented-topology",
+      "validation_status": "unverified",
+      "boundary_confidence": "high",
+      "admission": "admitted",
+      "recommended_for_merge": true,
+      "has_effect_evidence": false,
+      "diff_ids": [
+        "D04b"
+      ],
+      "decision_status": "adjudicated",
+      "primary_locators": [
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+          "path": "repo/megatron/core/models/gpt/conceptlm_v2.py",
+          "symbol": "ConceptPredictorV2",
+          "parameter": null,
+          "role": "Implement the concept-rate autoregressive HLM predictor.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v2.py"
+        }
+      ],
+      "validation": {
+        "comparison": "Segmented topology without a concept-rate predictor versus ConceptPredictorV2.",
+        "conditions": "Retrospective inspection of the shared initial snapshot; no isolated A/B artifact.",
+        "metrics": {},
+        "artifact_locators": [],
+        "conclusion": "The HLM module is pinned; its parent-relative effect is unverified.",
+        "limitations": [
+          "Shared snapshot does not reveal a separate introduction time.",
+          "No HLM ablation result."
+        ]
+      }
+    },
+    {
+      "id": "feat-concept-hlm-backbone-window",
+      "file": "features/feat-concept-hlm-backbone-window.json",
+      "category": "architecture",
+      "parent_id": "feat-concept-hlm-predictor",
+      "validation_status": "unverified",
+      "boundary_confidence": "high",
+      "admission": "admitted",
+      "recommended_for_merge": true,
+      "has_effect_evidence": false,
+      "diff_ids": [
+        "D07"
+      ],
+      "decision_status": "adjudicated",
+      "primary_locators": [
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "93fadb42872024a53b5d3750f8d47e44175d51da",
+          "path": "repo/megatron/core/models/gpt/conceptlm_v2.py",
+          "symbol": "ConceptCausalBlock._sliding_window_causal_bias",
+          "parameter": null,
+          "role": "Implement HLM sliding-window attention.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/93fadb42872024a53b5d3750f8d47e44175d51da/repo/megatron/core/models/gpt/conceptlm_v2.py"
+        },
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "4c5c9536d6b015ce099172e550b4f5865d23e9b3",
+          "path": "repo/examples/public_training_bench/train_concept_v22_vq_olmo3_7b.sh",
+          "symbol": "CONCEPTLM_HLM_ATTENTION_MODE",
+          "parameter": "conceptlm-hlm-attention-mode",
+          "role": "Select backbone_window as the default.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/4c5c9536d6b015ce099172e550b4f5865d23e9b3/repo/examples/public_training_bench/train_concept_v22_vq_olmo3_7b.sh"
+        }
+      ],
+      "validation": {
+        "comparison": "Full causal HLM attention versus backbone sliding/full attention cadence.",
+        "conditions": "No isolated A/B run is committed.",
+        "metrics": {},
+        "artifact_locators": [],
+        "conclusion": "Mechanism and default are pinned; effect is unverified.",
+        "limitations": [
+          "No quality, memory or throughput comparison."
+        ]
+      }
+    },
+    {
+      "id": "feat-concept-hlm-olmo3-layer-reuse",
+      "file": "features/feat-concept-hlm-olmo3-layer-reuse.json",
+      "category": "architecture",
+      "parent_id": "feat-concept-hlm-predictor",
+      "validation_status": "unverified",
+      "boundary_confidence": "medium",
+      "admission": "conditional",
+      "recommended_for_merge": false,
+      "has_effect_evidence": false,
+      "diff_ids": [
+        "D08"
+      ],
+      "decision_status": "adjudicated",
+      "primary_locators": [
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "7512755321ee4238b43ad08eb3ecfbc5fe2f2e6e",
+          "path": "repo/megatron/core/models/gpt/conceptlm_v21.py",
+          "symbol": "ConceptPredictorV21.hlm_block",
+          "parameter": null,
+          "role": "Replace custom HLM blocks with the configured OLMo3 TransformerBlock.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/7512755321ee4238b43ad08eb3ecfbc5fe2f2e6e/repo/megatron/core/models/gpt/conceptlm_v21.py"
+        }
+      ],
+      "validation": {
+        "comparison": "Custom ConceptCausalBlock HLM versus shared OLMo3 TransformerBlock implementation.",
+        "conditions": "Patch inspection; no parity or training A/B artifact.",
+        "metrics": {},
+        "artifact_locators": [],
+        "conclusion": "Implementation replacement is clear; Feature status depends on unresolved structural/numerical equivalence.",
+        "limitations": [
+          "No checkpoint migration or numerical parity result.",
+          "If equivalent, downgrade this proposal to D04b implementation evidence."
+        ]
+      },
+      "conditional_review": {
+        "question": "Are ConceptCausalBlock and the OLMo3 TransformerBlock path structurally and numerically equivalent under the same HLM configuration?",
+        "if_equivalent": "Downgrade D08 to implementation evidence of feat-concept-hlm-predictor.",
+        "if_not_equivalent": "Retain D08 as a sibling of D07 under feat-concept-hlm-predictor.",
+        "owner": "algorithm review"
+      }
+    },
+    {
+      "id": "feat-concept-chunk-representation",
+      "file": "features/feat-concept-chunk-representation.json",
+      "category": "architecture",
+      "parent_id": "feat-olmo3-standard",
+      "validation_status": "unverified",
+      "boundary_confidence": "high",
+      "admission": "admitted",
+      "recommended_for_merge": true,
+      "has_effect_evidence": false,
+      "diff_ids": [
+        "D05a"
+      ],
+      "decision_status": "adjudicated",
+      "primary_locators": [
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+          "path": "repo/megatron/core/models/gpt/conceptlm_v2.py",
+          "symbol": "ConceptLMV2Model._merge_token_chunks",
+          "parameter": "chunk_size=4, merge=meanpooling",
+          "role": "Construct four-token mean-pooled continuous concept states.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v2.py"
+        },
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+          "path": "repo/megatron/core/models/gpt/conceptlm_v2.py",
+          "symbol": "ConceptLMV2Model._repeat_shift_concepts",
+          "parameter": "shift_feature=true",
+          "role": "Apply shifted concept reinjection semantics.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v2.py"
+        }
+      ],
+      "validation": {
+        "comparison": "No chunk-rate representation versus continuous four-token mean-pooled concepts with shifted reinjection.",
+        "conditions": "Retrospective inspection of the shared initial snapshot; no isolated A/B artifact.",
+        "metrics": {},
+        "artifact_locators": [],
+        "conclusion": "The representation and its parameters are pinned; effect and exact shift semantics are unverified.",
+        "limitations": [
+          "Shared snapshot does not reveal a separate introduction time.",
+          "No chunk/pooling/shift ablation result."
+        ]
+      }
+    },
+    {
+      "id": "feat-concept-product-vq",
+      "file": "features/feat-concept-product-vq.json",
+      "category": "architecture",
+      "parent_id": "feat-concept-chunk-representation",
+      "validation_status": "unverified",
+      "boundary_confidence": "high",
+      "admission": "admitted",
+      "recommended_for_merge": true,
+      "has_effect_evidence": false,
+      "diff_ids": [
+        "D05b"
+      ],
+      "decision_status": "adjudicated",
+      "primary_locators": [
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+          "path": "repo/megatron/core/models/gpt/conceptlm_v22_vq.py",
+          "symbol": "ConceptLMV22VQModel.__init__ / ConceptLMV22VQModel._concept_branch_v21",
+          "parameter": "32 codebooks x 128 entries",
+          "role": "Implement Product VQ and its HLM/VQ loss path.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v22_vq.py"
+        }
+      ],
+      "validation": {
+        "comparison": "Continuous D05a concepts versus Product-VQ-discretized concepts.",
+        "conditions": "Retrospective inspection of the shared initial snapshot; no isolated VQ A/B artifact.",
+        "metrics": {},
+        "artifact_locators": [],
+        "conclusion": "The VQ bottleneck is pinned and independently removable; its effect is unverified.",
+        "limitations": [
+          "Shared snapshot does not reveal a separate introduction time.",
+          "No continuous-versus-VQ result."
+        ]
+      }
+    },
+    {
+      "id": "feat-concept-self-dd",
+      "file": "features/feat-concept-self-dd.json",
+      "category": "architecture",
+      "parent_id": "feat-olmo3-standard",
+      "validation_status": "unverified",
+      "boundary_confidence": "high",
+      "admission": "admitted",
+      "recommended_for_merge": true,
+      "has_effect_evidence": false,
+      "diff_ids": [
+        "D06a"
+      ],
+      "decision_status": "adjudicated",
+      "primary_locators": [
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+          "path": "repo/megatron/core/models/gpt/conceptlm_v21.py",
+          "symbol": "V21SelfDD / V21DepthDD",
+          "parameter": null,
+          "role": "Implement same-module cross-layer history reads and mixing.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v21.py"
+        }
+      ],
+      "validation": {
+        "comparison": "Sequential layers reading only the previous state versus same-module stacked-history reads.",
+        "conditions": "Retrospective inspection of the shared initial snapshot; no isolated A/B artifact.",
+        "metrics": {},
+        "artifact_locators": [],
+        "conclusion": "Self-DD is pinned and independently switchable; its effect is unverified.",
+        "limitations": [
+          "Shared snapshot does not reveal a separate introduction time.",
+          "DD acronym expansion and isolated result need algorithm-owner confirmation."
+        ]
+      }
+    },
+    {
+      "id": "feat-concept-cumsum-self-dd",
+      "file": "features/feat-concept-cumsum-self-dd.json",
+      "category": "architecture",
+      "parent_id": "feat-concept-self-dd",
+      "validation_status": "unverified",
+      "boundary_confidence": "high",
+      "admission": "admitted",
+      "recommended_for_merge": true,
+      "has_effect_evidence": false,
+      "diff_ids": [
+        "D09"
+      ],
+      "decision_status": "adjudicated",
+      "primary_locators": [
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "98719543fc9a3aa076a75ffd579e26d412c64141",
+          "path": "repo/megatron/core/models/gpt/conceptlm_v21.py",
+          "symbol": "V21SelfCumsumDD",
+          "parameter": null,
+          "role": "Replace full layer-history self-DD with recurrent cumsum state.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/98719543fc9a3aa076a75ffd579e26d412c64141/repo/megatron/core/models/gpt/conceptlm_v21.py"
+        },
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "8d359faf0ae492d323edb86e704e1398af2ad7cc",
+          "path": "repo/megatron/core/models/gpt/conceptlm_v21.py",
+          "symbol": "ConceptLMV21Model._run_v21_decoder",
+          "parameter": null,
+          "role": "Apply cumsum state across encoder/HLM/decoder paths.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/8d359faf0ae492d323edb86e704e1398af2ad7cc/repo/megatron/core/models/gpt/conceptlm_v21.py"
+        }
+      ],
+      "validation": {
+        "comparison": "Full previous-layer history DD versus one recurrent cumsum state.",
+        "conditions": "A/B submission script exists but no result artifact.",
+        "metrics": {},
+        "artifact_locators": [],
+        "conclusion": "Architecture is implemented; effect is unverified.",
+        "limitations": [
+          "No memory, speed, loss or quality result from the planned A/B."
+        ]
+      }
+    },
+    {
+      "id": "feat-concept-cross-module-residual-read",
+      "file": "features/feat-concept-cross-module-residual-read.json",
+      "category": "architecture",
+      "parent_id": "feat-olmo3-standard",
+      "validation_status": "unverified",
+      "boundary_confidence": "high",
+      "admission": "admitted",
+      "recommended_for_merge": true,
+      "has_effect_evidence": false,
+      "diff_ids": [
+        "D06b"
+      ],
+      "decision_status": "adjudicated",
+      "primary_locators": [
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+          "path": "repo/megatron/core/models/gpt/conceptlm_v21.py",
+          "symbol": "V21ResidualFlowRouteAdd",
+          "parameter": null,
+          "role": "Implement learned cross-module residual reads.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v21.py"
+        },
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+          "path": "repo/megatron/core/models/gpt/conceptlm_v21.py",
+          "symbol": "ConceptLMV21Model._build_encoder_concept_states / _build_decoder_encoder_states / _build_decoder_concept_states",
+          "parameter": null,
+          "role": "Build encoder-to-HLM and encoder/HLM-to-decoder route sources.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v21.py"
+        }
+      ],
+      "validation": {
+        "comparison": "No intermediate-state reads across modules versus learned encoder/HLM/decoder residual-read routes.",
+        "conditions": "Retrospective inspection of the shared initial snapshot; no isolated A/B artifact.",
+        "metrics": {},
+        "artifact_locators": [],
+        "conclusion": "Cross-module routes are pinned and independently switchable; their effect is unverified.",
+        "limitations": [
+          "Shared snapshot does not reveal a separate introduction time.",
+          "No route ablation result."
+        ]
+      }
+    },
+    {
+      "id": "feat-concept-cross-module-cumsum-routes",
+      "file": "features/feat-concept-cross-module-cumsum-routes.json",
+      "category": "architecture",
+      "parent_id": "feat-concept-cross-module-residual-read",
+      "validation_status": "unverified",
+      "boundary_confidence": "high",
+      "admission": "admitted",
+      "recommended_for_merge": true,
+      "has_effect_evidence": false,
+      "diff_ids": [
+        "D10"
+      ],
+      "decision_status": "adjudicated",
+      "primary_locators": [
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "28a1ec57c9a0e5eed1eb5224b2d0883cc560a51a",
+          "path": "repo/megatron/core/models/gpt/conceptlm_v21.py",
+          "symbol": "ConceptLMV21Model._build_encoder_concept_states",
+          "parameter": null,
+          "role": "Expose and consume single cumsum sources across encoder, concept and decoder modules.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/28a1ec57c9a0e5eed1eb5224b2d0883cc560a51a/repo/megatron/core/models/gpt/conceptlm_v21.py"
+        }
+      ],
+      "validation": {
+        "comparison": "Cross-module reads over per-layer histories versus one cumsum source per module.",
+        "conditions": "Code and submission-path review; no A/B result.",
+        "metrics": {},
+        "artifact_locators": [],
+        "conclusion": "Routing semantics are explicit; effect is unverified.",
+        "limitations": [
+          "No route-quality, throughput or convergence comparison."
+        ]
+      }
+    },
+    {
+      "id": "feat-concept-stage1-scale-resume",
+      "file": "features/feat-concept-stage1-scale-resume.json",
+      "category": "training_configuration",
+      "parent_id": "feat-concept-cross-module-cumsum-routes",
+      "validation_status": "unverified",
+      "boundary_confidence": "medium",
+      "admission": "admitted",
+      "recommended_for_merge": false,
+      "has_effect_evidence": false,
+      "diff_ids": [
+        "D11",
+        "D12"
+      ],
+      "decision_status": "pending",
+      "primary_locators": [
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "6ae216283d88f8db0cb35e18c818018617b50f65",
+          "path": "full_train_dd_diag_256g_0611/scripts/pretrain_concept_olmo_stage_1.sh",
+          "symbol": "shell entrypoint",
+          "parameter": "cards=256, load_dir, save_interval, save_full_state",
+          "role": "Define the canonical 256-H200 Stage-1 resource and checkpoint workflow.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/full_train_dd_diag_256g_0611/scripts/pretrain_concept_olmo_stage_1.sh"
+        },
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "6ae216283d88f8db0cb35e18c818018617b50f65",
+          "path": "repo/examples/public_training_bench/concept_v22_vq_olmo3_config.sh",
+          "symbol": "Concept V2.2-VQ Stage-1 environment",
+          "parameter": null,
+          "role": "Bind model, optimizer and route configuration consumed by the launcher.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/examples/public_training_bench/concept_v22_vq_olmo3_config.sh"
+        }
+      ],
+      "validation": {
+        "comparison": "Routed Concept model without a canonical scale/recovery plan versus 256-H200 Stage-1 plus full-state resume and monitoring.",
+        "conditions": "Short 2/4-step monitoring smokes; not a full Stage-1 run.",
+        "metrics": {
+          "sampled_grad_nan_count": 0,
+          "sampled_update_nan_count": 0
+        },
+        "artifact_locators": [
+          "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/monitor.md"
+        ],
+        "conclusion": "Short health smokes support implementation integrity but do not validate the training configuration's model effect.",
+        "limitations": [
+          "No completed Stage-1 convergence or checkpoint-content artifact."
+        ]
+      }
+    },
+    {
+      "id": "feat-concept-segmented-inference-runtime",
+      "file": "features/feat-concept-segmented-inference-runtime.json",
+      "category": "runtime",
+      "parent_id": "feat-concept-cross-module-cumsum-routes",
+      "validation_status": "mixed",
+      "boundary_confidence": "high",
+      "admission": "admitted",
+      "recommended_for_merge": false,
+      "has_effect_evidence": true,
+      "diff_ids": [
+        "D13"
+      ],
+      "decision_status": "pending",
+      "primary_locators": [
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "6ae216283d88f8db0cb35e18c818018617b50f65",
+          "path": "repo/experiments/vllm_inference/segmented_kv.py",
+          "symbol": "SegmentedConceptKV",
+          "parameter": null,
+          "role": "Maintain separate encoder, HLM and decoder cache domains.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/segmented_kv.py"
+        },
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "6ae216283d88f8db0cb35e18c818018617b50f65",
+          "path": "repo/experiments/vllm_inference/inference.py",
+          "symbol": "ConceptLMInferencer",
+          "parameter": null,
+          "role": "Expose GPU-only batched decode.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/inference.py"
+        }
+      ],
+      "validation": {
+        "comparison": "Full-prefix Concept forward versus segmented-KV incremental decode.",
+        "conditions": "One H200; greedy 32-token decode at prompt lengths 12, 256 and 1024; strict checkpoint metadata fingerprinting.",
+        "metrics": {
+          "decode_speedup_12": "1.039x",
+          "decode_speedup_256": "1.012x",
+          "decode_speedup_1024": "1.075x",
+          "teacher_forced_top1": "32/32 at all three lengths",
+          "short_free_generation_match": false,
+          "checkpoint_mutated": false
+        },
+        "artifact_locators": [
+          "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/RESULTS_2026-07-17.md"
+        ],
+        "conclusion": "Incremental runtime works and can be faster, but generation is not universally equivalent.",
+        "limitations": [
+          "Single-device limited prompt set.",
+          "Stock vLLM serving unsupported."
+        ]
+      }
+    },
+    {
+      "id": "feat-concept-strict-hf-export",
+      "file": "features/feat-concept-strict-hf-export.json",
+      "category": "runtime",
+      "parent_id": "feat-concept-cross-module-cumsum-routes",
+      "validation_status": "unverified",
+      "boundary_confidence": "medium",
+      "admission": "ambiguous",
+      "recommended_for_merge": false,
+      "has_effect_evidence": false,
+      "diff_ids": [
+        "D14"
+      ],
+      "decision_status": "pending",
+      "primary_locators": [
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "56e4c613757570fa1090947633c4efe9245b6a89",
+          "path": "repo/experiments/vllm_inference/export_hf.py",
+          "symbol": "main / strict state-key validation",
+          "parameter": null,
+          "role": "Export a custom model-only Hugging Face artifact with strict key checks.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/56e4c613757570fa1090947633c4efe9245b6a89/repo/experiments/vllm_inference/export_hf.py"
+        }
+      ],
+      "validation": {
+        "comparison": "Megatron distributed checkpoint only versus a custom HF model-only export path.",
+        "conditions": "Exporter code/launcher only; no content-addressed export and reload artifact.",
+        "metrics": {},
+        "artifact_locators": [],
+        "conclusion": "Deployment value is plausible but not demonstrated; admission remains ambiguous.",
+        "limitations": [
+          "Could be evidence-only pure export.",
+          "No artifact digest or independent reload result."
+        ]
+      }
+    },
+    {
+      "id": "feat-concept-variable-length-batching",
+      "file": "features/feat-concept-variable-length-batching.json",
+      "category": "runtime",
+      "parent_id": "feat-concept-segmented-inference-runtime",
+      "validation_status": "unverified",
+      "boundary_confidence": "medium",
+      "admission": "admitted",
+      "recommended_for_merge": false,
+      "has_effect_evidence": false,
+      "diff_ids": [
+        "D15"
+      ],
+      "decision_status": "pending",
+      "primary_locators": [
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "6ae216283d88f8db0cb35e18c818018617b50f65",
+          "path": "repo/experiments/vllm_inference/segmented_kv.py",
+          "symbol": "VarlenConceptKVCaches",
+          "parameter": null,
+          "role": "Maintain request-local state for heterogeneous prompt lengths.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/segmented_kv.py"
+        },
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "ea921d04a02c3670e9e6c5d2aa72e9678e220c68",
+          "path": "repo/experiments/vllm_inference/compile_shape_sweep.py",
+          "symbol": "main",
+          "parameter": null,
+          "role": "Measure and constrain prompt-length route recompilation.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/ea921d04a02c3670e9e6c5d2aa72e9678e220c68/repo/experiments/vllm_inference/compile_shape_sweep.py"
+        }
+      ],
+      "validation": {
+        "comparison": "Fixed/equal-length segmented batches versus request-local variable-length batches.",
+        "conditions": "Implementation and smoke claims with Flash Decode disabled; no full parity matrix.",
+        "metrics": {},
+        "artifact_locators": [],
+        "conclusion": "Runtime mode is implemented but parent-relative behavior/effect remains insufficiently measured.",
+        "limitations": [
+          "No broad batch-size/length numerical parity metrics.",
+          "Flash Decode is outside this contract."
+        ]
+      }
+    },
+    {
+      "id": "feat-concept-flash-decode-evaluation",
+      "file": "features/feat-concept-flash-decode-evaluation.json",
+      "category": "runtime",
+      "parent_id": "feat-concept-segmented-inference-runtime",
+      "validation_status": "mixed",
+      "boundary_confidence": "high",
+      "admission": "admitted",
+      "recommended_for_merge": false,
+      "has_effect_evidence": true,
+      "diff_ids": [
+        "D16"
+      ],
+      "decision_status": "pending",
+      "primary_locators": [
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "6ae216283d88f8db0cb35e18c818018617b50f65",
+          "path": "repo/experiments/vllm_inference/flash_decode_diagnose.py",
+          "symbol": "main",
+          "parameter": null,
+          "role": "Diagnose long-context Flash Decode numerical behavior.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/flash_decode_diagnose.py"
+        },
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "6ae216283d88f8db0cb35e18c818018617b50f65",
+          "path": "repo/experiments/vllm_inference/gsm8k_eval.py",
+          "symbol": "main",
+          "parameter": null,
+          "role": "Run deterministic sharded GSM8K Flash on/off evaluation.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/gsm8k_eval.py"
+        }
+      ],
+      "validation": {
+        "comparison": "Segmented runtime with Flash Decode off versus repaired Flash Decode on.",
+        "conditions": "Eight matched H200 GSM8K shards plus long-context numerical gates.",
+        "metrics": {
+          "strict_off": "522/1319",
+          "strict_on": "525/1319",
+          "paired_p_value": 0.8199,
+          "makespan_speedup": "1.106x",
+          "identical_generations": "817/1319",
+          "worst_relative_l2": 0.9201,
+          "minimum_cosine": 0.6655
+        },
+        "artifact_locators": [
+          "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/README.md"
+        ],
+        "conclusion": "Faster with neutral aggregate accuracy in one run, but logits and generations are not equivalent; keep default off.",
+        "limitations": [
+          "Not compatible with random variable-length batching.",
+          "One task A/B is not universal quality evidence."
+        ]
+      }
+    }
+  ]
+}

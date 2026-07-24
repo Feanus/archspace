@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#070b14" />
+    <title>InternSpace · Model Lineage</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main id="app-shell" class="app-shell" aria-label="InternSpace Model Lineage">
+      <header class="topbar">
+        <a class="brand" href="./" aria-label="InternSpace 首页">
+          <span class="brand-mark" aria-hidden="true">⌘</span>
+          <span class="brand-copy"><strong>InternSpace</strong><small>Issue 驱动的模型谱系 · 离线快照</small></span>
+        </a>
+        <div class="search-wrap">
+          <label class="search-box">
+            <span class="sr-only">搜索模型、Issue 或 PR</span>
+            <svg aria-hidden="true" viewBox="0 0 20 20"><path d="m14.2 14.2 3.3 3.3m-1.8-8.3a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0Z"/></svg>
+            <input id="model-search" type="search" placeholder="搜索模型、Issue、PR…" autocomplete="off" />
+            <kbd>/</kbd>
+          </label>
+          <div id="search-results" class="search-results" hidden></div>
+        </div>
+        <div class="topbar-stats" aria-label="页面统计">
+          <section class="stat-group canonical-stats" aria-label="离线快照统计">
+            <span class="stat-source">OFFLINE SNAPSHOT</span>
+            <div class="stat"><small>Models</small><strong id="stat-models">—</strong></div>
+            <div class="stat"><small>Open issues</small><strong id="stat-open-issues">—</strong></div>
+            <div class="stat"><small>Pull requests</small><strong id="stat-pull-requests">—</strong></div>
+            <div class="stat"><small>Parent links</small><strong id="stat-parent-links">—</strong></div>
+          </section>
+        </div>
+      </header>
+
+      <section class="tree-workspace" aria-label="模型谱系画布">
+        <div id="canvas-scroller" class="canvas-scroller">
+          <svg id="tree-canvas" role="tree" aria-label="Issue 模型谱系">
+            <defs>
+              <linearGradient id="node-panel-gradient" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#17233a" stop-opacity=".98" />
+                <stop offset="1" stop-color="#0d1526" stop-opacity=".98" />
+              </linearGradient>
+              <filter id="node-shadow" x="-50%" y="-50%" width="200%" height="200%">
+                <feDropShadow dx="0" dy="7" stdDeviation="9" flood-color="#000814" flood-opacity=".55" />
+              </filter>
+              <marker id="dependency-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                <path d="M0,0 L8,4 L0,8 Z" fill="#5e829e" />
+              </marker>
+            </defs>
+            <g id="viewport-layer">
+              <g id="dependency-layer"></g>
+              <g id="edge-layer"></g>
+              <g id="node-layer"></g>
+            </g>
+          </svg>
+          <div id="empty-state" class="empty-state" hidden>
+            <strong>模型谱系无法加载</strong>
+            <p id="empty-message"></p>
+            <button type="button" data-action="retry">重新加载</button>
+          </div>
+          <div class="canvas-hint">Issue 生成模型 · parentIssue 连接父模型 · PR 在模型详情选项卡中展示</div>
+        </div>
+      </section>
+
+      <div class="bottom-legend" aria-label="节点类型与关系图例">
+        <div id="category-filters" class="category-filters"></div>
+        <div class="semantic-legend">
+          <span><i class="legend-dot open-dot"></i>Open Issue</span>
+          <span><i class="legend-dot closed-dot"></i>Closed Issue</span>
+          <span><i class="legend-line structural-line"></i>parentIssue</span>
+        </div>
+      </div>
+
+      <div class="canvas-controls" aria-label="画布控制">
+        <button type="button" data-action="zoom-out" title="缩小" aria-label="缩小">−</button>
+        <output id="zoom-output" aria-live="polite">100%</output>
+        <button type="button" data-action="zoom-in" title="放大" aria-label="放大">＋</button>
+        <button type="button" data-action="actual-size" title="1:1" aria-label="1:1">1:1</button>
+        <button type="button" data-action="fit" title="适配窗口" aria-label="适配">⊡</button>
+      </div>
+
+      <aside id="detail-panel" class="detail-panel" aria-label="模型、Issue 与 PR 详情" aria-hidden="true">
+        <div class="drawer-topline">
+          <span>MODEL · ISSUE · PULL REQUEST</span>
+          <button id="detail-close" type="button" aria-label="关闭详情">×</button>
+        </div>
+        <div id="detail-content" class="detail-content"><div class="detail-empty">选择一个模型查看 Issue 与 PR</div></div>
+      </aside>
+    </main>
+    <script type="module" src="./src/model-app.js"></script>
+  </body>
+</html>

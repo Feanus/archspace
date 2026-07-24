@@ -1,0 +1,143 @@
+{
+  "id": "feat-concept-chunk-representation",
+  "record_type": "feature",
+  "title": "Chunk-level concept representation",
+  "kind": "feature",
+  "parent_id": "feat-olmo3-standard",
+  "status": "validating",
+  "summary": "Construct one continuous concept vector from each four-token chunk, using mean pooling and shifted reinjection semantics.",
+  "hypothesis": "A lower-rate continuous representation can summarize local token groups while keeping the model well-defined without quantization.",
+  "design": "Group token states into four-token chunks, mean-pool each chunk and shift/repeat concept states for fusion; these parameters do not become child Features.",
+  "baseline": null,
+  "delta": {
+    "summary": "Construct one continuous concept vector from each four-token chunk, using mean pooling and shifted reinjection semantics.",
+    "operations": [
+      {
+        "target": "model.concept_representation",
+        "before": "no chunk-rate concept representation",
+        "after": {
+          "chunk_size": 4,
+          "pooling": "meanpooling",
+          "shift_feature": true,
+          "representation": "continuous concept vector"
+        },
+        "rationale": "The representation is independently removable; its parameter choices remain inside one Feature.",
+        "evidence_ids": [
+          "ev-chunk-merge-code",
+          "ev-chunk-shift-code"
+        ]
+      }
+    ]
+  },
+  "implementation": {
+    "commits": [
+      {
+        "id": "initial-logic-snapshot",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/a489526d1dff4161a60dccc5034c2d595f059d49",
+        "summary": "Shared aggregated history starting point; not a unique introduction commit for this Feature.",
+        "evidence_ids": [
+          "ev-chunk-snapshot"
+        ]
+      }
+    ],
+    "sessions": [],
+    "code_symbols": [
+      {
+        "id": "merge-token-chunks",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v2.py",
+        "summary": "ConceptLMV2Model._merge_token_chunks constructs chunk-level concept states.",
+        "evidence_ids": [
+          "ev-chunk-merge-code"
+        ]
+      },
+      {
+        "id": "repeat-shift-concepts",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v2.py",
+        "summary": "ConceptLMV2Model._repeat_shift_concepts implements shifted concept reinjection.",
+        "evidence_ids": [
+          "ev-chunk-shift-code"
+        ]
+      }
+    ],
+    "component_changes": []
+  },
+  "experiments": [],
+  "analysis": {
+    "outcome": "inconclusive",
+    "conclusion": "The continuous chunk representation is implemented; its isolated effect and exact shift semantics remain unverified.",
+    "limitations": [
+      "No isolated parent-relative ablation artifact is available.",
+      "The initial commit is shared with five other reviewed base mechanisms."
+    ],
+    "evidence_ids": [
+      "ev-chunk-snapshot",
+      "ev-chunk-merge-code",
+      "ev-chunk-shift-code"
+    ]
+  },
+  "evidence": [
+    {
+      "id": "ev-chunk-snapshot",
+      "type": "commit",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/a489526d1dff4161a60dccc5034c2d595f059d49",
+      "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+      "summary": "The first available repository commit is an aggregated ConceptLM V2/V2.1/V2.2-VQ snapshot; it supports six independently reviewed structures without exposing separate introduction commits or ablation results."
+    },
+    {
+      "id": "ev-chunk-merge-code",
+      "type": "code_symbol",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v2.py",
+      "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+      "summary": "ConceptLMV2Model._merge_token_chunks constructs four-token mean-pooled concept states."
+    },
+    {
+      "id": "ev-chunk-shift-code",
+      "type": "code_symbol",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v2.py",
+      "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+      "summary": "ConceptLMV2Model._repeat_shift_concepts implements shifted concept reinjection."
+    }
+  ],
+  "depends_on": [],
+  "related_to": [
+    "feat-concept-segmented-topology"
+  ],
+  "provenance": {
+    "sources": {
+      "work-repo": {
+        "state": "pinned",
+        "source_ids": [
+          "ev-chunk-snapshot",
+          "ev-chunk-merge-code",
+          "ev-chunk-shift-code"
+        ],
+        "note": "Derived private work-repository evidence; never root or official OLMo-3 provenance."
+      }
+    },
+    "fields": {
+      "id": "work-repo",
+      "record_type": "work-repo",
+      "title": "work-repo",
+      "category": "work-repo",
+      "kind": "work-repo",
+      "parent_id": "work-repo",
+      "status": "work-repo",
+      "summary": "work-repo",
+      "hypothesis": "work-repo",
+      "design": "work-repo",
+      "baseline": "work-repo",
+      "delta": "work-repo",
+      "implementation": "work-repo",
+      "experiments": "work-repo",
+      "analysis": "work-repo",
+      "evidence": "work-repo",
+      "depends_on": "work-repo",
+      "related_to": "work-repo",
+      "title_zh": "work-repo",
+      "summary_zh": "work-repo"
+    }
+  },
+  "title_zh": "Chunk 级 concept 表示",
+  "summary_zh": "每 4 个连续 token 的隐状态经 mean pooling 形成一个连续 concept 向量，并通过 shift feature 控制其回注时序；chunk size、pooling 方式与 shift 均保留在本节点内。",
+  "category": "architecture"
+}

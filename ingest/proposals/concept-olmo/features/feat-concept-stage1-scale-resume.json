@@ -1,0 +1,201 @@
+{
+  "id": "feat-concept-stage1-scale-resume",
+  "record_type": "feature",
+  "title": "Canonical Stage-1 scale and resume workflow",
+  "kind": "feature",
+  "parent_id": "feat-concept-cross-module-cumsum-routes",
+  "status": "validating",
+  "summary": "Package the Concept configuration into a canonical large-scale Stage-1 launcher with full-state save/resume probes and independent training health monitoring.",
+  "hypothesis": "A reproducible launcher, checkpoint policy and health signals are required before the architecture can be treated as a trainable model state.",
+  "design": "Separate reusable model config from launch wrappers, define a 256-GPU Stage-1 entrypoint, add MFU/save-resume probes and capture route/VQ/rank/grad-update health independently of checkpoint cadence.",
+  "baseline": null,
+  "delta": {
+    "summary": "Package the Concept configuration into a canonical large-scale Stage-1 launcher with full-state save/resume probes and independent training health monitoring.",
+    "operations": [
+      {
+        "target": "training.entrypoint",
+        "before": "ad-hoc public bench and A/B submission scripts",
+        "after": "canonical Stage-1 launcher sourcing one reusable Concept config",
+        "rationale": "Make the intended scale-up state explicit and reproducible.",
+        "evidence_ids": [
+          "ev-concept-stage-launcher",
+          "ev-concept-stage-config"
+        ]
+      },
+      {
+        "target": "training.recovery_and_health",
+        "before": "no dedicated full-state probe or Concept grad/update records",
+        "after": "full-state save/resume smoke plus route/VQ/rank/grad-update monitoring",
+        "rationale": "Detect inactive paths and verify recovery mechanics before long training.",
+        "evidence_ids": [
+          "ev-concept-stage-resume",
+          "ev-concept-stage-monitor",
+          "ev-concept-stage-report"
+        ]
+      }
+    ]
+  },
+  "implementation": {
+    "commits": [
+      {
+        "id": "stage-grad-monitor",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/2d71d3fc2aa14c071e4ff514c66426b48f7a22bd",
+        "summary": "Optimizer-step monitoring support.",
+        "evidence_ids": [
+          "ev-concept-stage-monitor"
+        ]
+      },
+      {
+        "id": "stage-resume-probe",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/1f85baff62a930b57427302e65f7822c0cd8b3a8",
+        "summary": "Full-state save/resume smoke launcher.",
+        "evidence_ids": [
+          "ev-concept-stage-resume"
+        ]
+      },
+      {
+        "id": "stage-canonical-launcher",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/bb08a0f4dc32549c79b904d9ba38c38c3fea280a",
+        "summary": "Canonical Stage-1 entrypoint.",
+        "evidence_ids": [
+          "ev-concept-stage-launcher"
+        ]
+      },
+      {
+        "id": "stage-config-separation",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/9f0fb4a1211304b586f2daaf8f97d8f9bc82fda7",
+        "summary": "Reusable config and thin compatibility launcher.",
+        "evidence_ids": [
+          "ev-concept-stage-config"
+        ]
+      }
+    ],
+    "sessions": [],
+    "code_symbols": [
+      {
+        "id": "stage1-launcher",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/full_train_dd_diag_256g_0611/scripts/pretrain_concept_olmo_stage_1.sh",
+        "summary": "Canonical Stage-1 resource/checkpoint launcher.",
+        "evidence_ids": [
+          "ev-concept-stage-launcher"
+        ]
+      }
+    ],
+    "component_changes": []
+  },
+  "experiments": [
+    {
+      "id": "stage-monitor-smoke",
+      "title": "Short Concept training health smokes",
+      "status": "passed",
+      "summary": "Committed report records successful short monitoring jobs with finite sampled gradients and updates; it is not a full Stage-1 completion.",
+      "metrics": {
+        "sampled_grad_nan_count": 0,
+        "sampled_update_nan_count": 0
+      },
+      "evidence_ids": [
+        "ev-concept-stage-report"
+      ]
+    },
+    {
+      "id": "stage-full-training",
+      "title": "Full Stage-1 training outcome",
+      "status": "inconclusive",
+      "summary": "The launcher and recovery workflow exist, but no complete training outcome is committed.",
+      "metrics": {},
+      "evidence_ids": [
+        "ev-concept-stage-launcher"
+      ]
+    }
+  ],
+  "analysis": {
+    "outcome": "inconclusive",
+    "conclusion": "Short operational smokes support the workflow, but full Stage-1 convergence and checkpoint content remain unresolved.",
+    "limitations": [
+      "The recorded successful jobs are short monitoring/probe runs, not the complete 256-GPU Stage-1 run.",
+      "Checkpoint references are internal paths without content-addressed model hashes."
+    ],
+    "evidence_ids": [
+      "ev-concept-stage-monitor",
+      "ev-concept-stage-resume",
+      "ev-concept-stage-launcher",
+      "ev-concept-stage-config",
+      "ev-concept-stage-report"
+    ]
+  },
+  "evidence": [
+    {
+      "id": "ev-concept-stage-monitor",
+      "type": "commit",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/2d71d3fc2aa14c071e4ff514c66426b48f7a22bd",
+      "revision": "2d71d3fc2aa14c071e4ff514c66426b48f7a22bd",
+      "summary": "Adds optimizer-step grad/update monitoring used by short successful smoke runs."
+    },
+    {
+      "id": "ev-concept-stage-resume",
+      "type": "commit",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/1f85baff62a930b57427302e65f7822c0cd8b3a8",
+      "revision": "1f85baff62a930b57427302e65f7822c0cd8b3a8",
+      "summary": "Adds a 256-GPU full-state save/resume smoke launcher."
+    },
+    {
+      "id": "ev-concept-stage-launcher",
+      "type": "commit",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/bb08a0f4dc32549c79b904d9ba38c38c3fea280a",
+      "revision": "bb08a0f4dc32549c79b904d9ba38c38c3fea280a",
+      "summary": "Adds the canonical Concept OLMo Stage-1 launcher."
+    },
+    {
+      "id": "ev-concept-stage-config",
+      "type": "commit",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/9f0fb4a1211304b586f2daaf8f97d8f9bc82fda7",
+      "revision": "9f0fb4a1211304b586f2daaf8f97d8f9bc82fda7",
+      "summary": "Separates reusable Concept configuration from compatibility and Stage-1 launchers."
+    },
+    {
+      "id": "ev-concept-stage-report",
+      "type": "document",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/monitor.md",
+      "revision": "6ae216283d88f8db0cb35e18c818018617b50f65",
+      "summary": "Documents successful short monitoring jobs, finite sampled gradients/updates and an unrelated later CE OOM."
+    }
+  ],
+  "depends_on": [],
+  "related_to": [],
+  "provenance": {
+    "sources": {
+      "work-repo": {
+        "state": "pinned",
+        "source_ids": [
+          "ev-concept-stage-monitor",
+          "ev-concept-stage-resume",
+          "ev-concept-stage-launcher",
+          "ev-concept-stage-config",
+          "ev-concept-stage-report"
+        ],
+        "note": "Derived private work-repository evidence; never root or official OLMo-3 provenance."
+      }
+    },
+    "fields": {
+      "id": "work-repo",
+      "record_type": "work-repo",
+      "title": "work-repo",
+      "category": "work-repo",
+      "kind": "work-repo",
+      "parent_id": "work-repo",
+      "status": "work-repo",
+      "summary": "work-repo",
+      "hypothesis": "work-repo",
+      "design": "work-repo",
+      "baseline": "work-repo",
+      "delta": "work-repo",
+      "implementation": "work-repo",
+      "experiments": "work-repo",
+      "analysis": "work-repo",
+      "evidence": "work-repo",
+      "depends_on": "work-repo",
+      "related_to": "work-repo"
+    }
+  },
+  "category": "training_configuration"
+}

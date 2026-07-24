@@ -1,0 +1,161 @@
+{
+  "id": "feat-olmo3-1b-dense-preset",
+  "record_type": "feature",
+  "title": "OLMo3 1B dense preset",
+  "kind": "feature",
+  "parent_id": "feat-olmo3-standard",
+  "status": "proposed",
+  "summary": "Define a concrete 1B-class OLMo3 model and coupled launch defaults rather than relying on the aggregate size label.",
+  "hypothesis": "A 16-layer, hidden-2048 OLMo3 configuration can provide a lower-cost vanilla baseline under the shared 150B recipe.",
+  "design": "Set 16 layers, hidden 2048, FFN 8192, 16 query/KV heads, head dimension 128, untied embeddings, LR 4e-4 and 32 H200s while retaining the OLMo3 attention/RoPE/RMSNorm contract.",
+  "baseline": null,
+  "delta": {
+    "summary": "Define a concrete 1B-class OLMo3 model and coupled launch defaults rather than relying on the aggregate size label.",
+    "operations": [
+      {
+        "target": "model_and_launch_configuration.olmo3_1b",
+        "before": {
+          "reference_work_launcher": "7B",
+          "layers": 32,
+          "hidden": 4096,
+          "ffn": 11008,
+          "heads": 32,
+          "default_lr": "3e-4"
+        },
+        "after": {
+          "layers": 16,
+          "hidden": 2048,
+          "ffn": 8192,
+          "query_heads": 16,
+          "kv_heads": 16,
+          "head_dim": 128,
+          "default_lr": "4e-4",
+          "default_h200s": 32
+        },
+        "rationale": "Expose the actual model/training diff behind the 1B label.",
+        "evidence_ids": [
+          "ev-olmo3-oneb-catalog",
+          "ev-olmo3-oneb-recipe"
+        ]
+      }
+    ]
+  },
+  "implementation": {
+    "commits": [
+      {
+        "id": "olmo3-oneb-preset",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/9125bb9dcd27c8c717cda66c1b4ccbf374b5e06b",
+        "summary": "Initial 1B dimensions and runtime defaults.",
+        "evidence_ids": [
+          "ev-olmo3-oneb-initial"
+        ]
+      },
+      {
+        "id": "olmo3-oneb-catalog-recipe",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/e3a07a986ff7069d5ce4edd053ffe86d962f976a",
+        "summary": "Structured preset and validated recipe consumption.",
+        "evidence_ids": [
+          "ev-olmo3-oneb-catalog",
+          "ev-olmo3-oneb-recipe"
+        ]
+      }
+    ],
+    "sessions": [],
+    "code_symbols": [
+      {
+        "id": "olmo3-oneb-catalog",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/e3a07a986ff7069d5ce4edd053ffe86d962f976a/repo/examples/public_training_bench/olmo3_vanilla/catalog.py",
+        "summary": "OLMO3_DENSE_PRESETS['1B'].",
+        "evidence_ids": [
+          "ev-olmo3-oneb-catalog"
+        ]
+      },
+      {
+        "id": "olmo3-oneb-runtime-defaults",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/e3a07a986ff7069d5ce4edd053ffe86d962f976a/repo/examples/public_training_bench/olmo3_vanilla/recipe.py",
+        "summary": "RUNTIME_DEFAULTS['1B'].",
+        "evidence_ids": [
+          "ev-olmo3-oneb-recipe"
+        ]
+      }
+    ],
+    "component_changes": []
+  },
+  "experiments": [],
+  "analysis": {
+    "outcome": "inconclusive",
+    "conclusion": "The configuration diff and consumption path are explicit; no training result validates quality, stability or cost targets.",
+    "limitations": [
+      "The branch is unmerged.",
+      "No 1B training run, checkpoint, loss curve or parent-relative effect artifact is available."
+    ],
+    "evidence_ids": [
+      "ev-olmo3-oneb-initial",
+      "ev-olmo3-oneb-catalog",
+      "ev-olmo3-oneb-recipe"
+    ]
+  },
+  "evidence": [
+    {
+      "id": "ev-olmo3-oneb-initial",
+      "type": "commit",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/9125bb9dcd27c8c717cda66c1b4ccbf374b5e06b",
+      "revision": "9125bb9dcd27c8c717cda66c1b4ccbf374b5e06b",
+      "summary": "Introduces the explicit 1B model dimensions and size-specific LR/resource defaults."
+    },
+    {
+      "id": "ev-olmo3-oneb-catalog",
+      "type": "code_symbol",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/e3a07a986ff7069d5ce4edd053ffe86d962f976a/repo/examples/public_training_bench/olmo3_vanilla/catalog.py",
+      "revision": "e3a07a986ff7069d5ce4edd053ffe86d962f976a",
+      "summary": "OLMO3_DENSE_PRESETS['1B'] resolves 16 layers, hidden 2048, FFN 8192 and 16 attention/KV heads."
+    },
+    {
+      "id": "ev-olmo3-oneb-recipe",
+      "type": "code_symbol",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/e3a07a986ff7069d5ce4edd053ffe86d962f976a/repo/examples/public_training_bench/olmo3_vanilla/recipe.py",
+      "revision": "e3a07a986ff7069d5ce4edd053ffe86d962f976a",
+      "summary": "RUNTIME_DEFAULTS['1B'] resolves 32 H200s, LR 4e-4 and minimum LR 4e-5."
+    }
+  ],
+  "depends_on": [
+    "feat-olmo3-150b-training-recipe"
+  ],
+  "related_to": [
+    "feat-olmo3-3b-dense-preset"
+  ],
+  "provenance": {
+    "sources": {
+      "work-repo": {
+        "state": "pinned",
+        "source_ids": [
+          "ev-olmo3-oneb-initial",
+          "ev-olmo3-oneb-catalog",
+          "ev-olmo3-oneb-recipe"
+        ],
+        "note": "Derived private work-repository evidence; never root or official OLMo-3 provenance."
+      }
+    },
+    "fields": {
+      "id": "work-repo",
+      "record_type": "work-repo",
+      "title": "work-repo",
+      "category": "work-repo",
+      "kind": "work-repo",
+      "parent_id": "work-repo",
+      "status": "work-repo",
+      "summary": "work-repo",
+      "hypothesis": "work-repo",
+      "design": "work-repo",
+      "baseline": "work-repo",
+      "delta": "work-repo",
+      "implementation": "work-repo",
+      "experiments": "work-repo",
+      "analysis": "work-repo",
+      "evidence": "work-repo",
+      "depends_on": "work-repo",
+      "related_to": "work-repo"
+    }
+  },
+  "category": "model_configuration"
+}

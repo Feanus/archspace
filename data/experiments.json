@@ -1,0 +1,68 @@
+{
+  "schema_version": "1.0.0",
+  "experiment_index_id": "internspace-experiment-index",
+  "experiments": [
+    {
+      "id": "exp-olmo2-0425-1b-training-report",
+      "title": "Training Logs of OLMo2-0425-1B",
+      "title_zh": "OLMo2-0425-1B 训练日志",
+      "type": "training_reference",
+      "status": "archived",
+      "cursor_type": "none",
+      "covered_feature_ids": [
+        "feat-olmo3-standard"
+      ],
+      "primary_feature_ids": [
+        "feat-olmo3-standard"
+      ],
+      "summary": "Public W&B report for OLMo2-0425-1B training logs. It is attached to the root as an external training-log reference only, not as OLMo-3 root provenance.",
+      "summary_zh": "公开 W&B 报告，内容为 OLMo2-0425-1B 训练日志。它只作为根节点的外部训练日志参考，不作为 OLMo-3 根节点 provenance。",
+      "wandb_url": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA",
+      "final_metrics": {},
+      "replay": {
+        "enabled": false,
+        "source": null,
+        "loss_trace": []
+      },
+      "evidence": [
+        {
+          "label": "W&B report",
+          "locator": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA",
+          "summary": "The sanitized report URL is reachable without storing the private query parameter."
+        }
+      ]
+    },
+    {
+      "id": "exp-all-dd-cumsum-ab",
+      "title": "All-DD cumsum A/B submission",
+      "title_zh": "All-DD cumsum A/B 提交",
+      "type": "training",
+      "status": "planned",
+      "cursor_type": "none",
+      "covered_feature_ids": [
+        "feat-concept-cumsum-self-dd",
+        "feat-concept-cross-module-cumsum-routes"
+      ],
+      "primary_feature_ids": [
+        "feat-concept-cumsum-self-dd",
+        "feat-concept-cross-module-cumsum-routes"
+      ],
+      "summary": "A submission recipe exists, but no W&B run, final loss or result artifact is committed.",
+      "summary_zh": "已有提交配方，但尚未提交 W&B run、最终 loss 或结果 artifact。",
+      "wandb_url": null,
+      "final_metrics": {},
+      "replay": {
+        "enabled": false,
+        "source": null,
+        "loss_trace": []
+      },
+      "evidence": [
+        {
+          "label": "Feature-local evidence",
+          "locator": "features/feat-concept-cumsum-self-dd.json",
+          "summary": "The existing Feature record mentions the All-DD cumsum A/B submission as planned."
+        }
+      ]
+    }
+  ]
+}

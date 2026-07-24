@@ -1,0 +1,47 @@
+id: feat-example-proposal
+record_type: feature
+title: Example proposal
+kind: feature
+parent_id: feat-olmo3-standard
+status: proposed
+summary: Demonstrate the explicit incremental Feature contract.
+hypothesis: A small proposal contract can preserve the single-parent Feature tree.
+design: Record one explicit parent-relative change without deriving model ownership.
+baseline: null
+delta:
+  summary: Add only the proposed behavior relative to the OLMo-3 standard root.
+  operations: []
+implementation:
+  commits: []
+  sessions: []
+  code_symbols: []
+  component_changes: []
+experiments: []
+analysis: null
+evidence: []
+depends_on: []
+related_to: []
+provenance:
+  sources:
+    proposal:
+      state: documented
+      source_ids: []
+      note: Explicit manual proposal; no model attribution was inferred.
+  fields:
+    id: proposal
+    record_type: proposal
+    title: proposal
+    kind: proposal
+    parent_id: proposal
+    status: proposal
+    summary: proposal
+    hypothesis: proposal
+    design: proposal
+    baseline: proposal
+    delta: proposal
+    implementation: proposal
+    experiments: proposal
+    analysis: proposal
+    evidence: proposal
+    depends_on: proposal
+    related_to: proposal

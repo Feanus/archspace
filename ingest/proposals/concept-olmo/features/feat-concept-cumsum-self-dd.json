@@ -1,0 +1,148 @@
+{
+  "id": "feat-concept-cumsum-self-dd",
+  "record_type": "feature",
+  "title": "Cumsum self-DD state",
+  "kind": "feature",
+  "parent_id": "feat-concept-self-dd",
+  "status": "validating",
+  "summary": "Replace full same-module layer-history self-DD with a recurrent cumsum state across encoder, HLM and decoder paths.",
+  "hypothesis": "A single accumulated state can retain depth context with lower history storage and simpler route shapes.",
+  "design": "Introduce V21SelfCumsumDD, preserve initialization ordering and switch same-module DD paths to cumsum mode by configuration.",
+  "baseline": null,
+  "delta": {
+    "summary": "Replace full same-module layer-history self-DD with a recurrent cumsum state across encoder, HLM and decoder paths.",
+    "operations": [
+      {
+        "target": "concept.self_dd.state",
+        "before": "list/stack of previous layer outputs",
+        "after": "normalized recurrent cumsum state with learned per-layer mixing",
+        "rationale": "Change the mathematical state and memory shape while preserving D06a as the direct baseline.",
+        "evidence_ids": [
+          "ev-concept-cumsum-core",
+          "ev-concept-cumsum-modules"
+        ]
+      }
+    ]
+  },
+  "implementation": {
+    "commits": [
+      {
+        "id": "cumsum-self-dd",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/98719543fc9a3aa076a75ffd579e26d412c64141",
+        "summary": "Core cumsum state implementation.",
+        "evidence_ids": [
+          "ev-concept-cumsum-core"
+        ]
+      },
+      {
+        "id": "cumsum-all-modules",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/8d359faf0ae492d323edb86e704e1398af2ad7cc",
+        "summary": "Encoder/HLM/decoder integration.",
+        "evidence_ids": [
+          "ev-concept-cumsum-modules"
+        ]
+      }
+    ],
+    "sessions": [],
+    "code_symbols": [
+      {
+        "id": "v21-self-cumsum-dd",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/98719543fc9a3aa076a75ffd579e26d412c64141/repo/megatron/core/models/gpt/conceptlm_v21.py",
+        "summary": "V21SelfCumsumDD recurrent state module.",
+        "evidence_ids": [
+          "ev-concept-cumsum-core"
+        ]
+      }
+    ],
+    "component_changes": []
+  },
+  "experiments": [
+    {
+      "id": "all-dd-cumsum-ab",
+      "title": "All-DD cumsum A/B submission",
+      "status": "planned",
+      "summary": "A submission recipe exists, but no result artifact is committed.",
+      "metrics": {},
+      "evidence_ids": [
+        "ev-concept-cumsum-ab"
+      ]
+    }
+  ],
+  "analysis": {
+    "outcome": "inconclusive",
+    "conclusion": "Implementation and A/B intent are pinned; performance and model-quality conclusions remain unresolved.",
+    "limitations": [
+      "The A/B commit contains a launcher but no result or log artifact."
+    ],
+    "evidence_ids": [
+      "ev-concept-cumsum-core",
+      "ev-concept-cumsum-modules",
+      "ev-concept-cumsum-ab"
+    ]
+  },
+  "evidence": [
+    {
+      "id": "ev-concept-cumsum-core",
+      "type": "commit",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/98719543fc9a3aa076a75ffd579e26d412c64141",
+      "revision": "98719543fc9a3aa076a75ffd579e26d412c64141",
+      "summary": "Introduces V21SelfCumsumDD as a recurrent single-state alternative to full layer-history self-DD."
+    },
+    {
+      "id": "ev-concept-cumsum-modules",
+      "type": "commit",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/8d359faf0ae492d323edb86e704e1398af2ad7cc",
+      "revision": "8d359faf0ae492d323edb86e704e1398af2ad7cc",
+      "summary": "Applies cumsum mode across encoder, HLM and decoder DD paths with single-source exports."
+    },
+    {
+      "id": "ev-concept-cumsum-ab",
+      "type": "commit",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/93e1120c73350333405e9cf89e37c21e41e72653",
+      "revision": "93e1120c73350333405e9cf89e37c21e41e72653",
+      "summary": "Adds an all-DD cumsum A/B submission, but no result artifact is committed."
+    }
+  ],
+  "depends_on": [],
+  "related_to": [
+    "feat-concept-cross-module-cumsum-routes"
+  ],
+  "provenance": {
+    "sources": {
+      "work-repo": {
+        "state": "pinned",
+        "source_ids": [
+          "ev-concept-cumsum-core",
+          "ev-concept-cumsum-modules",
+          "ev-concept-cumsum-ab"
+        ],
+        "note": "Derived private work-repository evidence; never root or official OLMo-3 provenance."
+      }
+    },
+    "fields": {
+      "id": "work-repo",
+      "record_type": "work-repo",
+      "title": "work-repo",
+      "category": "work-repo",
+      "kind": "work-repo",
+      "parent_id": "work-repo",
+      "status": "work-repo",
+      "summary": "work-repo",
+      "hypothesis": "work-repo",
+      "design": "work-repo",
+      "baseline": "work-repo",
+      "delta": "work-repo",
+      "implementation": "work-repo",
+      "experiments": "work-repo",
+      "analysis": "work-repo",
+      "evidence": "work-repo",
+      "depends_on": "work-repo",
+      "related_to": "work-repo",
+      "title_zh": "work-repo",
+      "summary_zh": "work-repo"
+    }
+  },
+  "title_zh": "Self-DD 累积式改写",
+  "summary_zh": "将模块内 Self-DD 状态从堆叠全部前层输出改为归一化递归 cumsum 与每层可学习混合，使状态存储不再随层数线性增长。",
+  "category": "architecture"
+}

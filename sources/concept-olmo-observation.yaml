@@ -1,0 +1,250 @@
+record_version: 1
+source_id: src-concept-olmo-work-repository
+subject: concept-olmo-feature-growth
+status: pinned_observation
+retrieved_at: '2026-07-19T11:05:46Z'
+
+repository:
+  role: derived_private_work_repository
+  owner: Liu-yuliang
+  name: concept_olmo
+  url: https://github.com/Liu-yuliang/concept_olmo
+  private: true
+  default_branch: main
+  official_olmo3_source: false
+  root_provenance: false
+  description: ConceptLM V2.2 OLMo 7B training logic snapshot
+  github_license_metadata:
+    status: unresolved
+    value: null
+
+observation_range:
+  initial_revision: a489526d1dff4161a60dccc5034c2d595f059d49
+  head_revision: 6ae216283d88f8db0cb35e18c818018617b50f65
+  head_parents:
+    - 9ec27a113876f0c6d4ee9bc6ce7be55fd8690ca2
+    - 9fdc384f139448aa5f915a2501d0e19aabd84372
+  compared_commits_after_initial: 31
+
+pull_request:
+  number: 1
+  url: https://github.com/Liu-yuliang/concept_olmo/pull/1
+  state: merged
+  base_revision: 9ec27a113876f0c6d4ee9bc6ce7be55fd8690ca2
+  head_revision: 9fdc384f139448aa5f915a2501d0e19aabd84372
+  merge_revision: 6ae216283d88f8db0cb35e18c818018617b50f65
+  note: Adds the custom segmented inference runtime and Flash Decode evaluation; the PR and merge commits are evidence, not Feature nodes.
+
+branch_observation:
+  name: olmo_1B_3B
+  revision: 49d1d1a33bbae26c03471d9088479061b5540e87
+  merge_base_revision: 9ec27a113876f0c6d4ee9bc6ce7be55fd8690ca2
+  ahead_by: 4
+  behind_by: 14
+  disposition: unmerged_configuration_candidates
+  note: The branch contains reviewable 1B/3B model and 150B training configuration candidates. It remains unmerged, and its documentation-only commits are evidence rather than nodes.
+
+baseline_comparison:
+  status: work_repository_alignment_evidence
+  official_root_provenance: false
+  model_scale: 7B
+  architecture:
+    num_layers: 32
+    hidden_size: 4096
+    ffn_hidden_size: 11008
+    attention_heads: 32
+    kv_channels: 128
+    qk_norm: true
+    attention_pattern: three sliding-window layers followed by one full-attention layer
+    sliding_window: 4096
+    rope_base: 500000
+    rope_percent: 1.0
+    normalization: RMSNorm
+    norm_epsilon: 1.0e-6
+    sequence_length: 8192
+    max_position_embeddings: 8192
+    embedding_output_tying: untied
+    training_entrypoint: pretrain_gpt.py
+  note: These values are extracted from commit-pinned work-repository launchers and are only a reproducible diff baseline.
+
+artifacts:
+  - id: head-readme
+    role: work_repository_summary
+    revision: 6ae216283d88f8db0cb35e18c818018617b50f65
+    path: README.md
+    locator: https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/README.md
+    sha256: 8314309a8fdc5ca33a96a5ee1c08042a3248a02ea0a4e48f92f86900aab94be7
+  - id: public-bench-readme
+    role: baseline_and_launcher_documentation
+    revision: 6ae216283d88f8db0cb35e18c818018617b50f65
+    path: repo/examples/public_training_bench/README.md
+    locator: https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/examples/public_training_bench/README.md
+    sha256: c1837b2c51de3d5447836ffa2ac44433f18fb69ece11f1bb067cf64ad891565b
+  - id: olmo3-baseline-launcher
+    role: baseline_comparison_launcher
+    revision: 6ae216283d88f8db0cb35e18c818018617b50f65
+    path: repo/examples/public_training_bench/train_olmo3_7b.sh
+    locator: https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/examples/public_training_bench/train_olmo3_7b.sh
+    sha256: f8b61032aef2d242408ff71b5b78d97a0678167e0158857291c4cfeb5985a2e7
+  - id: concept-stage1-config
+    role: concept_training_configuration
+    revision: 6ae216283d88f8db0cb35e18c818018617b50f65
+    path: repo/examples/public_training_bench/concept_v22_vq_olmo3_config.sh
+    locator: https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/examples/public_training_bench/concept_v22_vq_olmo3_config.sh
+    sha256: 41571dbd36da1126c37236ec4b631048e128cb578cb6f5c53cfa613f7a3c8fe0
+  - id: concept-compat-launcher
+    role: compatibility_launcher
+    revision: 6ae216283d88f8db0cb35e18c818018617b50f65
+    path: repo/examples/public_training_bench/train_concept_v22_vq_olmo3_7b.sh
+    locator: https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/examples/public_training_bench/train_concept_v22_vq_olmo3_7b.sh
+    sha256: a9b28abe013dd1a67c2c35657cd92f21012f97f19f782acffcc5cda33b64ced3
+  - id: concept-scale-launcher
+    role: scale_launcher
+    revision: 6ae216283d88f8db0cb35e18c818018617b50f65
+    path: repo/examples/public_training_bench/launch_concept_v22_vq_olmo3_128g.sh
+    locator: https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/examples/public_training_bench/launch_concept_v22_vq_olmo3_128g.sh
+    sha256: 252717a2d7c2a237bd505a08485e5abbecf0675261a6ab26038253bad1240d73
+  - id: canonical-stage1-launcher
+    role: canonical_stage1_launcher
+    revision: 6ae216283d88f8db0cb35e18c818018617b50f65
+    path: full_train_dd_diag_256g_0611/scripts/pretrain_concept_olmo_stage_1.sh
+    locator: https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/full_train_dd_diag_256g_0611/scripts/pretrain_concept_olmo_stage_1.sh
+    sha256: 560ad60a4d3fe6d36284ae2e7aceb1b6345e8074f0bcef1efbaeda0ed9d99dff
+  - id: training-monitor-report
+    role: training_monitor_and_smoke_results
+    revision: 6ae216283d88f8db0cb35e18c818018617b50f65
+    path: monitor.md
+    locator: https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/monitor.md
+    sha256: 4206562c677b1e8f4b2e27702abd6ed1206ac0862c077f29672a0634d9cd219f
+  - id: concept-v21-model
+    role: route_and_segmented_model_implementation
+    revision: 6ae216283d88f8db0cb35e18c818018617b50f65
+    path: repo/megatron/core/models/gpt/conceptlm_v21.py
+    locator: https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/megatron/core/models/gpt/conceptlm_v21.py
+    sha256: c0272bee831a22b411681a7d4d3eb7c8ab0a9288d6d5bf62b31054bc072ce200
+  - id: concept-v22-vq-model
+    role: vq_model_implementation
+    revision: 6ae216283d88f8db0cb35e18c818018617b50f65
+    path: repo/megatron/core/models/gpt/conceptlm_v22_vq.py
+    locator: https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/megatron/core/models/gpt/conceptlm_v22_vq.py
+    sha256: 89466af6ff21d47a6bd890dbfd8c7838f89868f3e685e1d2bf99ece02a506cc0
+  - id: inference-readme
+    role: inference_contract_and_results_summary
+    revision: 6ae216283d88f8db0cb35e18c818018617b50f65
+    path: repo/experiments/vllm_inference/README.md
+    locator: https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/README.md
+    sha256: 60ed1012ea42744a1dc3f72a6d58c6db3a8a53e7affb97e7b1ee62653c984d46
+  - id: inference-results
+    role: checkpoint_safe_inference_results
+    revision: 6ae216283d88f8db0cb35e18c818018617b50f65
+    path: repo/experiments/vllm_inference/RESULTS_2026-07-17.md
+    locator: https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/RESULTS_2026-07-17.md
+    sha256: d9ab8978c70a08c47c2490c04a5871826c2ab91f36d35798b7a56bf9e6141db6
+  - id: segmented-kv-runtime
+    role: segmented_inference_runtime
+    revision: 6ae216283d88f8db0cb35e18c818018617b50f65
+    path: repo/experiments/vllm_inference/segmented_kv.py
+    locator: https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/segmented_kv.py
+    sha256: 633863ed76a15b90aca29a973f68b1aff3deb684eb98ea63c7b0631d777b0b20
+  - id: inference-api
+    role: inference_api
+    revision: 6ae216283d88f8db0cb35e18c818018617b50f65
+    path: repo/experiments/vllm_inference/inference.py
+    locator: https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/inference.py
+    sha256: aced9ec74bc438fbbf023054dcb932a638ccbc106fbcc49ea92dd5508ddfa721
+  - id: inference-benchmark
+    role: inference_benchmark
+    revision: 6ae216283d88f8db0cb35e18c818018617b50f65
+    path: repo/experiments/vllm_inference/benchmark.py
+    locator: https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/benchmark.py
+    sha256: 08587dd67f68247e644579416304c86f8c2d724d22b28a28fd3caff9260583ac
+  - id: hf-export
+    role: strict_hf_export
+    revision: 6ae216283d88f8db0cb35e18c818018617b50f65
+    path: repo/experiments/vllm_inference/export_hf.py
+    locator: https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/export_hf.py
+    sha256: baabc679eda9bc08791e44648521f09c3567f4e2d1aacb4a22c60f4e60b70962
+  - id: gsm8k-evaluation
+    role: deterministic_sharded_evaluation
+    revision: 6ae216283d88f8db0cb35e18c818018617b50f65
+    path: repo/experiments/vllm_inference/gsm8k_eval.py
+    locator: https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/gsm8k_eval.py
+    sha256: 69b83908d6a1fb479d6a8ec0f65475f09665840f586af6af965638f052691571
+  - id: flash-diagnosis
+    role: flash_decode_diagnosis
+    revision: 6ae216283d88f8db0cb35e18c818018617b50f65
+    path: repo/experiments/vllm_inference/flash_decode_diagnose.py
+    locator: https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/flash_decode_diagnose.py
+    sha256: 35990a1be519449e642e8c4acb5066bd349fb6e3eba6fe488fc8dc28f547e5ba
+  - id: initial-readme
+    role: initial_logic_snapshot_summary
+    revision: a489526d1dff4161a60dccc5034c2d595f059d49
+    path: README.md
+    locator: https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/README.md
+    sha256: 358d64e37ed2b203773b9ed5dba9b08394efd268e73109a9dc095f9c17de6076
+  - id: initial-v2-model
+    role: initial_segmented_model_snapshot
+    revision: a489526d1dff4161a60dccc5034c2d595f059d49
+    path: repo/megatron/core/models/gpt/conceptlm_v2.py
+    locator: https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v2.py
+    sha256: 86244cbf31cccfc43418bec36d694c0a796a329622f6035bd2a1e42619c68b13
+  - id: initial-v21-model
+    role: initial_route_model_snapshot
+    revision: a489526d1dff4161a60dccc5034c2d595f059d49
+    path: repo/megatron/core/models/gpt/conceptlm_v21.py
+    locator: https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v21.py
+    sha256: 5e061623b2e4c33a4ce51baae2d685e17875806142cfd413bb8e9d45fc253495
+  - id: initial-v22-vq-model
+    role: initial_vq_model_snapshot
+    revision: a489526d1dff4161a60dccc5034c2d595f059d49
+    path: repo/megatron/core/models/gpt/conceptlm_v22_vq.py
+    locator: https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v22_vq.py
+    sha256: f3ddd89c8a9d0d995d8bd08e9e62ea2ec6e93bce9bad8331ed64ce904bcd110b
+  - id: branch-vanilla-catalog
+    role: unmerged_configuration_candidate_catalog
+    revision: 49d1d1a33bbae26c03471d9088479061b5540e87
+    path: repo/examples/public_training_bench/olmo3_vanilla/catalog.py
+    locator: https://github.com/Liu-yuliang/concept_olmo/blob/49d1d1a33bbae26c03471d9088479061b5540e87/repo/examples/public_training_bench/olmo3_vanilla/catalog.py
+    sha256: cc63059a5e3cfa3f53d2aed6d5700846f77914520f061e7230e3e5db1962de3d
+  - id: branch-initial-config
+    role: unmerged_1b_3b_model_and_training_configuration
+    revision: 9125bb9dcd27c8c717cda66c1b4ccbf374b5e06b
+    path: repo/examples/public_training_bench/olmo3_vanilla_config.sh
+    locator: https://github.com/Liu-yuliang/concept_olmo/blob/9125bb9dcd27c8c717cda66c1b4ccbf374b5e06b/repo/examples/public_training_bench/olmo3_vanilla_config.sh
+    sha256: 878fedd1cb4f47cc46f831bbba661ba5b9db5aeb53c1c6e35188832a72a1deef
+  - id: branch-initial-launcher
+    role: unmerged_1b_3b_dry_run_and_submission_launcher
+    revision: 9125bb9dcd27c8c717cda66c1b4ccbf374b5e06b
+    path: repo/examples/public_training_bench/launch_olmo3_vanilla.sh
+    locator: https://github.com/Liu-yuliang/concept_olmo/blob/9125bb9dcd27c8c717cda66c1b4ccbf374b5e06b/repo/examples/public_training_bench/launch_olmo3_vanilla.sh
+    sha256: 66c7456f7db3d51ad43a6a7764893bb1a3c60ae852f87d8cceb81085bbf49d3e
+  - id: branch-recipe-catalog
+    role: unmerged_dense_model_configuration_catalog
+    revision: e3a07a986ff7069d5ce4edd053ffe86d962f976a
+    path: repo/examples/public_training_bench/olmo3_vanilla/catalog.py
+    locator: https://github.com/Liu-yuliang/concept_olmo/blob/e3a07a986ff7069d5ce4edd053ffe86d962f976a/repo/examples/public_training_bench/olmo3_vanilla/catalog.py
+    sha256: cc63059a5e3cfa3f53d2aed6d5700846f77914520f061e7230e3e5db1962de3d
+  - id: branch-training-recipe
+    role: unmerged_150b_training_and_resource_recipe
+    revision: e3a07a986ff7069d5ce4edd053ffe86d962f976a
+    path: repo/examples/public_training_bench/olmo3_vanilla/recipe.py
+    locator: https://github.com/Liu-yuliang/concept_olmo/blob/e3a07a986ff7069d5ce4edd053ffe86d962f976a/repo/examples/public_training_bench/olmo3_vanilla/recipe.py
+    sha256: 6d9f716cc270e9182b762893f1782de4f61f63524719cec577d0997db14eb691
+  - id: branch-recipe-cli
+    role: unmerged_configuration_build_dry_run_launch_cli
+    revision: e3a07a986ff7069d5ce4edd053ffe86d962f976a
+    path: repo/examples/public_training_bench/olmo3_vanilla/cli.py
+    locator: https://github.com/Liu-yuliang/concept_olmo/blob/e3a07a986ff7069d5ce4edd053ffe86d962f976a/repo/examples/public_training_bench/olmo3_vanilla/cli.py
+    sha256: 02e12581b3dbe66f150d685d6e71a6dc6ef8012bf8e927e67669cf6a284f0cbb
+
+unresolved:
+  - external_official_olmo3_repository
+  - external_official_olmo3_revision
+  - external_official_olmo3_license
+  - checkpoint_content_hash
+  - full_stage1_training_outcome
+
+security:
+  credentials_embedded: false
+  absolute_internal_paths_embedded: false
+  clone_used: false

@@ -1,0 +1,81 @@
+{
+  "metadata": { "fixture": true },
+  "features": [
+    {
+      "id": "feat-olmo3-standard",
+      "title": "OLMo-3 标准态",
+      "title_zh": "OLMo-3 标准态",
+      "kind": "baseline",
+      "parent_id": null,
+      "status": "baseline",
+      "summary": "固定的 OLMo-3 标准基线。",
+      "provenance": { "revision": "unresolved" }
+    },
+    {
+      "id": "feat-context-prediction",
+      "title": "Context prediction",
+      "title_zh": "上下文预测",
+      "parent_id": "feat-olmo3-standard",
+      "status": "validating",
+      "summary": "Adds a context prediction objective.",
+      "summary_zh": "加入显式上下文信号预测目标。",
+      "hypothesis": "显式预测上下文可改善长程建模。",
+      "design": "在父 Feature 上加入辅助预测头。",
+      "delta": { "summary": "增加训练目标", "operations": [{ "target": "training objective", "before": "causal LM", "after": "causal LM + context prediction" }] },
+      "implementation": { "commits": ["abc123"], "sessions": ["session-context"], "code_symbols": ["ContextPredictionHead"] },
+      "experiments": [{ "name": "context-smoke", "result": "running" }],
+      "evidence": ["artifact://context-smoke"],
+      "related_to": ["feat-token-routing"]
+    },
+    {
+      "id": "feat-context-window",
+      "title": "Longer context window",
+      "title_zh": "这是一个用于验证紧凑截断规则的超长中文功能标题",
+      "parent_id": "feat-context-prediction",
+      "status": "implementing",
+      "summary": "Extends the training context window.",
+      "summary_zh": "扩展训练上下文长度，同时保持节点高度不变。",
+      "depends_on": ["feat-token-routing"]
+    },
+    {
+      "id": "feat-context-rejected",
+      "title": "Rejected context gate",
+      "parent_id": "feat-context-prediction",
+      "status": "abandoned",
+      "summary": "门控方案验证失败后保留的分支。",
+      "analysis": "收益不足且增加训练不稳定性。"
+    },
+    {
+      "id": "feat-token-routing",
+      "title": "Token routing",
+      "title_zh": "令牌路由",
+      "parent_id": "feat-olmo3-standard",
+      "status": "analyzed",
+      "summary": "探索 token 级路由策略。",
+      "related_to": ["feat-optimizer-stability"]
+    },
+    {
+      "id": "feat-routing-balance",
+      "title": "Routing balance loss",
+      "title_zh": "路由均衡损失",
+      "parent_id": "feat-token-routing",
+      "status": "proposed",
+      "summary": "为路由器加入负载均衡约束。"
+    },
+    {
+      "id": "feat-optimizer-stability",
+      "title": "Optimizer stability",
+      "parent_id": "feat-olmo3-standard",
+      "status": "validated",
+      "summary": "提升训练后期的优化稳定性。"
+    },
+    {
+      "id": "feat-gradient-guard",
+      "title": "Gradient guard",
+      "title_zh": "梯度保护",
+      "parent_id": "feat-optimizer-stability",
+      "status": "completed",
+      "summary": "增加梯度异常保护。"
+    }
+  ]
+}

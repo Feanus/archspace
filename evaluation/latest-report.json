@@ -1,0 +1,125 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "id": "SRC-01",
+      "requirement": "baseline source record is valid and honest",
+      "passed": true,
+      "detail": "status=unresolved",
+      "blocking": true
+    },
+    {
+      "id": "SRC-02",
+      "requirement": "OLMo-3 baseline is fully pinned",
+      "passed": false,
+      "detail": "unresolved_fields=['facts.model_family.authoritative_external_evidence', 'facts.model_scale', 'facts.official_repository', 'facts.immutable_revision', 'facts.config', 'facts.checkpoint', 'facts.license', 'authoritative_sources']",
+      "blocking": false
+    },
+    {
+      "id": "IS-S01-01",
+      "requirement": "formal data satisfies canonical schema",
+      "passed": true,
+      "detail": "schema valid",
+      "blocking": true
+    },
+    {
+      "id": "IS-S01-02",
+      "requirement": "there is exactly one OLMo-3 structural root",
+      "passed": true,
+      "detail": "roots=['feat-olmo3-standard']",
+      "blocking": true
+    },
+    {
+      "id": "IS-S01-03",
+      "requirement": "every formal node is a Feature",
+      "passed": true,
+      "detail": "count=11",
+      "blocking": true
+    },
+    {
+      "id": "IS-S01-04",
+      "requirement": "parent_id is single-parent, connected, and acyclic",
+      "passed": true,
+      "detail": "all Features reach the root exactly once",
+      "blocking": true
+    },
+    {
+      "id": "IS-S01-05",
+      "requirement": "formal data is exactly the reviewed root plus ten structural Features",
+      "passed": true,
+      "detail": "ids=['feat-concept-chunk-representation', 'feat-concept-cross-module-cumsum-routes', 'feat-concept-cross-module-residual-read', 'feat-concept-cumsum-self-dd', 'feat-concept-hlm-backbone-window', 'feat-concept-hlm-olmo3-layer-reuse', 'feat-concept-hlm-predictor', 'feat-concept-product-vq', 'feat-concept-segmented-topology', 'feat-concept-self-dd', 'feat-olmo3-standard']",
+      "blocking": true
+    },
+    {
+      "id": "IS-S01-06",
+      "requirement": "auxiliary relations reference Features and do not define tree parents",
+      "passed": true,
+      "detail": "only parent_id was used for structural validation",
+      "blocking": true
+    },
+    {
+      "id": "IS-S01-07",
+      "requirement": "formal data contains no fallback payload",
+      "passed": true,
+      "detail": "no fallback markers",
+      "blocking": true
+    },
+    {
+      "id": "IS-S02-01",
+      "requirement": "web implementation exists",
+      "passed": true,
+      "detail": "source_files=10",
+      "blocking": true
+    },
+    {
+      "id": "IS-S02-02",
+      "requirement": "local service is reachable",
+      "passed": true,
+      "detail": "HTTP 200, bytes=5560",
+      "blocking": true
+    },
+    {
+      "id": "IS-S02-03",
+      "requirement": "main canvas renders only the formal Feature tree",
+      "passed": true,
+      "detail": "browser assertion passed",
+      "blocking": true
+    },
+    {
+      "id": "IS-S02-04",
+      "requirement": "expand/collapse preserves the adjudicated HLM branch",
+      "passed": true,
+      "detail": "browser assertion passed",
+      "blocking": true
+    },
+    {
+      "id": "IS-S02-05",
+      "requirement": "selection details are complete and auxiliary edges do not change the tree",
+      "passed": true,
+      "detail": "browser assertion passed",
+      "blocking": true
+    },
+    {
+      "id": "IS-S02-06",
+      "requirement": "search reveals the collapsed Product-VQ path and opens correct details",
+      "passed": true,
+      "detail": "browser assertion passed",
+      "blocking": true
+    },
+    {
+      "id": "IS-S02-07",
+      "requirement": "root details expose every OLMo-3 pin field and unresolved state",
+      "passed": true,
+      "detail": "browser assertion passed",
+      "blocking": true
+    },
+    {
+      "id": "IS-S02-08",
+      "requirement": "missing formal data never activates a fallback tree",
+      "passed": true,
+      "detail": "browser assertion passed",
+      "blocking": true
+    }
+  ],
+  "data_path": "data/feature-tree.json"
+}

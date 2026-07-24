@@ -1,0 +1,205 @@
+{
+  "id": "feat-concept-variable-length-batching",
+  "record_type": "feature",
+  "title": "Variable-length compiled batching",
+  "kind": "feature",
+  "parent_id": "feat-concept-segmented-inference-runtime",
+  "status": "validating",
+  "summary": "Generalize the segmented runtime from fixed/equal-length batches to request-local variable lengths with stable route compilation and throughput gates.",
+  "hypothesis": "Separating logical request lengths from padded precision shapes can enable true batching without recompiling routes per prompt length.",
+  "design": "Add request-local varlen cache state, FlashAttention varlen prefill with Flash Decode disabled, dynamic route compile reuse, explicit precision lengths and fixed-batch throughput benchmarks.",
+  "baseline": null,
+  "delta": {
+    "summary": "Generalize the segmented runtime from fixed/equal-length batches to request-local variable lengths with stable route compilation and throughput gates.",
+    "operations": [
+      {
+        "target": "inference.batch_shape",
+        "before": "fixed or equal-length batch cache contract",
+        "after": "request-local variable lengths with shared dense token caches and stable compiled route plans",
+        "rationale": "Support heterogeneous prompts while containing shape-driven recompilation and preserving route semantics.",
+        "evidence_ids": [
+          "ev-concept-varlen-core",
+          "ev-concept-varlen-compile",
+          "ev-concept-varlen-precision"
+        ]
+      }
+    ]
+  },
+  "implementation": {
+    "commits": [
+      {
+        "id": "varlen-stability-gates",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/236bfa37b8e55a78a4b5c8d2737bf958b7760434",
+        "summary": "Pre-varlen batch stability gates.",
+        "evidence_ids": [
+          "ev-concept-varlen-stability"
+        ]
+      },
+      {
+        "id": "true-varlen-batching",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/06002575e5db02fde4b4a67aec28f7e1e3437ffe",
+        "summary": "Request-local variable-length implementation.",
+        "evidence_ids": [
+          "ev-concept-varlen-core"
+        ]
+      },
+      {
+        "id": "route-compile-shapes",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/ea921d04a02c3670e9e6c5d2aa72e9678e220c68",
+        "summary": "Prompt-length compile reuse.",
+        "evidence_ids": [
+          "ev-concept-varlen-compile"
+        ]
+      },
+      {
+        "id": "precision-lengths",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/832100f5fcc2cf6f37d0700fb0d52ce4b7abc934",
+        "summary": "Logical versus padded length separation.",
+        "evidence_ids": [
+          "ev-concept-varlen-precision"
+        ]
+      },
+      {
+        "id": "fixed-batch-benchmark",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/78cbce74c3e049d44973ab4b61ecc3a5d7287197",
+        "summary": "Steady-state throughput gate.",
+        "evidence_ids": [
+          "ev-concept-varlen-throughput"
+        ]
+      }
+    ],
+    "sessions": [],
+    "code_symbols": [
+      {
+        "id": "varlen-cache-runtime",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/segmented_kv.py",
+        "summary": "VarlenConceptKVCaches and per-request route plans.",
+        "evidence_ids": [
+          "ev-concept-varlen-code"
+        ]
+      }
+    ],
+    "component_changes": []
+  },
+  "experiments": [
+    {
+      "id": "varlen-runtime-smoke",
+      "title": "Variable-length runtime smoke",
+      "status": "passed",
+      "summary": "PR validation reports the true varlen path and inferencer API completing with checkpoint mutation disabled.",
+      "metrics": {
+        "checkpoint_mutated": false,
+        "flash_decode": false
+      },
+      "evidence_ids": [
+        "ev-concept-varlen-core",
+        "ev-concept-varlen-throughput"
+      ]
+    }
+  ],
+  "analysis": {
+    "outcome": "inconclusive",
+    "conclusion": "The variable-length path is implemented and smoke-validated under its safe contract; broad workload equivalence is not established.",
+    "limitations": [
+      "Flash Decode is intentionally excluded from random varlen batching.",
+      "The committed evidence does not provide a full matrix of batch-size/length numerical parity."
+    ],
+    "evidence_ids": [
+      "ev-concept-varlen-stability",
+      "ev-concept-varlen-core",
+      "ev-concept-varlen-compile",
+      "ev-concept-varlen-precision",
+      "ev-concept-varlen-throughput",
+      "ev-concept-varlen-code"
+    ]
+  },
+  "evidence": [
+    {
+      "id": "ev-concept-varlen-stability",
+      "type": "commit",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/236bfa37b8e55a78a4b5c8d2737bf958b7760434",
+      "revision": "236bfa37b8e55a78a4b5c8d2737bf958b7760434",
+      "summary": "Adds batched decode stability gates before generalizing request lengths."
+    },
+    {
+      "id": "ev-concept-varlen-core",
+      "type": "commit",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/06002575e5db02fde4b4a67aec28f7e1e3437ffe",
+      "revision": "06002575e5db02fde4b4a67aec28f7e1e3437ffe",
+      "summary": "Adds request-local variable-length state and a FlashAttention varlen batch path with Flash Decode disabled."
+    },
+    {
+      "id": "ev-concept-varlen-compile",
+      "type": "commit",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/ea921d04a02c3670e9e6c5d2aa72e9678e220c68",
+      "revision": "ea921d04a02c3670e9e6c5d2aa72e9678e220c68",
+      "summary": "Avoids recompiling routes for each prompt length and adds compile-shape diagnostics."
+    },
+    {
+      "id": "ev-concept-varlen-precision",
+      "type": "commit",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/832100f5fcc2cf6f37d0700fb0d52ce4b7abc934",
+      "revision": "832100f5fcc2cf6f37d0700fb0d52ce4b7abc934",
+      "summary": "Separates logical request lengths from precision/padded batch lengths."
+    },
+    {
+      "id": "ev-concept-varlen-throughput",
+      "type": "commit",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/78cbce74c3e049d44973ab4b61ecc3a5d7287197",
+      "revision": "78cbce74c3e049d44973ab4b61ecc3a5d7287197",
+      "summary": "Adds a fixed-batch steady-state throughput benchmark."
+    },
+    {
+      "id": "ev-concept-varlen-code",
+      "type": "code_symbol",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/segmented_kv.py",
+      "revision": "6ae216283d88f8db0cb35e18c818018617b50f65",
+      "summary": "VarlenConceptKVCaches and per-request route-source planning."
+    }
+  ],
+  "depends_on": [
+    "feat-concept-chunk-representation",
+    "feat-concept-self-dd",
+    "feat-concept-cross-module-residual-read"
+  ],
+  "related_to": [
+    "feat-concept-strict-hf-export"
+  ],
+  "provenance": {
+    "sources": {
+      "work-repo": {
+        "state": "pinned",
+        "source_ids": [
+          "ev-concept-varlen-stability",
+          "ev-concept-varlen-core",
+          "ev-concept-varlen-compile",
+          "ev-concept-varlen-precision",
+          "ev-concept-varlen-throughput",
+          "ev-concept-varlen-code"
+        ],
+        "note": "Derived private work-repository evidence; never root or official OLMo-3 provenance."
+      }
+    },
+    "fields": {
+      "id": "work-repo",
+      "record_type": "work-repo",
+      "title": "work-repo",
+      "category": "work-repo",
+      "kind": "work-repo",
+      "parent_id": "work-repo",
+      "status": "work-repo",
+      "summary": "work-repo",
+      "hypothesis": "work-repo",
+      "design": "work-repo",
+      "baseline": "work-repo",
+      "delta": "work-repo",
+      "implementation": "work-repo",
+      "experiments": "work-repo",
+      "analysis": "work-repo",
+      "evidence": "work-repo",
+      "depends_on": "work-repo",
+      "related_to": "work-repo"
+    }
+  },
+  "category": "runtime"
+}

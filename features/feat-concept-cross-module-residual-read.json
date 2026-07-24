@@ -1,0 +1,183 @@
+{
+  "id": "feat-concept-cross-module-residual-read",
+  "record_type": "feature",
+  "title": "Cross-module residual-read routes",
+  "kind": "feature",
+  "parent_id": "feat-olmo3-standard",
+  "status": "validating",
+  "summary": "Add routes that let HLM read encoder intermediates and decoder layers read encoder or HLM intermediates.",
+  "hypothesis": "Later modules can benefit from direct learned access to intermediate states produced by earlier modules.",
+  "design": "Expose encoder and concept/HLM histories as route sources and mix them through V21ResidualFlowRouteAdd with independent route-builder switches.",
+  "baseline": null,
+  "delta": {
+    "summary": "Add routes that let HLM read encoder intermediates and decoder layers read encoder or HLM intermediates.",
+    "operations": [
+      {
+        "target": "concept.cross_module_routes",
+        "before": "no learned reads of intermediate states across encoder, HLM and decoder modules",
+        "after": "HLM reads encoder histories; decoder reads encoder and HLM histories through residual routes",
+        "rationale": "Cross-module reads are independently switchable from Self-DD and are the direct parent of D10.",
+        "evidence_ids": [
+          "ev-cross-read-route-code",
+          "ev-cross-read-builders-code"
+        ]
+      }
+    ]
+  },
+  "implementation": {
+    "commits": [
+      {
+        "id": "initial-logic-snapshot",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/a489526d1dff4161a60dccc5034c2d595f059d49",
+        "summary": "Shared aggregated history starting point; not a unique introduction commit for this Feature.",
+        "evidence_ids": [
+          "ev-cross-read-snapshot"
+        ]
+      }
+    ],
+    "sessions": [],
+    "code_symbols": [
+      {
+        "id": "residual-flow-route-add",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v21.py",
+        "summary": "V21ResidualFlowRouteAdd implements learned cross-module reads.",
+        "evidence_ids": [
+          "ev-cross-read-route-code"
+        ]
+      },
+      {
+        "id": "cross-module-route-builders",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v21.py",
+        "summary": "ConceptLMV21Model._build_encoder_concept_states, _build_decoder_encoder_states and _build_decoder_concept_states expose route sources.",
+        "evidence_ids": [
+          "ev-cross-read-builders-code"
+        ]
+      }
+    ],
+    "component_changes": []
+  },
+  "experiments": [],
+  "analysis": {
+    "outcome": "inconclusive",
+    "conclusion": "Cross-module residual-read routes are explicit and independently configurable, but their isolated effect is unverified.",
+    "limitations": [
+      "No isolated parent-relative ablation artifact is available.",
+      "The initial commit is shared with five other reviewed base mechanisms."
+    ],
+    "evidence_ids": [
+      "ev-cross-read-snapshot",
+      "ev-cross-read-route-code",
+      "ev-cross-read-builders-code"
+    ]
+  },
+  "evidence": [
+    {
+      "id": "ev-cross-read-snapshot",
+      "type": "commit",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/a489526d1dff4161a60dccc5034c2d595f059d49",
+      "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+      "summary": "The first available repository commit is an aggregated ConceptLM V2/V2.1/V2.2-VQ snapshot; it supports six independently reviewed structures without exposing separate introduction commits or ablation results."
+    },
+    {
+      "id": "ev-cross-read-route-code",
+      "type": "code_symbol",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v21.py",
+      "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+      "summary": "V21ResidualFlowRouteAdd implements learned cross-module residual reads."
+    },
+    {
+      "id": "ev-cross-read-builders-code",
+      "type": "code_symbol",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v21.py",
+      "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+      "summary": "ConceptLMV21Model route builders expose encoder and HLM histories to later modules."
+    }
+  ],
+  "depends_on": [],
+  "related_to": [
+    "feat-concept-segmented-topology",
+    "feat-concept-self-dd"
+  ],
+  "provenance": {
+    "sources": {
+      "work-repo": {
+        "state": "pinned",
+        "source_ids": [
+          "ev-cross-read-snapshot",
+          "ev-cross-read-route-code",
+          "ev-cross-read-builders-code"
+        ],
+        "note": "Derived private work-repository evidence; never root or official OLMo-3 provenance."
+      }
+    },
+    "fields": {
+      "id": "work-repo",
+      "record_type": "work-repo",
+      "title": "work-repo",
+      "category": "work-repo",
+      "kind": "work-repo",
+      "parent_id": "work-repo",
+      "status": "work-repo",
+      "summary": "work-repo",
+      "hypothesis": "work-repo",
+      "design": "work-repo",
+      "baseline": "work-repo",
+      "delta": "work-repo",
+      "implementation": "work-repo",
+      "experiments": "work-repo",
+      "analysis": "work-repo",
+      "evidence": "work-repo",
+      "depends_on": "work-repo",
+      "related_to": "work-repo",
+      "title_zh": "work-repo",
+      "summary_zh": "work-repo",
+      "validation_status": "work-repo",
+      "code_locators": "work-repo",
+      "validation": "work-repo"
+    }
+  },
+  "title_zh": "跨模块 residual-read 路由",
+  "summary_zh": "加入模块间信息通路：HLM 可读取 encoder 的中间表示，decoder 可读取 encoder 与 HLM 的中间表示；初始 source 为来源模块的逐层历史。",
+  "category": "architecture",
+  "validation_status": "unverified",
+  "code_locators": [
+    {
+      "repository": "https://github.com/Liu-yuliang/concept_olmo",
+      "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+      "path": "repo/megatron/core/models/gpt/conceptlm_v21.py",
+      "symbol": "V21ResidualFlowRouteAdd",
+      "role": "V21ResidualFlowRouteAdd implements learned cross-module reads.",
+      "url": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v21.py"
+    },
+    {
+      "repository": "https://github.com/Liu-yuliang/concept_olmo",
+      "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+      "path": "repo/megatron/core/models/gpt/conceptlm_v21.py",
+      "symbol": "ConceptLMV21Model._build_encoder_concept_states / ConceptLMV21Model._build_decoder_encoder_states / ConceptLMV21Model._build_decoder_concept_states",
+      "role": "ConceptLMV21Model._build_encoder_concept_states, _build_decoder_encoder_states and _build_decoder_concept_states expose route sources.",
+      "url": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v21.py"
+    }
+  ],
+  "validation": {
+    "comparison": "No cross-module intermediate reads versus learned encoder-to-HLM and encoder/HLM-to-decoder residual-read routes.",
+    "conditions": [
+      "Retrospective code inspection at the shared initial snapshot a489526d1dff4161a60dccc5034c2d595f059d49.",
+      "No isolated parent-relative result artifact is available."
+    ],
+    "metrics": {},
+    "observations": [
+      "Cross-module residual-read routes are explicit and independently configurable, but their isolated effect is unverified."
+    ],
+    "artifacts": [],
+    "conclusion": "Cross-module residual-read routes are explicit and independently configurable, but their isolated effect is unverified.",
+    "limitations": [
+      "No isolated parent-relative ablation artifact is available.",
+      "The initial commit is shared with five other reviewed base mechanisms."
+    ],
+    "evidence_ids": [
+      "ev-cross-read-snapshot",
+      "ev-cross-read-route-code",
+      "ev-cross-read-builders-code"
+    ]
+  }
+}

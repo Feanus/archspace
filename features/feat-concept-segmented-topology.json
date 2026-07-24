@@ -1,0 +1,153 @@
+{
+  "id": "feat-concept-segmented-topology",
+  "record_type": "feature",
+  "title": "Segmented encoder–chunk–HLM–fusion–decoder topology",
+  "kind": "feature",
+  "parent_id": "feat-olmo3-standard",
+  "status": "validating",
+  "summary": "Split the standard token Transformer into encoder, chunk compression, HLM concept prediction, fusion and decoder stages.",
+  "hypothesis": "A lower-rate concept stream can augment token modeling when the model exposes explicit encode, concept-predict, fuse and decode stages.",
+  "design": "Define the five-stage information-flow skeleton without absorbing the independently switchable concept representation, quantizer or residual-read routes into this node.",
+  "baseline": null,
+  "delta": {
+    "summary": "Split the standard token Transformer into encoder, chunk compression, HLM concept prediction, fusion and decoder stages.",
+    "operations": [
+      {
+        "target": "model.forward_topology",
+        "before": "single-stream token Transformer stack",
+        "after": "token encoder -> chunk compression -> HLM concept prediction -> concept fusion -> token decoder",
+        "rationale": "Define the primary segmented topology while leaving representation and routing choices independently reviewable.",
+        "evidence_ids": [
+          "ev-segmented-topology-code"
+        ]
+      }
+    ]
+  },
+  "implementation": {
+    "commits": [
+      {
+        "id": "initial-logic-snapshot",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/a489526d1dff4161a60dccc5034c2d595f059d49",
+        "summary": "Shared aggregated history starting point; not a unique introduction commit for this Feature.",
+        "evidence_ids": [
+          "ev-segmented-snapshot"
+        ]
+      }
+    ],
+    "sessions": [],
+    "code_symbols": [
+      {
+        "id": "conceptlm-v2-forward",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v2.py",
+        "summary": "ConceptLMV2Model.__init__ and ConceptLMV2Model.forward implement the five-stage path.",
+        "evidence_ids": [
+          "ev-segmented-topology-code"
+        ]
+      }
+    ],
+    "component_changes": []
+  },
+  "experiments": [],
+  "analysis": {
+    "outcome": "inconclusive",
+    "conclusion": "The segmented topology is directly visible in code, but its isolated model-quality effect is unverified.",
+    "limitations": [
+      "No isolated parent-relative ablation artifact is available.",
+      "The initial commit is shared with five other reviewed base mechanisms."
+    ],
+    "evidence_ids": [
+      "ev-segmented-snapshot",
+      "ev-segmented-topology-code"
+    ]
+  },
+  "evidence": [
+    {
+      "id": "ev-segmented-snapshot",
+      "type": "commit",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/a489526d1dff4161a60dccc5034c2d595f059d49",
+      "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+      "summary": "The first available repository commit is an aggregated ConceptLM V2/V2.1/V2.2-VQ snapshot; it supports six independently reviewed structures without exposing separate introduction commits or ablation results."
+    },
+    {
+      "id": "ev-segmented-topology-code",
+      "type": "code_symbol",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v2.py",
+      "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+      "summary": "ConceptLMV2Model.__init__ and forward implement the segmented encoder/chunk/HLM/fusion/decoder path."
+    }
+  ],
+  "depends_on": [],
+  "related_to": [],
+  "provenance": {
+    "sources": {
+      "work-repo": {
+        "state": "pinned",
+        "source_ids": [
+          "ev-segmented-snapshot",
+          "ev-segmented-topology-code"
+        ],
+        "note": "Derived private work-repository evidence; never root or official OLMo-3 provenance."
+      }
+    },
+    "fields": {
+      "id": "work-repo",
+      "record_type": "work-repo",
+      "title": "work-repo",
+      "category": "work-repo",
+      "kind": "work-repo",
+      "parent_id": "work-repo",
+      "status": "work-repo",
+      "summary": "work-repo",
+      "hypothesis": "work-repo",
+      "design": "work-repo",
+      "baseline": "work-repo",
+      "delta": "work-repo",
+      "implementation": "work-repo",
+      "experiments": "work-repo",
+      "analysis": "work-repo",
+      "evidence": "work-repo",
+      "depends_on": "work-repo",
+      "related_to": "work-repo",
+      "title_zh": "work-repo",
+      "summary_zh": "work-repo",
+      "validation_status": "work-repo",
+      "code_locators": "work-repo",
+      "validation": "work-repo"
+    }
+  },
+  "title_zh": "分段拓扑骨架",
+  "summary_zh": "将标准 OLMo3 的单流 token Transformer 改为 token encoder → chunk 压缩 → HLM concept 预测 → concept fusion → token decoder 五段管道，并引入低频概念流。",
+  "category": "architecture",
+  "validation_status": "unverified",
+  "code_locators": [
+    {
+      "repository": "https://github.com/Liu-yuliang/concept_olmo",
+      "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+      "path": "repo/megatron/core/models/gpt/conceptlm_v2.py",
+      "symbol": "ConceptLMV2Model.__init__ / ConceptLMV2Model.forward",
+      "role": "ConceptLMV2Model.__init__ and ConceptLMV2Model.forward implement the five-stage path.",
+      "url": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v2.py"
+    }
+  ],
+  "validation": {
+    "comparison": "Single-stream token Transformer stack versus segmented encoder, chunk, HLM, fusion and decoder topology.",
+    "conditions": [
+      "Retrospective code inspection at the shared initial snapshot a489526d1dff4161a60dccc5034c2d595f059d49.",
+      "No isolated parent-relative result artifact is available."
+    ],
+    "metrics": {},
+    "observations": [
+      "The segmented topology is directly visible in code, but its isolated model-quality effect is unverified."
+    ],
+    "artifacts": [],
+    "conclusion": "The segmented topology is directly visible in code, but its isolated model-quality effect is unverified.",
+    "limitations": [
+      "No isolated parent-relative ablation artifact is available.",
+      "The initial commit is shared with five other reviewed base mechanisms."
+    ],
+    "evidence_ids": [
+      "ev-segmented-snapshot",
+      "ev-segmented-topology-code"
+    ]
+  }
+}

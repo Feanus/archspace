@@ -1,0 +1,4000 @@
+{
+  "proposal_version": "1.2.0",
+  "base_root_id": "feat-olmo3-standard",
+  "source_record": "sources/concept-olmo-observation.yaml",
+  "work_repository": {
+    "url": "https://github.com/Liu-yuliang/concept_olmo",
+    "role": "derived_private_work_repository",
+    "official_olmo3_source": false
+  },
+  "observation": {
+    "initial_revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+    "head_revision": "6ae216283d88f8db0cb35e18c818018617b50f65",
+    "pull_request": 1,
+    "branch_reviewed": "olmo_1B_3B"
+  },
+  "features": [
+    {
+      "id": "feat-olmo3-150b-training-recipe",
+      "record_type": "feature",
+      "title": "OLMo3 150B vanilla training recipe",
+      "kind": "feature",
+      "parent_id": "feat-olmo3-standard",
+      "status": "proposed",
+      "summary": "Define a reproducible 150B-token vanilla OLMo3 training schedule, batch, optimizer, checkpoint cadence and distributed resource contract.",
+      "hypothesis": "A shared validated recipe surface can make model-size experiments comparable by holding data, token budget and most training settings constant.",
+      "design": "Resolve global batch 512, sequence length 8192, 35,763 steps, Adam settings, cosine decay inputs, checkpoint interval, TP/PP/CP defaults and RJob resources through a versioned recipe with build/dry-run validation.",
+      "baseline": null,
+      "delta": {
+        "summary": "Define a reproducible 150B-token vanilla OLMo3 training schedule, batch, optimizer, checkpoint cadence and distributed resource contract.",
+        "operations": [
+          {
+            "target": "training.recipe",
+            "before": "No branch-local structured recipe for smaller vanilla OLMo3 presets",
+            "after": {
+              "target_tokens": 150000893952,
+              "global_batch_size": 512,
+              "micro_batch_size": 1,
+              "sequence_length": 8192,
+              "train_iters": 35763,
+              "optimizer": "adam",
+              "weight_decay": 0.1,
+              "clip_grad": 1.0,
+              "tp_pp_cp": "1/1/1"
+            },
+            "rationale": "Hold the training/data/resource contract explicit so size-specific model configurations can be reviewed independently.",
+            "evidence_ids": [
+              "ev-olmo3-recipe-initial",
+              "ev-olmo3-recipe-implementation"
+            ]
+          }
+        ]
+      },
+      "implementation": {
+        "commits": [
+          {
+            "id": "olmo3-recipe-initial",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/9125bb9dcd27c8c717cda66c1b4ccbf374b5e06b",
+            "summary": "Initial shared 1B/3B schedule and resource configuration.",
+            "evidence_ids": [
+              "ev-olmo3-recipe-initial"
+            ]
+          },
+          {
+            "id": "olmo3-recipe-refactor",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/e3a07a986ff7069d5ce4edd053ffe86d962f976a",
+            "summary": "Structured catalog/recipe/CLI with validation.",
+            "evidence_ids": [
+              "ev-olmo3-recipe-implementation",
+              "ev-olmo3-recipe-cli"
+            ]
+          }
+        ],
+        "sessions": [],
+        "code_symbols": [
+          {
+            "id": "olmo3-build-train-config",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/e3a07a986ff7069d5ce4edd053ffe86d962f976a/repo/examples/public_training_bench/olmo3_vanilla/recipe.py",
+            "summary": "build_train_config, build_launch_config and validate_config.",
+            "evidence_ids": [
+              "ev-olmo3-recipe-implementation"
+            ]
+          },
+          {
+            "id": "olmo3-recipe-cli",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/e3a07a986ff7069d5ce4edd053ffe86d962f976a/repo/examples/public_training_bench/olmo3_vanilla/cli.py",
+            "summary": "build/dry-run/launch command interface.",
+            "evidence_ids": [
+              "ev-olmo3-recipe-cli"
+            ]
+          }
+        ],
+        "component_changes": []
+      },
+      "experiments": [],
+      "analysis": {
+        "outcome": "inconclusive",
+        "conclusion": "The recipe is reproducibly specified and dry-run capable, but no parent-relative training outcome is committed.",
+        "limitations": [
+          "The branch is unmerged.",
+          "Dry-run/config validation is not training-effect evidence.",
+          "No completed 150B run or convergence comparison is available."
+        ],
+        "evidence_ids": [
+          "ev-olmo3-recipe-initial",
+          "ev-olmo3-recipe-implementation",
+          "ev-olmo3-recipe-cli"
+        ]
+      },
+      "evidence": [
+        {
+          "id": "ev-olmo3-recipe-initial",
+          "type": "commit",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/9125bb9dcd27c8c717cda66c1b4ccbf374b5e06b",
+          "revision": "9125bb9dcd27c8c717cda66c1b4ccbf374b5e06b",
+          "summary": "Defines the shared 150B-token schedule, batch, optimizer and resource defaults for 1B/3B vanilla training."
+        },
+        {
+          "id": "ev-olmo3-recipe-implementation",
+          "type": "code_symbol",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/e3a07a986ff7069d5ce4edd053ffe86d962f976a/repo/examples/public_training_bench/olmo3_vanilla/recipe.py",
+          "revision": "e3a07a986ff7069d5ce4edd053ffe86d962f976a",
+          "summary": "build_train_config/build_launch_config/validate_config resolve training, data, resources and parallelism."
+        },
+        {
+          "id": "ev-olmo3-recipe-cli",
+          "type": "code_symbol",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/e3a07a986ff7069d5ce4edd053ffe86d962f976a/repo/examples/public_training_bench/olmo3_vanilla/cli.py",
+          "revision": "e3a07a986ff7069d5ce4edd053ffe86d962f976a",
+          "summary": "CLI build/dry-run/launch surface for the resolved recipe."
+        }
+      ],
+      "depends_on": [],
+      "related_to": [],
+      "provenance": {
+        "sources": {
+          "work-repo": {
+            "state": "pinned",
+            "source_ids": [
+              "ev-olmo3-recipe-initial",
+              "ev-olmo3-recipe-implementation",
+              "ev-olmo3-recipe-cli"
+            ],
+            "note": "Derived private work-repository evidence; never root or official OLMo-3 provenance."
+          }
+        },
+        "fields": {
+          "id": "work-repo",
+          "record_type": "work-repo",
+          "title": "work-repo",
+          "category": "work-repo",
+          "kind": "work-repo",
+          "parent_id": "work-repo",
+          "status": "work-repo",
+          "summary": "work-repo",
+          "hypothesis": "work-repo",
+          "design": "work-repo",
+          "baseline": "work-repo",
+          "delta": "work-repo",
+          "implementation": "work-repo",
+          "experiments": "work-repo",
+          "analysis": "work-repo",
+          "evidence": "work-repo",
+          "depends_on": "work-repo",
+          "related_to": "work-repo"
+        }
+      },
+      "category": "training_configuration"
+    },
+    {
+      "id": "feat-olmo3-1b-dense-preset",
+      "record_type": "feature",
+      "title": "OLMo3 1B dense preset",
+      "kind": "feature",
+      "parent_id": "feat-olmo3-standard",
+      "status": "proposed",
+      "summary": "Define a concrete 1B-class OLMo3 model and coupled launch defaults rather than relying on the aggregate size label.",
+      "hypothesis": "A 16-layer, hidden-2048 OLMo3 configuration can provide a lower-cost vanilla baseline under the shared 150B recipe.",
+      "design": "Set 16 layers, hidden 2048, FFN 8192, 16 query/KV heads, head dimension 128, untied embeddings, LR 4e-4 and 32 H200s while retaining the OLMo3 attention/RoPE/RMSNorm contract.",
+      "baseline": null,
+      "delta": {
+        "summary": "Define a concrete 1B-class OLMo3 model and coupled launch defaults rather than relying on the aggregate size label.",
+        "operations": [
+          {
+            "target": "model_and_launch_configuration.olmo3_1b",
+            "before": {
+              "reference_work_launcher": "7B",
+              "layers": 32,
+              "hidden": 4096,
+              "ffn": 11008,
+              "heads": 32,
+              "default_lr": "3e-4"
+            },
+            "after": {
+              "layers": 16,
+              "hidden": 2048,
+              "ffn": 8192,
+              "query_heads": 16,
+              "kv_heads": 16,
+              "head_dim": 128,
+              "default_lr": "4e-4",
+              "default_h200s": 32
+            },
+            "rationale": "Expose the actual model/training diff behind the 1B label.",
+            "evidence_ids": [
+              "ev-olmo3-oneb-catalog",
+              "ev-olmo3-oneb-recipe"
+            ]
+          }
+        ]
+      },
+      "implementation": {
+        "commits": [
+          {
+            "id": "olmo3-oneb-preset",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/9125bb9dcd27c8c717cda66c1b4ccbf374b5e06b",
+            "summary": "Initial 1B dimensions and runtime defaults.",
+            "evidence_ids": [
+              "ev-olmo3-oneb-initial"
+            ]
+          },
+          {
+            "id": "olmo3-oneb-catalog-recipe",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/e3a07a986ff7069d5ce4edd053ffe86d962f976a",
+            "summary": "Structured preset and validated recipe consumption.",
+            "evidence_ids": [
+              "ev-olmo3-oneb-catalog",
+              "ev-olmo3-oneb-recipe"
+            ]
+          }
+        ],
+        "sessions": [],
+        "code_symbols": [
+          {
+            "id": "olmo3-oneb-catalog",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/e3a07a986ff7069d5ce4edd053ffe86d962f976a/repo/examples/public_training_bench/olmo3_vanilla/catalog.py",
+            "summary": "OLMO3_DENSE_PRESETS['1B'].",
+            "evidence_ids": [
+              "ev-olmo3-oneb-catalog"
+            ]
+          },
+          {
+            "id": "olmo3-oneb-runtime-defaults",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/e3a07a986ff7069d5ce4edd053ffe86d962f976a/repo/examples/public_training_bench/olmo3_vanilla/recipe.py",
+            "summary": "RUNTIME_DEFAULTS['1B'].",
+            "evidence_ids": [
+              "ev-olmo3-oneb-recipe"
+            ]
+          }
+        ],
+        "component_changes": []
+      },
+      "experiments": [],
+      "analysis": {
+        "outcome": "inconclusive",
+        "conclusion": "The configuration diff and consumption path are explicit; no training result validates quality, stability or cost targets.",
+        "limitations": [
+          "The branch is unmerged.",
+          "No 1B training run, checkpoint, loss curve or parent-relative effect artifact is available."
+        ],
+        "evidence_ids": [
+          "ev-olmo3-oneb-initial",
+          "ev-olmo3-oneb-catalog",
+          "ev-olmo3-oneb-recipe"
+        ]
+      },
+      "evidence": [
+        {
+          "id": "ev-olmo3-oneb-initial",
+          "type": "commit",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/9125bb9dcd27c8c717cda66c1b4ccbf374b5e06b",
+          "revision": "9125bb9dcd27c8c717cda66c1b4ccbf374b5e06b",
+          "summary": "Introduces the explicit 1B model dimensions and size-specific LR/resource defaults."
+        },
+        {
+          "id": "ev-olmo3-oneb-catalog",
+          "type": "code_symbol",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/e3a07a986ff7069d5ce4edd053ffe86d962f976a/repo/examples/public_training_bench/olmo3_vanilla/catalog.py",
+          "revision": "e3a07a986ff7069d5ce4edd053ffe86d962f976a",
+          "summary": "OLMO3_DENSE_PRESETS['1B'] resolves 16 layers, hidden 2048, FFN 8192 and 16 attention/KV heads."
+        },
+        {
+          "id": "ev-olmo3-oneb-recipe",
+          "type": "code_symbol",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/e3a07a986ff7069d5ce4edd053ffe86d962f976a/repo/examples/public_training_bench/olmo3_vanilla/recipe.py",
+          "revision": "e3a07a986ff7069d5ce4edd053ffe86d962f976a",
+          "summary": "RUNTIME_DEFAULTS['1B'] resolves 32 H200s, LR 4e-4 and minimum LR 4e-5."
+        }
+      ],
+      "depends_on": [
+        "feat-olmo3-150b-training-recipe"
+      ],
+      "related_to": [
+        "feat-olmo3-3b-dense-preset"
+      ],
+      "provenance": {
+        "sources": {
+          "work-repo": {
+            "state": "pinned",
+            "source_ids": [
+              "ev-olmo3-oneb-initial",
+              "ev-olmo3-oneb-catalog",
+              "ev-olmo3-oneb-recipe"
+            ],
+            "note": "Derived private work-repository evidence; never root or official OLMo-3 provenance."
+          }
+        },
+        "fields": {
+          "id": "work-repo",
+          "record_type": "work-repo",
+          "title": "work-repo",
+          "category": "work-repo",
+          "kind": "work-repo",
+          "parent_id": "work-repo",
+          "status": "work-repo",
+          "summary": "work-repo",
+          "hypothesis": "work-repo",
+          "design": "work-repo",
+          "baseline": "work-repo",
+          "delta": "work-repo",
+          "implementation": "work-repo",
+          "experiments": "work-repo",
+          "analysis": "work-repo",
+          "evidence": "work-repo",
+          "depends_on": "work-repo",
+          "related_to": "work-repo"
+        }
+      },
+      "category": "model_configuration"
+    },
+    {
+      "id": "feat-olmo3-3b-dense-preset",
+      "record_type": "feature",
+      "title": "OLMo3 3B dense preset",
+      "kind": "feature",
+      "parent_id": "feat-olmo3-standard",
+      "status": "proposed",
+      "summary": "Define a concrete 3B-class OLMo3 model and coupled launch defaults rather than relying on the aggregate size label.",
+      "hypothesis": "A 16-layer, hidden-3328 OLMo3 configuration can provide an intermediate vanilla baseline under the shared 150B recipe.",
+      "design": "Set 16 layers, hidden 3328, FFN 13312, 16 query/KV heads, head dimension 208, untied embeddings, LR 3e-4 and 64 H200s while retaining the OLMo3 attention/RoPE/RMSNorm contract.",
+      "baseline": null,
+      "delta": {
+        "summary": "Define a concrete 3B-class OLMo3 model and coupled launch defaults rather than relying on the aggregate size label.",
+        "operations": [
+          {
+            "target": "model_and_launch_configuration.olmo3_3b",
+            "before": {
+              "reference_work_launcher": "7B",
+              "layers": 32,
+              "hidden": 4096,
+              "ffn": 11008,
+              "heads": 32,
+              "default_h200s": 8
+            },
+            "after": {
+              "layers": 16,
+              "hidden": 3328,
+              "ffn": 13312,
+              "query_heads": 16,
+              "kv_heads": 16,
+              "head_dim": 208,
+              "default_lr": "3e-4",
+              "default_h200s": 64
+            },
+            "rationale": "Expose the actual model/training diff behind the 3B label.",
+            "evidence_ids": [
+              "ev-olmo3-threeb-catalog",
+              "ev-olmo3-threeb-recipe"
+            ]
+          }
+        ]
+      },
+      "implementation": {
+        "commits": [
+          {
+            "id": "olmo3-threeb-preset",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/9125bb9dcd27c8c717cda66c1b4ccbf374b5e06b",
+            "summary": "Initial 3B dimensions and runtime defaults.",
+            "evidence_ids": [
+              "ev-olmo3-threeb-initial"
+            ]
+          },
+          {
+            "id": "olmo3-threeb-catalog-recipe",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/e3a07a986ff7069d5ce4edd053ffe86d962f976a",
+            "summary": "Structured preset and validated recipe consumption.",
+            "evidence_ids": [
+              "ev-olmo3-threeb-catalog",
+              "ev-olmo3-threeb-recipe"
+            ]
+          }
+        ],
+        "sessions": [],
+        "code_symbols": [
+          {
+            "id": "olmo3-threeb-catalog",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/e3a07a986ff7069d5ce4edd053ffe86d962f976a/repo/examples/public_training_bench/olmo3_vanilla/catalog.py",
+            "summary": "OLMO3_DENSE_PRESETS['3B'].",
+            "evidence_ids": [
+              "ev-olmo3-threeb-catalog"
+            ]
+          },
+          {
+            "id": "olmo3-threeb-runtime-defaults",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/e3a07a986ff7069d5ce4edd053ffe86d962f976a/repo/examples/public_training_bench/olmo3_vanilla/recipe.py",
+            "summary": "RUNTIME_DEFAULTS['3B'].",
+            "evidence_ids": [
+              "ev-olmo3-threeb-recipe"
+            ]
+          }
+        ],
+        "component_changes": []
+      },
+      "experiments": [],
+      "analysis": {
+        "outcome": "inconclusive",
+        "conclusion": "The configuration diff and consumption path are explicit; no training result validates quality, stability or cost targets.",
+        "limitations": [
+          "The branch is unmerged.",
+          "No 3B training run, checkpoint, loss curve or parent-relative effect artifact is available."
+        ],
+        "evidence_ids": [
+          "ev-olmo3-threeb-initial",
+          "ev-olmo3-threeb-catalog",
+          "ev-olmo3-threeb-recipe"
+        ]
+      },
+      "evidence": [
+        {
+          "id": "ev-olmo3-threeb-initial",
+          "type": "commit",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/9125bb9dcd27c8c717cda66c1b4ccbf374b5e06b",
+          "revision": "9125bb9dcd27c8c717cda66c1b4ccbf374b5e06b",
+          "summary": "Introduces the explicit 3B model dimensions and size-specific LR/resource defaults."
+        },
+        {
+          "id": "ev-olmo3-threeb-catalog",
+          "type": "code_symbol",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/e3a07a986ff7069d5ce4edd053ffe86d962f976a/repo/examples/public_training_bench/olmo3_vanilla/catalog.py",
+          "revision": "e3a07a986ff7069d5ce4edd053ffe86d962f976a",
+          "summary": "OLMO3_DENSE_PRESETS['3B'] resolves 16 layers, hidden 3328, FFN 13312 and 16 attention/KV heads."
+        },
+        {
+          "id": "ev-olmo3-threeb-recipe",
+          "type": "code_symbol",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/e3a07a986ff7069d5ce4edd053ffe86d962f976a/repo/examples/public_training_bench/olmo3_vanilla/recipe.py",
+          "revision": "e3a07a986ff7069d5ce4edd053ffe86d962f976a",
+          "summary": "RUNTIME_DEFAULTS['3B'] resolves 64 H200s, LR 3e-4 and minimum LR 3e-5."
+        }
+      ],
+      "depends_on": [
+        "feat-olmo3-150b-training-recipe"
+      ],
+      "related_to": [
+        "feat-olmo3-1b-dense-preset"
+      ],
+      "provenance": {
+        "sources": {
+          "work-repo": {
+            "state": "pinned",
+            "source_ids": [
+              "ev-olmo3-threeb-initial",
+              "ev-olmo3-threeb-catalog",
+              "ev-olmo3-threeb-recipe"
+            ],
+            "note": "Derived private work-repository evidence; never root or official OLMo-3 provenance."
+          }
+        },
+        "fields": {
+          "id": "work-repo",
+          "record_type": "work-repo",
+          "title": "work-repo",
+          "category": "work-repo",
+          "kind": "work-repo",
+          "parent_id": "work-repo",
+          "status": "work-repo",
+          "summary": "work-repo",
+          "hypothesis": "work-repo",
+          "design": "work-repo",
+          "baseline": "work-repo",
+          "delta": "work-repo",
+          "implementation": "work-repo",
+          "experiments": "work-repo",
+          "analysis": "work-repo",
+          "evidence": "work-repo",
+          "depends_on": "work-repo",
+          "related_to": "work-repo"
+        }
+      },
+      "category": "model_configuration"
+    },
+    {
+      "id": "feat-concept-segmented-topology",
+      "record_type": "feature",
+      "title": "Segmented encoder–chunk–HLM–fusion–decoder topology",
+      "kind": "feature",
+      "parent_id": "feat-olmo3-standard",
+      "status": "validating",
+      "summary": "Split the standard token Transformer into encoder, chunk compression, HLM concept prediction, fusion and decoder stages.",
+      "hypothesis": "A lower-rate concept stream can augment token modeling when the model exposes explicit encode, concept-predict, fuse and decode stages.",
+      "design": "Define the five-stage information-flow skeleton without absorbing the independently switchable concept representation, quantizer or residual-read routes into this node.",
+      "baseline": null,
+      "delta": {
+        "summary": "Split the standard token Transformer into encoder, chunk compression, HLM concept prediction, fusion and decoder stages.",
+        "operations": [
+          {
+            "target": "model.forward_topology",
+            "before": "single-stream token Transformer stack",
+            "after": "token encoder -> chunk compression -> HLM concept prediction -> concept fusion -> token decoder",
+            "rationale": "Define the primary segmented topology while leaving representation and routing choices independently reviewable.",
+            "evidence_ids": [
+              "ev-segmented-topology-code"
+            ]
+          }
+        ]
+      },
+      "implementation": {
+        "commits": [
+          {
+            "id": "initial-logic-snapshot",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/a489526d1dff4161a60dccc5034c2d595f059d49",
+            "summary": "Shared aggregated history starting point; not a unique introduction commit for this Feature.",
+            "evidence_ids": [
+              "ev-segmented-snapshot"
+            ]
+          }
+        ],
+        "sessions": [],
+        "code_symbols": [
+          {
+            "id": "conceptlm-v2-forward",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v2.py",
+            "summary": "ConceptLMV2Model.__init__ and ConceptLMV2Model.forward implement the five-stage path.",
+            "evidence_ids": [
+              "ev-segmented-topology-code"
+            ]
+          }
+        ],
+        "component_changes": []
+      },
+      "experiments": [],
+      "analysis": {
+        "outcome": "inconclusive",
+        "conclusion": "The segmented topology is directly visible in code, but its isolated model-quality effect is unverified.",
+        "limitations": [
+          "No isolated parent-relative ablation artifact is available.",
+          "The initial commit is shared with five other reviewed base mechanisms."
+        ],
+        "evidence_ids": [
+          "ev-segmented-snapshot",
+          "ev-segmented-topology-code"
+        ]
+      },
+      "evidence": [
+        {
+          "id": "ev-segmented-snapshot",
+          "type": "commit",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/a489526d1dff4161a60dccc5034c2d595f059d49",
+          "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+          "summary": "The first available repository commit is an aggregated ConceptLM V2/V2.1/V2.2-VQ snapshot; it supports six independently reviewed structures without exposing separate introduction commits or ablation results."
+        },
+        {
+          "id": "ev-segmented-topology-code",
+          "type": "code_symbol",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v2.py",
+          "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+          "summary": "ConceptLMV2Model.__init__ and forward implement the segmented encoder/chunk/HLM/fusion/decoder path."
+        }
+      ],
+      "depends_on": [],
+      "related_to": [],
+      "provenance": {
+        "sources": {
+          "work-repo": {
+            "state": "pinned",
+            "source_ids": [
+              "ev-segmented-snapshot",
+              "ev-segmented-topology-code"
+            ],
+            "note": "Derived private work-repository evidence; never root or official OLMo-3 provenance."
+          }
+        },
+        "fields": {
+          "id": "work-repo",
+          "record_type": "work-repo",
+          "title": "work-repo",
+          "category": "work-repo",
+          "kind": "work-repo",
+          "parent_id": "work-repo",
+          "status": "work-repo",
+          "summary": "work-repo",
+          "hypothesis": "work-repo",
+          "design": "work-repo",
+          "baseline": "work-repo",
+          "delta": "work-repo",
+          "implementation": "work-repo",
+          "experiments": "work-repo",
+          "analysis": "work-repo",
+          "evidence": "work-repo",
+          "depends_on": "work-repo",
+          "related_to": "work-repo",
+          "title_zh": "work-repo",
+          "summary_zh": "work-repo"
+        }
+      },
+      "title_zh": "分段拓扑骨架",
+      "summary_zh": "将标准 OLMo3 的单流 token Transformer 改为 token encoder → chunk 压缩 → HLM concept 预测 → concept fusion → token decoder 五段管道，并引入低频概念流。",
+      "category": "architecture"
+    },
+    {
+      "id": "feat-concept-hlm-predictor",
+      "record_type": "feature",
+      "title": "HLM concept predictor",
+      "kind": "feature",
+      "parent_id": "feat-concept-segmented-topology",
+      "status": "validating",
+      "summary": "Add a concept-rate autoregressive Transformer that predicts the next concept vector.",
+      "hypothesis": "Autoregressive prediction over the lower-rate concept sequence can provide useful high-level supervision and states for token decoding.",
+      "design": "Instantiate ConceptPredictorV2 over concept states with its own causal layers, normalization and prediction heads; attention-window and layer-implementation variants evolve beneath this node.",
+      "baseline": null,
+      "delta": {
+        "summary": "Add a concept-rate autoregressive Transformer that predicts the next concept vector.",
+        "operations": [
+          {
+            "target": "concept.hlm.module",
+            "before": "no concept-rate autoregressive predictor",
+            "after": "ConceptPredictorV2 HLM tower with causal layers, final norm and prediction heads",
+            "rationale": "The HLM is independently configurable and is the semantic parent of D07 and D08.",
+            "evidence_ids": [
+              "ev-hlm-predictor-code"
+            ]
+          }
+        ]
+      },
+      "implementation": {
+        "commits": [
+          {
+            "id": "initial-logic-snapshot",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/a489526d1dff4161a60dccc5034c2d595f059d49",
+            "summary": "Shared aggregated history starting point; not a unique introduction commit for this Feature.",
+            "evidence_ids": [
+              "ev-hlm-predictor-snapshot"
+            ]
+          }
+        ],
+        "sessions": [],
+        "code_symbols": [
+          {
+            "id": "concept-predictor-v2",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v2.py",
+            "summary": "ConceptPredictorV2 implements the concept-rate autoregressive HLM tower.",
+            "evidence_ids": [
+              "ev-hlm-predictor-code"
+            ]
+          }
+        ],
+        "component_changes": []
+      },
+      "experiments": [],
+      "analysis": {
+        "outcome": "inconclusive",
+        "conclusion": "The HLM module is implemented, but no isolated ablation establishes its effect.",
+        "limitations": [
+          "No isolated parent-relative ablation artifact is available.",
+          "The initial commit is shared with five other reviewed base mechanisms."
+        ],
+        "evidence_ids": [
+          "ev-hlm-predictor-snapshot",
+          "ev-hlm-predictor-code"
+        ]
+      },
+      "evidence": [
+        {
+          "id": "ev-hlm-predictor-snapshot",
+          "type": "commit",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/a489526d1dff4161a60dccc5034c2d595f059d49",
+          "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+          "summary": "The first available repository commit is an aggregated ConceptLM V2/V2.1/V2.2-VQ snapshot; it supports six independently reviewed structures without exposing separate introduction commits or ablation results."
+        },
+        {
+          "id": "ev-hlm-predictor-code",
+          "type": "code_symbol",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v2.py",
+          "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+          "summary": "ConceptPredictorV2 implements the concept-rate autoregressive predictor."
+        }
+      ],
+      "depends_on": [],
+      "related_to": [],
+      "provenance": {
+        "sources": {
+          "work-repo": {
+            "state": "pinned",
+            "source_ids": [
+              "ev-hlm-predictor-snapshot",
+              "ev-hlm-predictor-code"
+            ],
+            "note": "Derived private work-repository evidence; never root or official OLMo-3 provenance."
+          }
+        },
+        "fields": {
+          "id": "work-repo",
+          "record_type": "work-repo",
+          "title": "work-repo",
+          "category": "work-repo",
+          "kind": "work-repo",
+          "parent_id": "work-repo",
+          "status": "work-repo",
+          "summary": "work-repo",
+          "hypothesis": "work-repo",
+          "design": "work-repo",
+          "baseline": "work-repo",
+          "delta": "work-repo",
+          "implementation": "work-repo",
+          "experiments": "work-repo",
+          "analysis": "work-repo",
+          "evidence": "work-repo",
+          "depends_on": "work-repo",
+          "related_to": "work-repo",
+          "title_zh": "work-repo",
+          "summary_zh": "work-repo"
+        }
+      },
+      "title_zh": "HLM concept 预测模块",
+      "summary_zh": "在概念流中加入负责预测下一个 concept 的小型自回归 Transformer；其序列单元是 concept 向量，序列长度约为 token 流的四分之一。",
+      "category": "architecture"
+    },
+    {
+      "id": "feat-concept-hlm-backbone-window",
+      "record_type": "feature",
+      "title": "HLM backbone-window attention",
+      "kind": "feature",
+      "parent_id": "feat-concept-hlm-predictor",
+      "status": "implementing",
+      "summary": "Make the chunk-rate HLM tower follow the backbone sliding/full attention schedule instead of always using full causal attention.",
+      "hypothesis": "The HLM tower can reduce attention cost and align its inductive bias by inheriting the backbone window cadence.",
+      "design": "Add per-layer sliding-window causal bias support and a full/backbone_window mode, then make backbone_window the default.",
+      "baseline": null,
+      "delta": {
+        "summary": "Make the chunk-rate HLM tower follow the backbone sliding/full attention schedule instead of always using full causal attention.",
+        "operations": [
+          {
+            "target": "concept.hlm.attention_pattern",
+            "before": "full causal attention",
+            "after": "inherit backbone window_size and window_attn_skip_freq",
+            "rationale": "Retain an independently switchable full-attention alternative.",
+            "evidence_ids": [
+              "ev-concept-window-implementation",
+              "ev-concept-window-default"
+            ]
+          }
+        ]
+      },
+      "implementation": {
+        "commits": [
+          {
+            "id": "hlm-window-mode",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/93fadb42872024a53b5d3750f8d47e44175d51da",
+            "summary": "Window-aware HLM implementation.",
+            "evidence_ids": [
+              "ev-concept-window-implementation"
+            ]
+          },
+          {
+            "id": "hlm-window-default",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/4c5c9536d6b015ce099172e550b4f5865d23e9b3",
+            "summary": "Default selection change.",
+            "evidence_ids": [
+              "ev-concept-window-default"
+            ]
+          }
+        ],
+        "sessions": [],
+        "code_symbols": [
+          {
+            "id": "concept-causal-window",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/93fadb42872024a53b5d3750f8d47e44175d51da/repo/megatron/core/models/gpt/conceptlm_v2.py",
+            "summary": "ConceptCausalBlock._sliding_window_causal_bias and layer scheduling.",
+            "evidence_ids": [
+              "ev-concept-window-implementation"
+            ]
+          }
+        ],
+        "component_changes": []
+      },
+      "experiments": [],
+      "analysis": {
+        "outcome": "inconclusive",
+        "conclusion": "The code and default are pinned, but no isolated quality or throughput result is committed.",
+        "limitations": [
+          "No A/B result establishes the effect of HLM windowing.",
+          "The concept-window to token receptive-field mapping needs algorithm-owner confirmation."
+        ],
+        "evidence_ids": [
+          "ev-concept-window-implementation",
+          "ev-concept-window-default"
+        ]
+      },
+      "evidence": [
+        {
+          "id": "ev-concept-window-implementation",
+          "type": "commit",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/93fadb42872024a53b5d3750f8d47e44175d51da",
+          "revision": "93fadb42872024a53b5d3750f8d47e44175d51da",
+          "summary": "Adds causal sliding-window masks and backbone-window configuration to the HLM tower."
+        },
+        {
+          "id": "ev-concept-window-default",
+          "type": "commit",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/4c5c9536d6b015ce099172e550b4f5865d23e9b3",
+          "revision": "4c5c9536d6b015ce099172e550b4f5865d23e9b3",
+          "summary": "Changes the launcher/model default from full HLM attention to backbone_window."
+        }
+      ],
+      "depends_on": [],
+      "related_to": [
+        "feat-concept-hlm-olmo3-layer-reuse"
+      ],
+      "provenance": {
+        "sources": {
+          "work-repo": {
+            "state": "pinned",
+            "source_ids": [
+              "ev-concept-window-implementation",
+              "ev-concept-window-default"
+            ],
+            "note": "Derived private work-repository evidence; never root or official OLMo-3 provenance."
+          }
+        },
+        "fields": {
+          "id": "work-repo",
+          "record_type": "work-repo",
+          "title": "work-repo",
+          "category": "work-repo",
+          "kind": "work-repo",
+          "parent_id": "work-repo",
+          "status": "work-repo",
+          "summary": "work-repo",
+          "hypothesis": "work-repo",
+          "design": "work-repo",
+          "baseline": "work-repo",
+          "delta": "work-repo",
+          "implementation": "work-repo",
+          "experiments": "work-repo",
+          "analysis": "work-repo",
+          "evidence": "work-repo",
+          "depends_on": "work-repo",
+          "related_to": "work-repo",
+          "title_zh": "work-repo",
+          "summary_zh": "work-repo"
+        }
+      },
+      "title_zh": "HLM 注意力继承骨干窗口节奏",
+      "summary_zh": "将 HLM 内部注意力从每层全因果改为继承 OLMo3 骨干的 local/global 交替节奏，包括 window_size 与 window_attn_skip_freq。",
+      "category": "architecture"
+    },
+    {
+      "id": "feat-concept-hlm-olmo3-layer-reuse",
+      "record_type": "feature",
+      "title": "OLMo3 TransformerBlock reuse in HLM",
+      "kind": "feature",
+      "parent_id": "feat-concept-hlm-predictor",
+      "status": "implementing",
+      "summary": "Run HLM layers through the configured OLMo3 TransformerBlock instead of a separate custom causal block.",
+      "hypothesis": "Sharing the backbone layer implementation may improve alignment, but it is a Feature only if the replacement changes structural semantics or numerical behavior.",
+      "design": "Clone the transformer config for HLM depth, instantiate TransformerBlock with the OLMo3 layer spec and forward HLM RoPE explicitly; retain this as a conditional proposal pending equivalence review.",
+      "baseline": null,
+      "delta": {
+        "summary": "Run HLM layers through the configured OLMo3 TransformerBlock instead of a separate custom causal block.",
+        "operations": [
+          {
+            "target": "concept.hlm.layer_implementation",
+            "before": "custom ConceptCausalBlock list with standalone LayerNorm",
+            "after": "TransformerBlock using the configured OLMo3 layer spec and final norm",
+            "rationale": "Record the replacement while preserving the explicit downgrade-to-evidence condition.",
+            "evidence_ids": [
+              "ev-concept-olmo-layer-commit",
+              "ev-concept-olmo-layer-code"
+            ]
+          }
+        ]
+      },
+      "implementation": {
+        "commits": [
+          {
+            "id": "olmo3-layer-reuse",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/7512755321ee4238b43ad08eb3ecfbc5fe2f2e6e",
+            "summary": "HLM TransformerBlock reuse.",
+            "evidence_ids": [
+              "ev-concept-olmo-layer-commit"
+            ]
+          }
+        ],
+        "sessions": [],
+        "code_symbols": [
+          {
+            "id": "concept-predictor-hlm-block",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/7512755321ee4238b43ad08eb3ecfbc5fe2f2e6e/repo/megatron/core/models/gpt/conceptlm_v21.py",
+            "summary": "ConceptPredictorV21.hlm_block and rotary forwarding.",
+            "evidence_ids": [
+              "ev-concept-olmo-layer-code"
+            ]
+          }
+        ],
+        "component_changes": []
+      },
+      "experiments": [],
+      "analysis": {
+        "outcome": "inconclusive",
+        "conclusion": "The implementation replacement is clear; whether it is a structural Feature or semantically equivalent implementation evidence is unresolved.",
+        "limitations": [
+          "No numerical parity or training A/B artifact.",
+          "Downgrade to D04b implementation evidence if algorithm review confirms structural and numerical equivalence."
+        ],
+        "evidence_ids": [
+          "ev-concept-olmo-layer-commit",
+          "ev-concept-olmo-layer-code"
+        ]
+      },
+      "evidence": [
+        {
+          "id": "ev-concept-olmo-layer-commit",
+          "type": "commit",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/7512755321ee4238b43ad08eb3ecfbc5fe2f2e6e",
+          "revision": "7512755321ee4238b43ad08eb3ecfbc5fe2f2e6e",
+          "summary": "Replaces the custom HLM causal block with Megatron TransformerBlock using the OLMo3 layer spec."
+        },
+        {
+          "id": "ev-concept-olmo-layer-code",
+          "type": "code_symbol",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/7512755321ee4238b43ad08eb3ecfbc5fe2f2e6e/repo/megatron/core/models/gpt/conceptlm_v21.py",
+          "revision": "7512755321ee4238b43ad08eb3ecfbc5fe2f2e6e",
+          "summary": "ConceptPredictorV21.hlm_block and HLM rotary embedding integration."
+        }
+      ],
+      "depends_on": [],
+      "related_to": [
+        "feat-concept-hlm-backbone-window"
+      ],
+      "provenance": {
+        "sources": {
+          "work-repo": {
+            "state": "pinned",
+            "source_ids": [
+              "ev-concept-olmo-layer-commit",
+              "ev-concept-olmo-layer-code"
+            ],
+            "note": "Derived private work-repository evidence; never root or official OLMo-3 provenance."
+          }
+        },
+        "fields": {
+          "id": "work-repo",
+          "record_type": "work-repo",
+          "title": "work-repo",
+          "category": "work-repo",
+          "kind": "work-repo",
+          "parent_id": "work-repo",
+          "status": "work-repo",
+          "summary": "work-repo",
+          "hypothesis": "work-repo",
+          "design": "work-repo",
+          "baseline": "work-repo",
+          "delta": "work-repo",
+          "implementation": "work-repo",
+          "experiments": "work-repo",
+          "analysis": "work-repo",
+          "evidence": "work-repo",
+          "depends_on": "work-repo",
+          "related_to": "work-repo",
+          "title_zh": "work-repo",
+          "summary_zh": "work-repo"
+        }
+      },
+      "title_zh": "HLM 层实现换成 OLMo3 标准 TransformerBlock",
+      "summary_zh": "将 HLM 每层从自定义 ConceptCausalBlock 替换为 OLMo3 layer spec 的标准 TransformerBlock，并统一 final norm；若确认结构语义与数值等价，应降级为 HLM 节点的实现 evidence。",
+      "category": "architecture"
+    },
+    {
+      "id": "feat-concept-chunk-representation",
+      "record_type": "feature",
+      "title": "Chunk-level concept representation",
+      "kind": "feature",
+      "parent_id": "feat-olmo3-standard",
+      "status": "validating",
+      "summary": "Construct one continuous concept vector from each four-token chunk, using mean pooling and shifted reinjection semantics.",
+      "hypothesis": "A lower-rate continuous representation can summarize local token groups while keeping the model well-defined without quantization.",
+      "design": "Group token states into four-token chunks, mean-pool each chunk and shift/repeat concept states for fusion; these parameters do not become child Features.",
+      "baseline": null,
+      "delta": {
+        "summary": "Construct one continuous concept vector from each four-token chunk, using mean pooling and shifted reinjection semantics.",
+        "operations": [
+          {
+            "target": "model.concept_representation",
+            "before": "no chunk-rate concept representation",
+            "after": {
+              "chunk_size": 4,
+              "pooling": "meanpooling",
+              "shift_feature": true,
+              "representation": "continuous concept vector"
+            },
+            "rationale": "The representation is independently removable; its parameter choices remain inside one Feature.",
+            "evidence_ids": [
+              "ev-chunk-merge-code",
+              "ev-chunk-shift-code"
+            ]
+          }
+        ]
+      },
+      "implementation": {
+        "commits": [
+          {
+            "id": "initial-logic-snapshot",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/a489526d1dff4161a60dccc5034c2d595f059d49",
+            "summary": "Shared aggregated history starting point; not a unique introduction commit for this Feature.",
+            "evidence_ids": [
+              "ev-chunk-snapshot"
+            ]
+          }
+        ],
+        "sessions": [],
+        "code_symbols": [
+          {
+            "id": "merge-token-chunks",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v2.py",
+            "summary": "ConceptLMV2Model._merge_token_chunks constructs chunk-level concept states.",
+            "evidence_ids": [
+              "ev-chunk-merge-code"
+            ]
+          },
+          {
+            "id": "repeat-shift-concepts",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v2.py",
+            "summary": "ConceptLMV2Model._repeat_shift_concepts implements shifted concept reinjection.",
+            "evidence_ids": [
+              "ev-chunk-shift-code"
+            ]
+          }
+        ],
+        "component_changes": []
+      },
+      "experiments": [],
+      "analysis": {
+        "outcome": "inconclusive",
+        "conclusion": "The continuous chunk representation is implemented; its isolated effect and exact shift semantics remain unverified.",
+        "limitations": [
+          "No isolated parent-relative ablation artifact is available.",
+          "The initial commit is shared with five other reviewed base mechanisms."
+        ],
+        "evidence_ids": [
+          "ev-chunk-snapshot",
+          "ev-chunk-merge-code",
+          "ev-chunk-shift-code"
+        ]
+      },
+      "evidence": [
+        {
+          "id": "ev-chunk-snapshot",
+          "type": "commit",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/a489526d1dff4161a60dccc5034c2d595f059d49",
+          "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+          "summary": "The first available repository commit is an aggregated ConceptLM V2/V2.1/V2.2-VQ snapshot; it supports six independently reviewed structures without exposing separate introduction commits or ablation results."
+        },
+        {
+          "id": "ev-chunk-merge-code",
+          "type": "code_symbol",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v2.py",
+          "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+          "summary": "ConceptLMV2Model._merge_token_chunks constructs four-token mean-pooled concept states."
+        },
+        {
+          "id": "ev-chunk-shift-code",
+          "type": "code_symbol",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v2.py",
+          "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+          "summary": "ConceptLMV2Model._repeat_shift_concepts implements shifted concept reinjection."
+        }
+      ],
+      "depends_on": [],
+      "related_to": [
+        "feat-concept-segmented-topology"
+      ],
+      "provenance": {
+        "sources": {
+          "work-repo": {
+            "state": "pinned",
+            "source_ids": [
+              "ev-chunk-snapshot",
+              "ev-chunk-merge-code",
+              "ev-chunk-shift-code"
+            ],
+            "note": "Derived private work-repository evidence; never root or official OLMo-3 provenance."
+          }
+        },
+        "fields": {
+          "id": "work-repo",
+          "record_type": "work-repo",
+          "title": "work-repo",
+          "category": "work-repo",
+          "kind": "work-repo",
+          "parent_id": "work-repo",
+          "status": "work-repo",
+          "summary": "work-repo",
+          "hypothesis": "work-repo",
+          "design": "work-repo",
+          "baseline": "work-repo",
+          "delta": "work-repo",
+          "implementation": "work-repo",
+          "experiments": "work-repo",
+          "analysis": "work-repo",
+          "evidence": "work-repo",
+          "depends_on": "work-repo",
+          "related_to": "work-repo",
+          "title_zh": "work-repo",
+          "summary_zh": "work-repo"
+        }
+      },
+      "title_zh": "Chunk 级 concept 表示",
+      "summary_zh": "每 4 个连续 token 的隐状态经 mean pooling 形成一个连续 concept 向量，并通过 shift feature 控制其回注时序；chunk size、pooling 方式与 shift 均保留在本节点内。",
+      "category": "architecture"
+    },
+    {
+      "id": "feat-concept-product-vq",
+      "record_type": "feature",
+      "title": "Product-VQ concept discretization",
+      "kind": "feature",
+      "parent_id": "feat-concept-chunk-representation",
+      "status": "validating",
+      "summary": "Discretize continuous chunk concepts with product vector quantization using 32 codebooks of 128 entries.",
+      "hypothesis": "A discrete compositional concept bottleneck can improve high-level modeling while allowing VQ removal to recover the continuous representation.",
+      "design": "Normalize each concept, quantize it through 32 codebooks with 128 entries each and train the HLM against the quantized path; codebook parameters stay within this Feature.",
+      "baseline": null,
+      "delta": {
+        "summary": "Discretize continuous chunk concepts with product vector quantization using 32 codebooks of 128 entries.",
+        "operations": [
+          {
+            "target": "model.concept_quantization",
+            "before": "continuous chunk concept vectors without VQ",
+            "after": {
+              "method": "product vector quantization",
+              "codebooks": 32,
+              "codebook_size": 128
+            },
+            "rationale": "VQ is an optional structural layer whose removal returns the continuous parent state.",
+            "evidence_ids": [
+              "ev-product-vq-code"
+            ]
+          }
+        ]
+      },
+      "implementation": {
+        "commits": [
+          {
+            "id": "initial-logic-snapshot",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/a489526d1dff4161a60dccc5034c2d595f059d49",
+            "summary": "Shared aggregated history starting point; not a unique introduction commit for this Feature.",
+            "evidence_ids": [
+              "ev-product-vq-snapshot"
+            ]
+          }
+        ],
+        "sessions": [],
+        "code_symbols": [
+          {
+            "id": "conceptlm-v22-vq",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v22_vq.py",
+            "summary": "ConceptLMV22VQModel.__init__ and the VQ concept branch implement Product VQ and its losses.",
+            "evidence_ids": [
+              "ev-product-vq-code"
+            ]
+          }
+        ],
+        "component_changes": []
+      },
+      "experiments": [],
+      "analysis": {
+        "outcome": "inconclusive",
+        "conclusion": "Product VQ is independently identifiable, but no VQ-versus-continuous ablation result is committed.",
+        "limitations": [
+          "No isolated parent-relative ablation artifact is available.",
+          "The initial commit is shared with five other reviewed base mechanisms."
+        ],
+        "evidence_ids": [
+          "ev-product-vq-snapshot",
+          "ev-product-vq-code"
+        ]
+      },
+      "evidence": [
+        {
+          "id": "ev-product-vq-snapshot",
+          "type": "commit",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/a489526d1dff4161a60dccc5034c2d595f059d49",
+          "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+          "summary": "The first available repository commit is an aggregated ConceptLM V2/V2.1/V2.2-VQ snapshot; it supports six independently reviewed structures without exposing separate introduction commits or ablation results."
+        },
+        {
+          "id": "ev-product-vq-code",
+          "type": "code_symbol",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v22_vq.py",
+          "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+          "summary": "ConceptLMV22VQModel implements the 32-by-128 Product-VQ path and associated losses."
+        }
+      ],
+      "depends_on": [],
+      "related_to": [],
+      "provenance": {
+        "sources": {
+          "work-repo": {
+            "state": "pinned",
+            "source_ids": [
+              "ev-product-vq-snapshot",
+              "ev-product-vq-code"
+            ],
+            "note": "Derived private work-repository evidence; never root or official OLMo-3 provenance."
+          }
+        },
+        "fields": {
+          "id": "work-repo",
+          "record_type": "work-repo",
+          "title": "work-repo",
+          "category": "work-repo",
+          "kind": "work-repo",
+          "parent_id": "work-repo",
+          "status": "work-repo",
+          "summary": "work-repo",
+          "hypothesis": "work-repo",
+          "design": "work-repo",
+          "baseline": "work-repo",
+          "delta": "work-repo",
+          "implementation": "work-repo",
+          "experiments": "work-repo",
+          "analysis": "work-repo",
+          "evidence": "work-repo",
+          "depends_on": "work-repo",
+          "related_to": "work-repo",
+          "title_zh": "work-repo",
+          "summary_zh": "work-repo"
+        }
+      },
+      "title_zh": "Product VQ 离散化",
+      "summary_zh": "在连续 concept 向量上叠加 Product VQ：向量切分为 32 段，每段在 128 词条码本中选择码字；码本数量和大小作为节点内参数。",
+      "category": "architecture"
+    },
+    {
+      "id": "feat-concept-self-dd",
+      "record_type": "feature",
+      "title": "Self-DD intra-module cross-layer reads",
+      "kind": "feature",
+      "parent_id": "feat-olmo3-standard",
+      "status": "validating",
+      "summary": "Let layers inside a module read earlier layer outputs in addition to the immediately preceding state.",
+      "hypothesis": "Learned access to earlier layer states can improve information reuse beyond a strictly sequential residual stack.",
+      "design": "Use V21SelfDD and V21DepthDD to select and mix same-module history states independently of cross-module residual routes.",
+      "baseline": null,
+      "delta": {
+        "summary": "Let layers inside a module read earlier layer outputs in addition to the immediately preceding state.",
+        "operations": [
+          {
+            "target": "concept.self_dd",
+            "before": "each layer consumes only the immediately preceding hidden state",
+            "after": "V21SelfDD/V21DepthDD read and mix stacked earlier outputs within the same module",
+            "rationale": "Same-module history reads are independently switchable and are the direct parent of D09.",
+            "evidence_ids": [
+              "ev-self-dd-code",
+              "ev-depth-dd-code"
+            ]
+          }
+        ]
+      },
+      "implementation": {
+        "commits": [
+          {
+            "id": "initial-logic-snapshot",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/a489526d1dff4161a60dccc5034c2d595f059d49",
+            "summary": "Shared aggregated history starting point; not a unique introduction commit for this Feature.",
+            "evidence_ids": [
+              "ev-self-dd-snapshot"
+            ]
+          }
+        ],
+        "sessions": [],
+        "code_symbols": [
+          {
+            "id": "v21-self-dd",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v21.py",
+            "summary": "V21SelfDD controls same-module history reads.",
+            "evidence_ids": [
+              "ev-self-dd-code"
+            ]
+          },
+          {
+            "id": "v21-depth-dd",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v21.py",
+            "summary": "V21DepthDD mixes stacked previous-layer states.",
+            "evidence_ids": [
+              "ev-depth-dd-code"
+            ]
+          }
+        ],
+        "component_changes": []
+      },
+      "experiments": [],
+      "analysis": {
+        "outcome": "inconclusive",
+        "conclusion": "Self-DD is independently configured in code, but its isolated effect and the exact expansion of DD require algorithm-owner confirmation.",
+        "limitations": [
+          "No isolated parent-relative ablation artifact is available.",
+          "The initial commit is shared with five other reviewed base mechanisms."
+        ],
+        "evidence_ids": [
+          "ev-self-dd-snapshot",
+          "ev-self-dd-code",
+          "ev-depth-dd-code"
+        ]
+      },
+      "evidence": [
+        {
+          "id": "ev-self-dd-snapshot",
+          "type": "commit",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/a489526d1dff4161a60dccc5034c2d595f059d49",
+          "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+          "summary": "The first available repository commit is an aggregated ConceptLM V2/V2.1/V2.2-VQ snapshot; it supports six independently reviewed structures without exposing separate introduction commits or ablation results."
+        },
+        {
+          "id": "ev-self-dd-code",
+          "type": "code_symbol",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v21.py",
+          "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+          "summary": "V21SelfDD controls same-module history reads."
+        },
+        {
+          "id": "ev-depth-dd-code",
+          "type": "code_symbol",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v21.py",
+          "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+          "summary": "V21DepthDD mixes stacked previous-layer states."
+        }
+      ],
+      "depends_on": [],
+      "related_to": [
+        "feat-concept-segmented-topology"
+      ],
+      "provenance": {
+        "sources": {
+          "work-repo": {
+            "state": "pinned",
+            "source_ids": [
+              "ev-self-dd-snapshot",
+              "ev-self-dd-code",
+              "ev-depth-dd-code"
+            ],
+            "note": "Derived private work-repository evidence; never root or official OLMo-3 provenance."
+          }
+        },
+        "fields": {
+          "id": "work-repo",
+          "record_type": "work-repo",
+          "title": "work-repo",
+          "category": "work-repo",
+          "kind": "work-repo",
+          "parent_id": "work-repo",
+          "status": "work-repo",
+          "summary": "work-repo",
+          "hypothesis": "work-repo",
+          "design": "work-repo",
+          "baseline": "work-repo",
+          "delta": "work-repo",
+          "implementation": "work-repo",
+          "experiments": "work-repo",
+          "analysis": "work-repo",
+          "evidence": "work-repo",
+          "depends_on": "work-repo",
+          "related_to": "work-repo",
+          "title_zh": "work-repo",
+          "summary_zh": "work-repo"
+        }
+      },
+      "title_zh": "Self-DD：模块内跨层读取",
+      "summary_zh": "在模块内部加入跨层读取：每层除接收上一层输出外，还可读取此前所有层输出；初始实现保存并堆叠完整层历史。",
+      "category": "architecture"
+    },
+    {
+      "id": "feat-concept-cumsum-self-dd",
+      "record_type": "feature",
+      "title": "Cumsum self-DD state",
+      "kind": "feature",
+      "parent_id": "feat-concept-self-dd",
+      "status": "validating",
+      "summary": "Replace full same-module layer-history self-DD with a recurrent cumsum state across encoder, HLM and decoder paths.",
+      "hypothesis": "A single accumulated state can retain depth context with lower history storage and simpler route shapes.",
+      "design": "Introduce V21SelfCumsumDD, preserve initialization ordering and switch same-module DD paths to cumsum mode by configuration.",
+      "baseline": null,
+      "delta": {
+        "summary": "Replace full same-module layer-history self-DD with a recurrent cumsum state across encoder, HLM and decoder paths.",
+        "operations": [
+          {
+            "target": "concept.self_dd.state",
+            "before": "list/stack of previous layer outputs",
+            "after": "normalized recurrent cumsum state with learned per-layer mixing",
+            "rationale": "Change the mathematical state and memory shape while preserving D06a as the direct baseline.",
+            "evidence_ids": [
+              "ev-concept-cumsum-core",
+              "ev-concept-cumsum-modules"
+            ]
+          }
+        ]
+      },
+      "implementation": {
+        "commits": [
+          {
+            "id": "cumsum-self-dd",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/98719543fc9a3aa076a75ffd579e26d412c64141",
+            "summary": "Core cumsum state implementation.",
+            "evidence_ids": [
+              "ev-concept-cumsum-core"
+            ]
+          },
+          {
+            "id": "cumsum-all-modules",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/8d359faf0ae492d323edb86e704e1398af2ad7cc",
+            "summary": "Encoder/HLM/decoder integration.",
+            "evidence_ids": [
+              "ev-concept-cumsum-modules"
+            ]
+          }
+        ],
+        "sessions": [],
+        "code_symbols": [
+          {
+            "id": "v21-self-cumsum-dd",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/98719543fc9a3aa076a75ffd579e26d412c64141/repo/megatron/core/models/gpt/conceptlm_v21.py",
+            "summary": "V21SelfCumsumDD recurrent state module.",
+            "evidence_ids": [
+              "ev-concept-cumsum-core"
+            ]
+          }
+        ],
+        "component_changes": []
+      },
+      "experiments": [
+        {
+          "id": "all-dd-cumsum-ab",
+          "title": "All-DD cumsum A/B submission",
+          "status": "planned",
+          "summary": "A submission recipe exists, but no result artifact is committed.",
+          "metrics": {},
+          "evidence_ids": [
+            "ev-concept-cumsum-ab"
+          ]
+        }
+      ],
+      "analysis": {
+        "outcome": "inconclusive",
+        "conclusion": "Implementation and A/B intent are pinned; performance and model-quality conclusions remain unresolved.",
+        "limitations": [
+          "The A/B commit contains a launcher but no result or log artifact."
+        ],
+        "evidence_ids": [
+          "ev-concept-cumsum-core",
+          "ev-concept-cumsum-modules",
+          "ev-concept-cumsum-ab"
+        ]
+      },
+      "evidence": [
+        {
+          "id": "ev-concept-cumsum-core",
+          "type": "commit",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/98719543fc9a3aa076a75ffd579e26d412c64141",
+          "revision": "98719543fc9a3aa076a75ffd579e26d412c64141",
+          "summary": "Introduces V21SelfCumsumDD as a recurrent single-state alternative to full layer-history self-DD."
+        },
+        {
+          "id": "ev-concept-cumsum-modules",
+          "type": "commit",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/8d359faf0ae492d323edb86e704e1398af2ad7cc",
+          "revision": "8d359faf0ae492d323edb86e704e1398af2ad7cc",
+          "summary": "Applies cumsum mode across encoder, HLM and decoder DD paths with single-source exports."
+        },
+        {
+          "id": "ev-concept-cumsum-ab",
+          "type": "commit",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/93e1120c73350333405e9cf89e37c21e41e72653",
+          "revision": "93e1120c73350333405e9cf89e37c21e41e72653",
+          "summary": "Adds an all-DD cumsum A/B submission, but no result artifact is committed."
+        }
+      ],
+      "depends_on": [],
+      "related_to": [
+        "feat-concept-cross-module-cumsum-routes"
+      ],
+      "provenance": {
+        "sources": {
+          "work-repo": {
+            "state": "pinned",
+            "source_ids": [
+              "ev-concept-cumsum-core",
+              "ev-concept-cumsum-modules",
+              "ev-concept-cumsum-ab"
+            ],
+            "note": "Derived private work-repository evidence; never root or official OLMo-3 provenance."
+          }
+        },
+        "fields": {
+          "id": "work-repo",
+          "record_type": "work-repo",
+          "title": "work-repo",
+          "category": "work-repo",
+          "kind": "work-repo",
+          "parent_id": "work-repo",
+          "status": "work-repo",
+          "summary": "work-repo",
+          "hypothesis": "work-repo",
+          "design": "work-repo",
+          "baseline": "work-repo",
+          "delta": "work-repo",
+          "implementation": "work-repo",
+          "experiments": "work-repo",
+          "analysis": "work-repo",
+          "evidence": "work-repo",
+          "depends_on": "work-repo",
+          "related_to": "work-repo",
+          "title_zh": "work-repo",
+          "summary_zh": "work-repo"
+        }
+      },
+      "title_zh": "Self-DD 累积式改写",
+      "summary_zh": "将模块内 Self-DD 状态从堆叠全部前层输出改为归一化递归 cumsum 与每层可学习混合，使状态存储不再随层数线性增长。",
+      "category": "architecture"
+    },
+    {
+      "id": "feat-concept-cross-module-residual-read",
+      "record_type": "feature",
+      "title": "Cross-module residual-read routes",
+      "kind": "feature",
+      "parent_id": "feat-olmo3-standard",
+      "status": "validating",
+      "summary": "Add routes that let HLM read encoder intermediates and decoder layers read encoder or HLM intermediates.",
+      "hypothesis": "Later modules can benefit from direct learned access to intermediate states produced by earlier modules.",
+      "design": "Expose encoder and concept/HLM histories as route sources and mix them through V21ResidualFlowRouteAdd with independent route-builder switches.",
+      "baseline": null,
+      "delta": {
+        "summary": "Add routes that let HLM read encoder intermediates and decoder layers read encoder or HLM intermediates.",
+        "operations": [
+          {
+            "target": "concept.cross_module_routes",
+            "before": "no learned reads of intermediate states across encoder, HLM and decoder modules",
+            "after": "HLM reads encoder histories; decoder reads encoder and HLM histories through residual routes",
+            "rationale": "Cross-module reads are independently switchable from Self-DD and are the direct parent of D10.",
+            "evidence_ids": [
+              "ev-cross-read-route-code",
+              "ev-cross-read-builders-code"
+            ]
+          }
+        ]
+      },
+      "implementation": {
+        "commits": [
+          {
+            "id": "initial-logic-snapshot",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/a489526d1dff4161a60dccc5034c2d595f059d49",
+            "summary": "Shared aggregated history starting point; not a unique introduction commit for this Feature.",
+            "evidence_ids": [
+              "ev-cross-read-snapshot"
+            ]
+          }
+        ],
+        "sessions": [],
+        "code_symbols": [
+          {
+            "id": "residual-flow-route-add",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v21.py",
+            "summary": "V21ResidualFlowRouteAdd implements learned cross-module reads.",
+            "evidence_ids": [
+              "ev-cross-read-route-code"
+            ]
+          },
+          {
+            "id": "cross-module-route-builders",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v21.py",
+            "summary": "ConceptLMV21Model._build_encoder_concept_states, _build_decoder_encoder_states and _build_decoder_concept_states expose route sources.",
+            "evidence_ids": [
+              "ev-cross-read-builders-code"
+            ]
+          }
+        ],
+        "component_changes": []
+      },
+      "experiments": [],
+      "analysis": {
+        "outcome": "inconclusive",
+        "conclusion": "Cross-module residual-read routes are explicit and independently configurable, but their isolated effect is unverified.",
+        "limitations": [
+          "No isolated parent-relative ablation artifact is available.",
+          "The initial commit is shared with five other reviewed base mechanisms."
+        ],
+        "evidence_ids": [
+          "ev-cross-read-snapshot",
+          "ev-cross-read-route-code",
+          "ev-cross-read-builders-code"
+        ]
+      },
+      "evidence": [
+        {
+          "id": "ev-cross-read-snapshot",
+          "type": "commit",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/a489526d1dff4161a60dccc5034c2d595f059d49",
+          "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+          "summary": "The first available repository commit is an aggregated ConceptLM V2/V2.1/V2.2-VQ snapshot; it supports six independently reviewed structures without exposing separate introduction commits or ablation results."
+        },
+        {
+          "id": "ev-cross-read-route-code",
+          "type": "code_symbol",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v21.py",
+          "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+          "summary": "V21ResidualFlowRouteAdd implements learned cross-module residual reads."
+        },
+        {
+          "id": "ev-cross-read-builders-code",
+          "type": "code_symbol",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v21.py",
+          "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+          "summary": "ConceptLMV21Model route builders expose encoder and HLM histories to later modules."
+        }
+      ],
+      "depends_on": [],
+      "related_to": [
+        "feat-concept-segmented-topology",
+        "feat-concept-self-dd"
+      ],
+      "provenance": {
+        "sources": {
+          "work-repo": {
+            "state": "pinned",
+            "source_ids": [
+              "ev-cross-read-snapshot",
+              "ev-cross-read-route-code",
+              "ev-cross-read-builders-code"
+            ],
+            "note": "Derived private work-repository evidence; never root or official OLMo-3 provenance."
+          }
+        },
+        "fields": {
+          "id": "work-repo",
+          "record_type": "work-repo",
+          "title": "work-repo",
+          "category": "work-repo",
+          "kind": "work-repo",
+          "parent_id": "work-repo",
+          "status": "work-repo",
+          "summary": "work-repo",
+          "hypothesis": "work-repo",
+          "design": "work-repo",
+          "baseline": "work-repo",
+          "delta": "work-repo",
+          "implementation": "work-repo",
+          "experiments": "work-repo",
+          "analysis": "work-repo",
+          "evidence": "work-repo",
+          "depends_on": "work-repo",
+          "related_to": "work-repo",
+          "title_zh": "work-repo",
+          "summary_zh": "work-repo"
+        }
+      },
+      "title_zh": "跨模块 residual-read 路由",
+      "summary_zh": "加入模块间信息通路：HLM 可读取 encoder 的中间表示，decoder 可读取 encoder 与 HLM 的中间表示；初始 source 为来源模块的逐层历史。",
+      "category": "architecture"
+    },
+    {
+      "id": "feat-concept-cross-module-cumsum-routes",
+      "record_type": "feature",
+      "title": "Cross-module cumsum routes",
+      "kind": "feature",
+      "parent_id": "feat-concept-cross-module-residual-read",
+      "status": "implementing",
+      "summary": "Expose cumsum states as single-source encoder/HLM/decoder route inputs instead of retaining multi-layer source histories.",
+      "hypothesis": "Cross-module residual reads can retain useful information while using one stable accumulated source per module.",
+      "design": "Add module route exports and update concept-read-encoder, decoder-read-encoder and decoder-read-concept source selection independently of same-module cumsum state.",
+      "baseline": null,
+      "delta": {
+        "summary": "Expose cumsum states as single-source encoder/HLM/decoder route inputs instead of retaining multi-layer source histories.",
+        "operations": [
+          {
+            "target": "concept.cross_module_routes.sources",
+            "before": "per-layer encoder/concept histories",
+            "after": "one cumsum route export per module",
+            "rationale": "D10 changes cross-module source semantics and therefore builds only on D06b.",
+            "evidence_ids": [
+              "ev-concept-cross-route-commit",
+              "ev-concept-cross-route-code"
+            ]
+          }
+        ]
+      },
+      "implementation": {
+        "commits": [
+          {
+            "id": "cross-module-cumsum-routes",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/28a1ec57c9a0e5eed1eb5224b2d0883cc560a51a",
+            "summary": "Cross-module source export integration.",
+            "evidence_ids": [
+              "ev-concept-cross-route-commit"
+            ]
+          }
+        ],
+        "sessions": [],
+        "code_symbols": [
+          {
+            "id": "module-route-export",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/28a1ec57c9a0e5eed1eb5224b2d0883cc560a51a/repo/megatron/core/models/gpt/conceptlm_v21.py",
+            "summary": "ConceptLMV21Model route-source builders and decoder source selection.",
+            "evidence_ids": [
+              "ev-concept-cross-route-code"
+            ]
+          }
+        ],
+        "component_changes": []
+      },
+      "experiments": [],
+      "analysis": {
+        "outcome": "inconclusive",
+        "conclusion": "The source-count and routing changes are explicit; no committed A/B outcome establishes their effect.",
+        "limitations": [
+          "The associated A/B launcher is evidence of intended validation, not a successful result."
+        ],
+        "evidence_ids": [
+          "ev-concept-cross-route-commit",
+          "ev-concept-cross-route-code"
+        ]
+      },
+      "evidence": [
+        {
+          "id": "ev-concept-cross-route-commit",
+          "type": "commit",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/28a1ec57c9a0e5eed1eb5224b2d0883cc560a51a",
+          "revision": "28a1ec57c9a0e5eed1eb5224b2d0883cc560a51a",
+          "summary": "Adds cross-module cumsum route sources between encoder, HLM concept and decoder."
+        },
+        {
+          "id": "ev-concept-cross-route-code",
+          "type": "code_symbol",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/28a1ec57c9a0e5eed1eb5224b2d0883cc560a51a/repo/megatron/core/models/gpt/conceptlm_v21.py",
+          "revision": "28a1ec57c9a0e5eed1eb5224b2d0883cc560a51a",
+          "summary": "Single-module route exports and decoder cross-read source selection."
+        }
+      ],
+      "depends_on": [],
+      "related_to": [
+        "feat-concept-cumsum-self-dd"
+      ],
+      "provenance": {
+        "sources": {
+          "work-repo": {
+            "state": "pinned",
+            "source_ids": [
+              "ev-concept-cross-route-commit",
+              "ev-concept-cross-route-code"
+            ],
+            "note": "Derived private work-repository evidence; never root or official OLMo-3 provenance."
+          }
+        },
+        "fields": {
+          "id": "work-repo",
+          "record_type": "work-repo",
+          "title": "work-repo",
+          "category": "work-repo",
+          "kind": "work-repo",
+          "parent_id": "work-repo",
+          "status": "work-repo",
+          "summary": "work-repo",
+          "hypothesis": "work-repo",
+          "design": "work-repo",
+          "baseline": "work-repo",
+          "delta": "work-repo",
+          "implementation": "work-repo",
+          "experiments": "work-repo",
+          "analysis": "work-repo",
+          "evidence": "work-repo",
+          "depends_on": "work-repo",
+          "related_to": "work-repo",
+          "title_zh": "work-repo",
+          "summary_zh": "work-repo"
+        }
+      },
+      "title_zh": "跨模块路由累积式改写",
+      "summary_zh": "将跨模块 residual-read 的 source 从来源模块逐层历史改为每个模块对外提供一个 cumsum 累积状态；它与 Self-DD 的累积式改写作用对象不同，可独立消融。",
+      "category": "architecture"
+    },
+    {
+      "id": "feat-concept-stage1-scale-resume",
+      "record_type": "feature",
+      "title": "Canonical Stage-1 scale and resume workflow",
+      "kind": "feature",
+      "parent_id": "feat-concept-cross-module-cumsum-routes",
+      "status": "validating",
+      "summary": "Package the Concept configuration into a canonical large-scale Stage-1 launcher with full-state save/resume probes and independent training health monitoring.",
+      "hypothesis": "A reproducible launcher, checkpoint policy and health signals are required before the architecture can be treated as a trainable model state.",
+      "design": "Separate reusable model config from launch wrappers, define a 256-GPU Stage-1 entrypoint, add MFU/save-resume probes and capture route/VQ/rank/grad-update health independently of checkpoint cadence.",
+      "baseline": null,
+      "delta": {
+        "summary": "Package the Concept configuration into a canonical large-scale Stage-1 launcher with full-state save/resume probes and independent training health monitoring.",
+        "operations": [
+          {
+            "target": "training.entrypoint",
+            "before": "ad-hoc public bench and A/B submission scripts",
+            "after": "canonical Stage-1 launcher sourcing one reusable Concept config",
+            "rationale": "Make the intended scale-up state explicit and reproducible.",
+            "evidence_ids": [
+              "ev-concept-stage-launcher",
+              "ev-concept-stage-config"
+            ]
+          },
+          {
+            "target": "training.recovery_and_health",
+            "before": "no dedicated full-state probe or Concept grad/update records",
+            "after": "full-state save/resume smoke plus route/VQ/rank/grad-update monitoring",
+            "rationale": "Detect inactive paths and verify recovery mechanics before long training.",
+            "evidence_ids": [
+              "ev-concept-stage-resume",
+              "ev-concept-stage-monitor",
+              "ev-concept-stage-report"
+            ]
+          }
+        ]
+      },
+      "implementation": {
+        "commits": [
+          {
+            "id": "stage-grad-monitor",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/2d71d3fc2aa14c071e4ff514c66426b48f7a22bd",
+            "summary": "Optimizer-step monitoring support.",
+            "evidence_ids": [
+              "ev-concept-stage-monitor"
+            ]
+          },
+          {
+            "id": "stage-resume-probe",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/1f85baff62a930b57427302e65f7822c0cd8b3a8",
+            "summary": "Full-state save/resume smoke launcher.",
+            "evidence_ids": [
+              "ev-concept-stage-resume"
+            ]
+          },
+          {
+            "id": "stage-canonical-launcher",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/bb08a0f4dc32549c79b904d9ba38c38c3fea280a",
+            "summary": "Canonical Stage-1 entrypoint.",
+            "evidence_ids": [
+              "ev-concept-stage-launcher"
+            ]
+          },
+          {
+            "id": "stage-config-separation",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/9f0fb4a1211304b586f2daaf8f97d8f9bc82fda7",
+            "summary": "Reusable config and thin compatibility launcher.",
+            "evidence_ids": [
+              "ev-concept-stage-config"
+            ]
+          }
+        ],
+        "sessions": [],
+        "code_symbols": [
+          {
+            "id": "stage1-launcher",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/full_train_dd_diag_256g_0611/scripts/pretrain_concept_olmo_stage_1.sh",
+            "summary": "Canonical Stage-1 resource/checkpoint launcher.",
+            "evidence_ids": [
+              "ev-concept-stage-launcher"
+            ]
+          }
+        ],
+        "component_changes": []
+      },
+      "experiments": [
+        {
+          "id": "stage-monitor-smoke",
+          "title": "Short Concept training health smokes",
+          "status": "passed",
+          "summary": "Committed report records successful short monitoring jobs with finite sampled gradients and updates; it is not a full Stage-1 completion.",
+          "metrics": {
+            "sampled_grad_nan_count": 0,
+            "sampled_update_nan_count": 0
+          },
+          "evidence_ids": [
+            "ev-concept-stage-report"
+          ]
+        },
+        {
+          "id": "stage-full-training",
+          "title": "Full Stage-1 training outcome",
+          "status": "inconclusive",
+          "summary": "The launcher and recovery workflow exist, but no complete training outcome is committed.",
+          "metrics": {},
+          "evidence_ids": [
+            "ev-concept-stage-launcher"
+          ]
+        }
+      ],
+      "analysis": {
+        "outcome": "inconclusive",
+        "conclusion": "Short operational smokes support the workflow, but full Stage-1 convergence and checkpoint content remain unresolved.",
+        "limitations": [
+          "The recorded successful jobs are short monitoring/probe runs, not the complete 256-GPU Stage-1 run.",
+          "Checkpoint references are internal paths without content-addressed model hashes."
+        ],
+        "evidence_ids": [
+          "ev-concept-stage-monitor",
+          "ev-concept-stage-resume",
+          "ev-concept-stage-launcher",
+          "ev-concept-stage-config",
+          "ev-concept-stage-report"
+        ]
+      },
+      "evidence": [
+        {
+          "id": "ev-concept-stage-monitor",
+          "type": "commit",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/2d71d3fc2aa14c071e4ff514c66426b48f7a22bd",
+          "revision": "2d71d3fc2aa14c071e4ff514c66426b48f7a22bd",
+          "summary": "Adds optimizer-step grad/update monitoring used by short successful smoke runs."
+        },
+        {
+          "id": "ev-concept-stage-resume",
+          "type": "commit",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/1f85baff62a930b57427302e65f7822c0cd8b3a8",
+          "revision": "1f85baff62a930b57427302e65f7822c0cd8b3a8",
+          "summary": "Adds a 256-GPU full-state save/resume smoke launcher."
+        },
+        {
+          "id": "ev-concept-stage-launcher",
+          "type": "commit",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/bb08a0f4dc32549c79b904d9ba38c38c3fea280a",
+          "revision": "bb08a0f4dc32549c79b904d9ba38c38c3fea280a",
+          "summary": "Adds the canonical Concept OLMo Stage-1 launcher."
+        },
+        {
+          "id": "ev-concept-stage-config",
+          "type": "commit",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/9f0fb4a1211304b586f2daaf8f97d8f9bc82fda7",
+          "revision": "9f0fb4a1211304b586f2daaf8f97d8f9bc82fda7",
+          "summary": "Separates reusable Concept configuration from compatibility and Stage-1 launchers."
+        },
+        {
+          "id": "ev-concept-stage-report",
+          "type": "document",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/monitor.md",
+          "revision": "6ae216283d88f8db0cb35e18c818018617b50f65",
+          "summary": "Documents successful short monitoring jobs, finite sampled gradients/updates and an unrelated later CE OOM."
+        }
+      ],
+      "depends_on": [],
+      "related_to": [],
+      "provenance": {
+        "sources": {
+          "work-repo": {
+            "state": "pinned",
+            "source_ids": [
+              "ev-concept-stage-monitor",
+              "ev-concept-stage-resume",
+              "ev-concept-stage-launcher",
+              "ev-concept-stage-config",
+              "ev-concept-stage-report"
+            ],
+            "note": "Derived private work-repository evidence; never root or official OLMo-3 provenance."
+          }
+        },
+        "fields": {
+          "id": "work-repo",
+          "record_type": "work-repo",
+          "title": "work-repo",
+          "category": "work-repo",
+          "kind": "work-repo",
+          "parent_id": "work-repo",
+          "status": "work-repo",
+          "summary": "work-repo",
+          "hypothesis": "work-repo",
+          "design": "work-repo",
+          "baseline": "work-repo",
+          "delta": "work-repo",
+          "implementation": "work-repo",
+          "experiments": "work-repo",
+          "analysis": "work-repo",
+          "evidence": "work-repo",
+          "depends_on": "work-repo",
+          "related_to": "work-repo"
+        }
+      },
+      "category": "training_configuration"
+    },
+    {
+      "id": "feat-concept-segmented-inference-runtime",
+      "record_type": "feature",
+      "title": "Segmented Concept inference runtime",
+      "kind": "feature",
+      "parent_id": "feat-concept-cross-module-cumsum-routes",
+      "status": "validating",
+      "summary": "Add a checkpoint-safe custom inference runtime with separate encoder, HLM and decoder cache domains and a GPU-only batched decode loop.",
+      "hypothesis": "ConceptLM can decode incrementally only if token and chunk-rate state are cached according to its segmented topology rather than stock OLMo assumptions.",
+      "design": "Load the original Megatron checkpoint strictly, maintain three coordinated cache domains, refresh HLM state at chunk boundaries and expose a batched GPU-only inferencer API.",
+      "baseline": null,
+      "delta": {
+        "summary": "Add a checkpoint-safe custom inference runtime with separate encoder, HLM and decoder cache domains and a GPU-only batched decode loop.",
+        "operations": [
+          {
+            "target": "inference.runtime",
+            "before": "training-only full-prefix Concept forward; stock runtime incompatible",
+            "after": "custom SegmentedConceptKV plus GPU-only batched token decode",
+            "rationale": "Respect encoder/HLM/decoder state boundaries without mutating the source checkpoint.",
+            "evidence_ids": [
+              "ev-concept-runtime-bringup",
+              "ev-concept-runtime-batched",
+              "ev-concept-runtime-code"
+            ]
+          }
+        ]
+      },
+      "implementation": {
+        "commits": [
+          {
+            "id": "inference-bringup",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/7802ff627c0abc4e1a489a34353ad8ebe7b52eea",
+            "summary": "Segmented cache prototype and benchmark harness.",
+            "evidence_ids": [
+              "ev-concept-runtime-bringup"
+            ]
+          },
+          {
+            "id": "inference-batched-decode",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/2119d24b231730b12953100e1e40bc2134993a18",
+            "summary": "GPU-only batched decode optimization.",
+            "evidence_ids": [
+              "ev-concept-runtime-batched"
+            ]
+          }
+        ],
+        "sessions": [],
+        "code_symbols": [
+          {
+            "id": "segmented-concept-kv",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/segmented_kv.py",
+            "summary": "SegmentedConceptKV and cache-domain state.",
+            "evidence_ids": [
+              "ev-concept-runtime-code"
+            ]
+          }
+        ],
+        "component_changes": []
+      },
+      "experiments": [
+        {
+          "id": "segmented-kv-reference",
+          "title": "Teacher-forced segmented-KV reference",
+          "status": "passed",
+          "summary": "Top-1 matched at all 32 checked positions for 12-, 256- and 1024-token prompts while the checkpoint metadata remained unchanged.",
+          "metrics": {
+            "prompt_lengths": "12,256,1024",
+            "checked_positions_each": 32,
+            "checkpoint_mutated": false,
+            "decode_speedup_1024": "1.075x"
+          },
+          "evidence_ids": [
+            "ev-concept-runtime-results"
+          ]
+        }
+      ],
+      "analysis": {
+        "outcome": "inconclusive",
+        "conclusion": "The custom runtime is operational and checkpoint-safe, but free generation is not bitwise equivalent for every prompt.",
+        "limitations": [
+          "A short-prompt free run diverged after numerical differences accumulated.",
+          "Stock vLLM serving remains unsupported."
+        ],
+        "evidence_ids": [
+          "ev-concept-runtime-bringup",
+          "ev-concept-runtime-batched",
+          "ev-concept-runtime-results",
+          "ev-concept-runtime-code"
+        ]
+      },
+      "evidence": [
+        {
+          "id": "ev-concept-runtime-bringup",
+          "type": "commit",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/7802ff627c0abc4e1a489a34353ad8ebe7b52eea",
+          "revision": "7802ff627c0abc4e1a489a34353ad8ebe7b52eea",
+          "summary": "Adds three-domain segmented KV cache inference and checkpoint-safe benchmarks."
+        },
+        {
+          "id": "ev-concept-runtime-batched",
+          "type": "commit",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/2119d24b231730b12953100e1e40bc2134993a18",
+          "revision": "2119d24b231730b12953100e1e40bc2134993a18",
+          "summary": "Moves decode into a GPU-only batched token loop and optimizes segmented cache updates."
+        },
+        {
+          "id": "ev-concept-runtime-results",
+          "type": "document",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/RESULTS_2026-07-17.md",
+          "revision": "6ae216283d88f8db0cb35e18c818018617b50f65",
+          "summary": "Teacher-forced top-1 matches at 12/256/1024 prompt lengths; short free generation is not bitwise equivalent."
+        },
+        {
+          "id": "ev-concept-runtime-code",
+          "type": "code_symbol",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/segmented_kv.py",
+          "revision": "6ae216283d88f8db0cb35e18c818018617b50f65",
+          "summary": "SegmentedConceptKV and ConceptKVCaches coordinate encoder, HLM and decoder cache domains."
+        }
+      ],
+      "depends_on": [
+        "feat-concept-chunk-representation",
+        "feat-concept-self-dd",
+        "feat-concept-cross-module-residual-read"
+      ],
+      "related_to": [
+        "feat-concept-stage1-scale-resume"
+      ],
+      "provenance": {
+        "sources": {
+          "work-repo": {
+            "state": "pinned",
+            "source_ids": [
+              "ev-concept-runtime-bringup",
+              "ev-concept-runtime-batched",
+              "ev-concept-runtime-results",
+              "ev-concept-runtime-code"
+            ],
+            "note": "Derived private work-repository evidence; never root or official OLMo-3 provenance."
+          }
+        },
+        "fields": {
+          "id": "work-repo",
+          "record_type": "work-repo",
+          "title": "work-repo",
+          "category": "work-repo",
+          "kind": "work-repo",
+          "parent_id": "work-repo",
+          "status": "work-repo",
+          "summary": "work-repo",
+          "hypothesis": "work-repo",
+          "design": "work-repo",
+          "baseline": "work-repo",
+          "delta": "work-repo",
+          "implementation": "work-repo",
+          "experiments": "work-repo",
+          "analysis": "work-repo",
+          "evidence": "work-repo",
+          "depends_on": "work-repo",
+          "related_to": "work-repo"
+        }
+      },
+      "category": "runtime"
+    },
+    {
+      "id": "feat-concept-strict-hf-export",
+      "record_type": "feature",
+      "title": "Strict model-only HF export",
+      "kind": "feature",
+      "parent_id": "feat-concept-cross-module-cumsum-routes",
+      "status": "validating",
+      "summary": "Export the custom ConceptLM model weights and configuration into a strict Hugging Face artifact without pretending it is a stock OLMo model.",
+      "hypothesis": "A model-only artifact can support downstream tooling if custom architecture identity and key validation remain explicit.",
+      "design": "Map the Megatron distributed checkpoint into custom ConceptLM HF keys, reject unexpected/missing model state and keep runtime compatibility probes separate.",
+      "baseline": null,
+      "delta": {
+        "summary": "Export the custom ConceptLM model weights and configuration into a strict Hugging Face artifact without pretending it is a stock OLMo model.",
+        "operations": [
+          {
+            "target": "inference.artifact_export",
+            "before": null,
+            "after": "strict custom ConceptLM Hugging Face model-only export",
+            "rationale": "Provide a portable artifact while preserving the non-stock compatibility boundary.",
+            "evidence_ids": [
+              "ev-concept-hf-export-commit",
+              "ev-concept-hf-export-code"
+            ]
+          }
+        ]
+      },
+      "implementation": {
+        "commits": [
+          {
+            "id": "strict-hf-export",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/56e4c613757570fa1090947633c4efe9245b6a89",
+            "summary": "Strict exporter and launcher.",
+            "evidence_ids": [
+              "ev-concept-hf-export-commit"
+            ]
+          }
+        ],
+        "sessions": [],
+        "code_symbols": [
+          {
+            "id": "export-hf",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/56e4c613757570fa1090947633c4efe9245b6a89/repo/experiments/vllm_inference/export_hf.py",
+            "summary": "Strict custom model export implementation.",
+            "evidence_ids": [
+              "ev-concept-hf-export-code"
+            ]
+          }
+        ],
+        "component_changes": []
+      },
+      "experiments": [],
+      "analysis": {
+        "outcome": "inconclusive",
+        "conclusion": "The exporter implementation is pinned, but no public artifact digest or independent reload report is available.",
+        "limitations": [
+          "The exported model artifact itself is not available by content hash.",
+          "The artifact does not make stock vLLM compatible with ConceptLM."
+        ],
+        "evidence_ids": [
+          "ev-concept-hf-export-commit",
+          "ev-concept-hf-export-code"
+        ]
+      },
+      "evidence": [
+        {
+          "id": "ev-concept-hf-export-commit",
+          "type": "commit",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/56e4c613757570fa1090947633c4efe9245b6a89",
+          "revision": "56e4c613757570fa1090947633c4efe9245b6a89",
+          "summary": "Adds strict model-only Hugging Face export and its launcher."
+        },
+        {
+          "id": "ev-concept-hf-export-code",
+          "type": "code_symbol",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/56e4c613757570fa1090947633c4efe9245b6a89/repo/experiments/vllm_inference/export_hf.py",
+          "revision": "56e4c613757570fa1090947633c4efe9245b6a89",
+          "summary": "Exporter validates expected model keys while preserving the custom ConceptLM compatibility boundary."
+        }
+      ],
+      "depends_on": [],
+      "related_to": [
+        "feat-concept-segmented-inference-runtime",
+        "feat-concept-stage1-scale-resume"
+      ],
+      "provenance": {
+        "sources": {
+          "work-repo": {
+            "state": "pinned",
+            "source_ids": [
+              "ev-concept-hf-export-commit",
+              "ev-concept-hf-export-code"
+            ],
+            "note": "Derived private work-repository evidence; never root or official OLMo-3 provenance."
+          }
+        },
+        "fields": {
+          "id": "work-repo",
+          "record_type": "work-repo",
+          "title": "work-repo",
+          "category": "work-repo",
+          "kind": "work-repo",
+          "parent_id": "work-repo",
+          "status": "work-repo",
+          "summary": "work-repo",
+          "hypothesis": "work-repo",
+          "design": "work-repo",
+          "baseline": "work-repo",
+          "delta": "work-repo",
+          "implementation": "work-repo",
+          "experiments": "work-repo",
+          "analysis": "work-repo",
+          "evidence": "work-repo",
+          "depends_on": "work-repo",
+          "related_to": "work-repo"
+        }
+      },
+      "category": "runtime"
+    },
+    {
+      "id": "feat-concept-variable-length-batching",
+      "record_type": "feature",
+      "title": "Variable-length compiled batching",
+      "kind": "feature",
+      "parent_id": "feat-concept-segmented-inference-runtime",
+      "status": "validating",
+      "summary": "Generalize the segmented runtime from fixed/equal-length batches to request-local variable lengths with stable route compilation and throughput gates.",
+      "hypothesis": "Separating logical request lengths from padded precision shapes can enable true batching without recompiling routes per prompt length.",
+      "design": "Add request-local varlen cache state, FlashAttention varlen prefill with Flash Decode disabled, dynamic route compile reuse, explicit precision lengths and fixed-batch throughput benchmarks.",
+      "baseline": null,
+      "delta": {
+        "summary": "Generalize the segmented runtime from fixed/equal-length batches to request-local variable lengths with stable route compilation and throughput gates.",
+        "operations": [
+          {
+            "target": "inference.batch_shape",
+            "before": "fixed or equal-length batch cache contract",
+            "after": "request-local variable lengths with shared dense token caches and stable compiled route plans",
+            "rationale": "Support heterogeneous prompts while containing shape-driven recompilation and preserving route semantics.",
+            "evidence_ids": [
+              "ev-concept-varlen-core",
+              "ev-concept-varlen-compile",
+              "ev-concept-varlen-precision"
+            ]
+          }
+        ]
+      },
+      "implementation": {
+        "commits": [
+          {
+            "id": "varlen-stability-gates",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/236bfa37b8e55a78a4b5c8d2737bf958b7760434",
+            "summary": "Pre-varlen batch stability gates.",
+            "evidence_ids": [
+              "ev-concept-varlen-stability"
+            ]
+          },
+          {
+            "id": "true-varlen-batching",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/06002575e5db02fde4b4a67aec28f7e1e3437ffe",
+            "summary": "Request-local variable-length implementation.",
+            "evidence_ids": [
+              "ev-concept-varlen-core"
+            ]
+          },
+          {
+            "id": "route-compile-shapes",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/ea921d04a02c3670e9e6c5d2aa72e9678e220c68",
+            "summary": "Prompt-length compile reuse.",
+            "evidence_ids": [
+              "ev-concept-varlen-compile"
+            ]
+          },
+          {
+            "id": "precision-lengths",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/832100f5fcc2cf6f37d0700fb0d52ce4b7abc934",
+            "summary": "Logical versus padded length separation.",
+            "evidence_ids": [
+              "ev-concept-varlen-precision"
+            ]
+          },
+          {
+            "id": "fixed-batch-benchmark",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/78cbce74c3e049d44973ab4b61ecc3a5d7287197",
+            "summary": "Steady-state throughput gate.",
+            "evidence_ids": [
+              "ev-concept-varlen-throughput"
+            ]
+          }
+        ],
+        "sessions": [],
+        "code_symbols": [
+          {
+            "id": "varlen-cache-runtime",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/segmented_kv.py",
+            "summary": "VarlenConceptKVCaches and per-request route plans.",
+            "evidence_ids": [
+              "ev-concept-varlen-code"
+            ]
+          }
+        ],
+        "component_changes": []
+      },
+      "experiments": [
+        {
+          "id": "varlen-runtime-smoke",
+          "title": "Variable-length runtime smoke",
+          "status": "passed",
+          "summary": "PR validation reports the true varlen path and inferencer API completing with checkpoint mutation disabled.",
+          "metrics": {
+            "checkpoint_mutated": false,
+            "flash_decode": false
+          },
+          "evidence_ids": [
+            "ev-concept-varlen-core",
+            "ev-concept-varlen-throughput"
+          ]
+        }
+      ],
+      "analysis": {
+        "outcome": "inconclusive",
+        "conclusion": "The variable-length path is implemented and smoke-validated under its safe contract; broad workload equivalence is not established.",
+        "limitations": [
+          "Flash Decode is intentionally excluded from random varlen batching.",
+          "The committed evidence does not provide a full matrix of batch-size/length numerical parity."
+        ],
+        "evidence_ids": [
+          "ev-concept-varlen-stability",
+          "ev-concept-varlen-core",
+          "ev-concept-varlen-compile",
+          "ev-concept-varlen-precision",
+          "ev-concept-varlen-throughput",
+          "ev-concept-varlen-code"
+        ]
+      },
+      "evidence": [
+        {
+          "id": "ev-concept-varlen-stability",
+          "type": "commit",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/236bfa37b8e55a78a4b5c8d2737bf958b7760434",
+          "revision": "236bfa37b8e55a78a4b5c8d2737bf958b7760434",
+          "summary": "Adds batched decode stability gates before generalizing request lengths."
+        },
+        {
+          "id": "ev-concept-varlen-core",
+          "type": "commit",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/06002575e5db02fde4b4a67aec28f7e1e3437ffe",
+          "revision": "06002575e5db02fde4b4a67aec28f7e1e3437ffe",
+          "summary": "Adds request-local variable-length state and a FlashAttention varlen batch path with Flash Decode disabled."
+        },
+        {
+          "id": "ev-concept-varlen-compile",
+          "type": "commit",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/ea921d04a02c3670e9e6c5d2aa72e9678e220c68",
+          "revision": "ea921d04a02c3670e9e6c5d2aa72e9678e220c68",
+          "summary": "Avoids recompiling routes for each prompt length and adds compile-shape diagnostics."
+        },
+        {
+          "id": "ev-concept-varlen-precision",
+          "type": "commit",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/832100f5fcc2cf6f37d0700fb0d52ce4b7abc934",
+          "revision": "832100f5fcc2cf6f37d0700fb0d52ce4b7abc934",
+          "summary": "Separates logical request lengths from precision/padded batch lengths."
+        },
+        {
+          "id": "ev-concept-varlen-throughput",
+          "type": "commit",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/78cbce74c3e049d44973ab4b61ecc3a5d7287197",
+          "revision": "78cbce74c3e049d44973ab4b61ecc3a5d7287197",
+          "summary": "Adds a fixed-batch steady-state throughput benchmark."
+        },
+        {
+          "id": "ev-concept-varlen-code",
+          "type": "code_symbol",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/segmented_kv.py",
+          "revision": "6ae216283d88f8db0cb35e18c818018617b50f65",
+          "summary": "VarlenConceptKVCaches and per-request route-source planning."
+        }
+      ],
+      "depends_on": [
+        "feat-concept-chunk-representation",
+        "feat-concept-self-dd",
+        "feat-concept-cross-module-residual-read"
+      ],
+      "related_to": [
+        "feat-concept-strict-hf-export"
+      ],
+      "provenance": {
+        "sources": {
+          "work-repo": {
+            "state": "pinned",
+            "source_ids": [
+              "ev-concept-varlen-stability",
+              "ev-concept-varlen-core",
+              "ev-concept-varlen-compile",
+              "ev-concept-varlen-precision",
+              "ev-concept-varlen-throughput",
+              "ev-concept-varlen-code"
+            ],
+            "note": "Derived private work-repository evidence; never root or official OLMo-3 provenance."
+          }
+        },
+        "fields": {
+          "id": "work-repo",
+          "record_type": "work-repo",
+          "title": "work-repo",
+          "category": "work-repo",
+          "kind": "work-repo",
+          "parent_id": "work-repo",
+          "status": "work-repo",
+          "summary": "work-repo",
+          "hypothesis": "work-repo",
+          "design": "work-repo",
+          "baseline": "work-repo",
+          "delta": "work-repo",
+          "implementation": "work-repo",
+          "experiments": "work-repo",
+          "analysis": "work-repo",
+          "evidence": "work-repo",
+          "depends_on": "work-repo",
+          "related_to": "work-repo"
+        }
+      },
+      "category": "runtime"
+    },
+    {
+      "id": "feat-concept-flash-decode-evaluation",
+      "record_type": "feature",
+      "title": "Flash Decode repair and evaluation",
+      "kind": "feature",
+      "parent_id": "feat-concept-segmented-inference-runtime",
+      "status": "analyzed",
+      "summary": "Repair missing HLM rotary inputs in Flash Decode, then evaluate speed, task accuracy and numerical/generation drift with deterministic sharded GSM8K.",
+      "hypothesis": "Flash Decode may improve throughput after the HLM RoPE fix, but must remain gated if numerical drift changes autoregressive trajectories.",
+      "design": "Add a dedicated diagnosis path, restore HLM rotary state, run matched Flash-off/on long-context and eight-shard GSM8K comparisons, and default Flash Decode off when equivalence is not supported.",
+      "baseline": null,
+      "delta": {
+        "summary": "Repair missing HLM rotary inputs in Flash Decode, then evaluate speed, task accuracy and numerical/generation drift with deterministic sharded GSM8K.",
+        "operations": [
+          {
+            "target": "inference.flash_decode",
+            "before": "HLM rotary input missing; unstable path without a task-level correctness gate",
+            "after": "rotary path repaired, deterministic A/B evaluation added, feature remains disabled by default",
+            "rationale": "Treat speed and correctness as separate claims and preserve the safer runtime default.",
+            "evidence_ids": [
+              "ev-concept-flash-rope-fix",
+              "ev-concept-flash-gsm8k",
+              "ev-concept-flash-results"
+            ]
+          }
+        ]
+      },
+      "implementation": {
+        "commits": [
+          {
+            "id": "flash-rope-fix",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/4dc4c2dda6db0879defb31019bc97366e20ac2ad",
+            "summary": "HLM RoPE repair and diagnostics.",
+            "evidence_ids": [
+              "ev-concept-flash-rope-fix"
+            ]
+          },
+          {
+            "id": "flash-gsm8k-eval",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/d57481c5f4b36e1d6846e01c18dd56cc077b3c0e",
+            "summary": "Sharded task evaluation.",
+            "evidence_ids": [
+              "ev-concept-flash-gsm8k"
+            ]
+          },
+          {
+            "id": "flash-workflow-doc",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/f17d00a49521219b210b4c18fd153915817e7196",
+            "summary": "Safe-default documentation.",
+            "evidence_ids": [
+              "ev-concept-flash-workflow"
+            ]
+          }
+        ],
+        "sessions": [],
+        "code_symbols": [
+          {
+            "id": "flash-diagnose",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/flash_decode_diagnose.py",
+            "summary": "Long-context numerical diagnosis.",
+            "evidence_ids": [
+              "ev-concept-flash-rope-fix"
+            ]
+          },
+          {
+            "id": "gsm8k-eval",
+            "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/gsm8k_eval.py",
+            "summary": "Deterministic sharded GSM8K evaluator.",
+            "evidence_ids": [
+              "ev-concept-flash-gsm8k"
+            ]
+          }
+        ],
+        "component_changes": []
+      },
+      "experiments": [
+        {
+          "id": "flash-gsm8k-paired",
+          "title": "Flash Decode GSM8K paired evaluation",
+          "status": "inconclusive",
+          "summary": "Aggregate strict accuracy was similar and makespan improved, but full generations and logits were not equivalent.",
+          "metrics": {
+            "strict_off": "522/1319",
+            "strict_on": "525/1319",
+            "paired_p_value": 0.8199,
+            "makespan_speedup": "1.106x",
+            "identical_generations": "817/1319",
+            "worst_relative_l2": 0.9201,
+            "minimum_cosine": 0.6655
+          },
+          "evidence_ids": [
+            "ev-concept-flash-results"
+          ]
+        }
+      ],
+      "analysis": {
+        "outcome": "partially_supported",
+        "conclusion": "The speed claim is supported, but numerical and generation equivalence is not; Flash Decode should remain off by default for output-sensitive use.",
+        "limitations": [
+          "One GSM8K A/B cannot establish universal quality neutrality.",
+          "Long-context top-1 agreement coexists with large relative-logit drift.",
+          "Flash Decode does not satisfy the random variable-length batch contract."
+        ],
+        "evidence_ids": [
+          "ev-concept-flash-rope-fix",
+          "ev-concept-flash-gsm8k",
+          "ev-concept-flash-workflow",
+          "ev-concept-flash-pr",
+          "ev-concept-flash-main-merge",
+          "ev-concept-flash-results"
+        ]
+      },
+      "evidence": [
+        {
+          "id": "ev-concept-flash-rope-fix",
+          "type": "commit",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/4dc4c2dda6db0879defb31019bc97366e20ac2ad",
+          "revision": "4dc4c2dda6db0879defb31019bc97366e20ac2ad",
+          "summary": "Restores HLM rotary inputs in the Flash Decode path and adds diagnosis tooling."
+        },
+        {
+          "id": "ev-concept-flash-gsm8k",
+          "type": "commit",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/d57481c5f4b36e1d6846e01c18dd56cc077b3c0e",
+          "revision": "d57481c5f4b36e1d6846e01c18dd56cc077b3c0e",
+          "summary": "Adds deterministic sharded Flash-on/off GSM8K evaluation."
+        },
+        {
+          "id": "ev-concept-flash-workflow",
+          "type": "commit",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/f17d00a49521219b210b4c18fd153915817e7196",
+          "revision": "f17d00a49521219b210b4c18fd153915817e7196",
+          "summary": "Documents safe defaults and the evidence-based Flash Decode decision."
+        },
+        {
+          "id": "ev-concept-flash-pr",
+          "type": "commit",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/pull/1/commits/9fdc384f139448aa5f915a2501d0e19aabd84372",
+          "revision": "9fdc384f139448aa5f915a2501d0e19aabd84372",
+          "summary": "PR #1 integration commit for the inference branch."
+        },
+        {
+          "id": "ev-concept-flash-main-merge",
+          "type": "commit",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/6ae216283d88f8db0cb35e18c818018617b50f65",
+          "revision": "6ae216283d88f8db0cb35e18c818018617b50f65",
+          "summary": "Immutable main merge revision observed for this analysis."
+        },
+        {
+          "id": "ev-concept-flash-results",
+          "type": "document",
+          "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/README.md",
+          "revision": "6ae216283d88f8db0cb35e18c818018617b50f65",
+          "summary": "Reports 522/1319 vs 525/1319 strict GSM8K, 1.106x makespan speedup, but only 817/1319 identical generations."
+        }
+      ],
+      "depends_on": [
+        "feat-concept-chunk-representation",
+        "feat-concept-self-dd",
+        "feat-concept-cross-module-residual-read"
+      ],
+      "related_to": [
+        "feat-concept-variable-length-batching",
+        "feat-concept-stage1-scale-resume"
+      ],
+      "provenance": {
+        "sources": {
+          "work-repo": {
+            "state": "pinned",
+            "source_ids": [
+              "ev-concept-flash-rope-fix",
+              "ev-concept-flash-gsm8k",
+              "ev-concept-flash-workflow",
+              "ev-concept-flash-pr",
+              "ev-concept-flash-main-merge",
+              "ev-concept-flash-results"
+            ],
+            "note": "Derived private work-repository evidence; never root or official OLMo-3 provenance."
+          }
+        },
+        "fields": {
+          "id": "work-repo",
+          "record_type": "work-repo",
+          "title": "work-repo",
+          "category": "work-repo",
+          "kind": "work-repo",
+          "parent_id": "work-repo",
+          "status": "work-repo",
+          "summary": "work-repo",
+          "hypothesis": "work-repo",
+          "design": "work-repo",
+          "baseline": "work-repo",
+          "delta": "work-repo",
+          "implementation": "work-repo",
+          "experiments": "work-repo",
+          "analysis": "work-repo",
+          "evidence": "work-repo",
+          "depends_on": "work-repo",
+          "related_to": "work-repo"
+        }
+      },
+      "category": "runtime"
+    }
+  ],
+  "feature_assessments": {
+    "feat-olmo3-150b-training-recipe": {
+      "boundary_confidence": "medium",
+      "grouped_commits": [
+        "9125bb9dcd27c8c717cda66c1b4ccbf374b5e06b",
+        "e3a07a986ff7069d5ce4edd053ffe86d962f976a"
+      ],
+      "evidence_only_commits": [
+        "79f65577f5a14d5ada43ccab5382d9be01114a77",
+        "49d1d1a33bbae26c03471d9088479061b5540e87"
+      ],
+      "reason": "The recipe has an independent reproducibility goal, but remains unmerged and untested as a full training intervention.",
+      "category": "training_configuration",
+      "validation_status": "unverified",
+      "admission": "admitted",
+      "recommended_for_merge": false,
+      "has_effect_evidence": false,
+      "primary_locators": [
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "e3a07a986ff7069d5ce4edd053ffe86d962f976a",
+          "path": "repo/examples/public_training_bench/olmo3_vanilla/recipe.py",
+          "symbol": "build_train_config / build_launch_config / validate_config",
+          "parameter": "GLOBAL_BATCH_SIZE, TRAIN_ITERS, LR, TP_SIZE, PP_SIZE, CP_SIZE",
+          "role": "Resolve and validate the 150B training, optimizer, parallel and resource recipe.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/e3a07a986ff7069d5ce4edd053ffe86d962f976a/repo/examples/public_training_bench/olmo3_vanilla/recipe.py"
+        }
+      ],
+      "validation": {
+        "comparison": "No structured branch-local smaller-model training recipe versus a resolved 150B schedule.",
+        "conditions": "Code and dry-run contract review only; no training run artifact.",
+        "metrics": {},
+        "artifact_locators": [],
+        "conclusion": "Configuration is explicit but its training effect is unverified.",
+        "limitations": [
+          "Unmerged branch.",
+          "No completed run or parent-relative convergence/cost result."
+        ]
+      },
+      "diff_ids": [
+        "D01"
+      ],
+      "decision_status": "pending"
+    },
+    "feat-olmo3-1b-dense-preset": {
+      "boundary_confidence": "medium",
+      "grouped_commits": [
+        "9125bb9dcd27c8c717cda66c1b4ccbf374b5e06b",
+        "e3a07a986ff7069d5ce4edd053ffe86d962f976a"
+      ],
+      "evidence_only_commits": [],
+      "reason": "The exact 1B model and launch diff is explicit; the branch and effect remain unverified.",
+      "category": "model_configuration",
+      "validation_status": "unverified",
+      "admission": "admitted",
+      "recommended_for_merge": false,
+      "has_effect_evidence": false,
+      "primary_locators": [
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "e3a07a986ff7069d5ce4edd053ffe86d962f976a",
+          "path": "repo/examples/public_training_bench/olmo3_vanilla/catalog.py",
+          "symbol": "OLMO3_DENSE_PRESETS['1B']",
+          "parameter": null,
+          "role": "Define the 1B model dimensions.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/e3a07a986ff7069d5ce4edd053ffe86d962f976a/repo/examples/public_training_bench/olmo3_vanilla/catalog.py"
+        },
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "e3a07a986ff7069d5ce4edd053ffe86d962f976a",
+          "path": "repo/examples/public_training_bench/olmo3_vanilla/recipe.py",
+          "symbol": "RUNTIME_DEFAULTS['1B']",
+          "parameter": null,
+          "role": "Bind the 1B preset to LR and 32-H200 launch defaults.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/e3a07a986ff7069d5ce4edd053ffe86d962f976a/repo/examples/public_training_bench/olmo3_vanilla/recipe.py"
+        }
+      ],
+      "validation": {
+        "comparison": "Work-repository 7B comparison launcher versus 1B concrete dimensions and launch defaults.",
+        "conditions": "Catalog/recipe build and dry-run capability only.",
+        "metrics": {},
+        "artifact_locators": [],
+        "conclusion": "The 1B intervention is reproducible but has no effect evidence.",
+        "limitations": [
+          "Unmerged branch.",
+          "No training, quality, stability or cost artifact."
+        ]
+      },
+      "diff_ids": [
+        "D02"
+      ],
+      "decision_status": "pending"
+    },
+    "feat-olmo3-3b-dense-preset": {
+      "boundary_confidence": "medium",
+      "grouped_commits": [
+        "9125bb9dcd27c8c717cda66c1b4ccbf374b5e06b",
+        "e3a07a986ff7069d5ce4edd053ffe86d962f976a"
+      ],
+      "evidence_only_commits": [],
+      "reason": "The exact 3B model and launch diff is explicit; the branch and effect remain unverified.",
+      "category": "model_configuration",
+      "validation_status": "unverified",
+      "admission": "admitted",
+      "recommended_for_merge": false,
+      "has_effect_evidence": false,
+      "primary_locators": [
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "e3a07a986ff7069d5ce4edd053ffe86d962f976a",
+          "path": "repo/examples/public_training_bench/olmo3_vanilla/catalog.py",
+          "symbol": "OLMO3_DENSE_PRESETS['3B']",
+          "parameter": null,
+          "role": "Define the 3B model dimensions.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/e3a07a986ff7069d5ce4edd053ffe86d962f976a/repo/examples/public_training_bench/olmo3_vanilla/catalog.py"
+        },
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "e3a07a986ff7069d5ce4edd053ffe86d962f976a",
+          "path": "repo/examples/public_training_bench/olmo3_vanilla/recipe.py",
+          "symbol": "RUNTIME_DEFAULTS['3B']",
+          "parameter": null,
+          "role": "Bind the 3B preset to LR and 64-H200 launch defaults.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/e3a07a986ff7069d5ce4edd053ffe86d962f976a/repo/examples/public_training_bench/olmo3_vanilla/recipe.py"
+        }
+      ],
+      "validation": {
+        "comparison": "Work-repository 7B comparison launcher versus 3B concrete dimensions and launch defaults.",
+        "conditions": "Catalog/recipe build and dry-run capability only.",
+        "metrics": {},
+        "artifact_locators": [],
+        "conclusion": "The 3B intervention is reproducible but has no effect evidence.",
+        "limitations": [
+          "Unmerged branch.",
+          "No training, quality, stability or cost artifact."
+        ]
+      },
+      "diff_ids": [
+        "D03"
+      ],
+      "decision_status": "pending"
+    },
+    "feat-concept-segmented-topology": {
+      "boundary_confidence": "high",
+      "grouped_commits": [
+        "a489526d1dff4161a60dccc5034c2d595f059d49"
+      ],
+      "evidence_only_commits": [],
+      "reason": "Human review separates the five-stage information-flow skeleton from representation, quantization and route dimensions; the shared snapshot is evidence, not the boundary.",
+      "category": "architecture",
+      "validation_status": "unverified",
+      "admission": "admitted",
+      "recommended_for_merge": true,
+      "has_effect_evidence": false,
+      "primary_locators": [
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+          "path": "repo/megatron/core/models/gpt/conceptlm_v2.py",
+          "symbol": "ConceptLMV2Model.__init__ / ConceptLMV2Model.forward",
+          "parameter": null,
+          "role": "Implement the segmented encoder, chunk, HLM, fusion and decoder topology.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v2.py"
+        }
+      ],
+      "validation": {
+        "comparison": "Standard single-stream OLMo3 Transformer versus the five-stage segmented topology.",
+        "conditions": "Retrospective inspection of the shared initial snapshot; no isolated A/B artifact.",
+        "metrics": {},
+        "artifact_locators": [],
+        "conclusion": "The topology is pinned and independently reviewable; its effect is unverified.",
+        "limitations": [
+          "Shared snapshot does not reveal a separate introduction time.",
+          "No isolated quality or efficiency result."
+        ]
+      },
+      "diff_ids": [
+        "D04a"
+      ],
+      "decision_status": "adjudicated"
+    },
+    "feat-concept-hlm-predictor": {
+      "boundary_confidence": "high",
+      "grouped_commits": [
+        "a489526d1dff4161a60dccc5034c2d595f059d49"
+      ],
+      "evidence_only_commits": [],
+      "reason": "ConceptPredictorV2 is an independently configurable HLM module and the semantic parent of D07 and D08.",
+      "category": "architecture",
+      "validation_status": "unverified",
+      "admission": "admitted",
+      "recommended_for_merge": true,
+      "has_effect_evidence": false,
+      "primary_locators": [
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+          "path": "repo/megatron/core/models/gpt/conceptlm_v2.py",
+          "symbol": "ConceptPredictorV2",
+          "parameter": null,
+          "role": "Implement the concept-rate autoregressive HLM predictor.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v2.py"
+        }
+      ],
+      "validation": {
+        "comparison": "Segmented topology without a concept-rate predictor versus ConceptPredictorV2.",
+        "conditions": "Retrospective inspection of the shared initial snapshot; no isolated A/B artifact.",
+        "metrics": {},
+        "artifact_locators": [],
+        "conclusion": "The HLM module is pinned; its parent-relative effect is unverified.",
+        "limitations": [
+          "Shared snapshot does not reveal a separate introduction time.",
+          "No HLM ablation result."
+        ]
+      },
+      "diff_ids": [
+        "D04b"
+      ],
+      "decision_status": "adjudicated"
+    },
+    "feat-concept-chunk-representation": {
+      "boundary_confidence": "high",
+      "grouped_commits": [
+        "a489526d1dff4161a60dccc5034c2d595f059d49"
+      ],
+      "evidence_only_commits": [],
+      "reason": "Chunk-rate continuous representation is independently removable; chunk=4, mean pooling and shift remain parameters of the same Feature.",
+      "category": "architecture",
+      "validation_status": "unverified",
+      "admission": "admitted",
+      "recommended_for_merge": true,
+      "has_effect_evidence": false,
+      "primary_locators": [
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+          "path": "repo/megatron/core/models/gpt/conceptlm_v2.py",
+          "symbol": "ConceptLMV2Model._merge_token_chunks",
+          "parameter": "chunk_size=4, merge=meanpooling",
+          "role": "Construct four-token mean-pooled continuous concept states.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v2.py"
+        },
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+          "path": "repo/megatron/core/models/gpt/conceptlm_v2.py",
+          "symbol": "ConceptLMV2Model._repeat_shift_concepts",
+          "parameter": "shift_feature=true",
+          "role": "Apply shifted concept reinjection semantics.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v2.py"
+        }
+      ],
+      "validation": {
+        "comparison": "No chunk-rate representation versus continuous four-token mean-pooled concepts with shifted reinjection.",
+        "conditions": "Retrospective inspection of the shared initial snapshot; no isolated A/B artifact.",
+        "metrics": {},
+        "artifact_locators": [],
+        "conclusion": "The representation and its parameters are pinned; effect and exact shift semantics are unverified.",
+        "limitations": [
+          "Shared snapshot does not reveal a separate introduction time.",
+          "No chunk/pooling/shift ablation result."
+        ]
+      },
+      "diff_ids": [
+        "D05a"
+      ],
+      "decision_status": "adjudicated"
+    },
+    "feat-concept-product-vq": {
+      "boundary_confidence": "high",
+      "grouped_commits": [
+        "a489526d1dff4161a60dccc5034c2d595f059d49"
+      ],
+      "evidence_only_commits": [],
+      "reason": "Product VQ is an optional discretization layer over the continuous D05a parent; 32 codebooks by 128 entries remain internal parameters.",
+      "category": "architecture",
+      "validation_status": "unverified",
+      "admission": "admitted",
+      "recommended_for_merge": true,
+      "has_effect_evidence": false,
+      "primary_locators": [
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+          "path": "repo/megatron/core/models/gpt/conceptlm_v22_vq.py",
+          "symbol": "ConceptLMV22VQModel.__init__ / ConceptLMV22VQModel._concept_branch_v21",
+          "parameter": "32 codebooks x 128 entries",
+          "role": "Implement Product VQ and its HLM/VQ loss path.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v22_vq.py"
+        }
+      ],
+      "validation": {
+        "comparison": "Continuous D05a concepts versus Product-VQ-discretized concepts.",
+        "conditions": "Retrospective inspection of the shared initial snapshot; no isolated VQ A/B artifact.",
+        "metrics": {},
+        "artifact_locators": [],
+        "conclusion": "The VQ bottleneck is pinned and independently removable; its effect is unverified.",
+        "limitations": [
+          "Shared snapshot does not reveal a separate introduction time.",
+          "No continuous-versus-VQ result."
+        ]
+      },
+      "diff_ids": [
+        "D05b"
+      ],
+      "decision_status": "adjudicated"
+    },
+    "feat-concept-self-dd": {
+      "boundary_confidence": "high",
+      "grouped_commits": [
+        "a489526d1dff4161a60dccc5034c2d595f059d49"
+      ],
+      "evidence_only_commits": [
+        "c5e4a029e6018cdcdbe500c5f13dc020c9d9fa4f"
+      ],
+      "reason": "Same-module history reads are independently switchable from cross-module routes; semantic-preserving compiled fastpaths are implementation evidence.",
+      "category": "architecture",
+      "validation_status": "unverified",
+      "admission": "admitted",
+      "recommended_for_merge": true,
+      "has_effect_evidence": false,
+      "primary_locators": [
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+          "path": "repo/megatron/core/models/gpt/conceptlm_v21.py",
+          "symbol": "V21SelfDD / V21DepthDD",
+          "parameter": null,
+          "role": "Implement same-module cross-layer history reads and mixing.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v21.py"
+        }
+      ],
+      "validation": {
+        "comparison": "Sequential layers reading only the previous state versus same-module stacked-history reads.",
+        "conditions": "Retrospective inspection of the shared initial snapshot; no isolated A/B artifact.",
+        "metrics": {},
+        "artifact_locators": [],
+        "conclusion": "Self-DD is pinned and independently switchable; its effect is unverified.",
+        "limitations": [
+          "Shared snapshot does not reveal a separate introduction time.",
+          "DD acronym expansion and isolated result need algorithm-owner confirmation."
+        ]
+      },
+      "diff_ids": [
+        "D06a"
+      ],
+      "decision_status": "adjudicated"
+    },
+    "feat-concept-cross-module-residual-read": {
+      "boundary_confidence": "high",
+      "grouped_commits": [
+        "a489526d1dff4161a60dccc5034c2d595f059d49"
+      ],
+      "evidence_only_commits": [
+        "c5e4a029e6018cdcdbe500c5f13dc020c9d9fa4f"
+      ],
+      "reason": "Cross-module route builders and V21ResidualFlowRouteAdd define a separate ablatable information-flow dimension; route fastpaths remain evidence.",
+      "category": "architecture",
+      "validation_status": "unverified",
+      "admission": "admitted",
+      "recommended_for_merge": true,
+      "has_effect_evidence": false,
+      "primary_locators": [
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+          "path": "repo/megatron/core/models/gpt/conceptlm_v21.py",
+          "symbol": "V21ResidualFlowRouteAdd",
+          "parameter": null,
+          "role": "Implement learned cross-module residual reads.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v21.py"
+        },
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "a489526d1dff4161a60dccc5034c2d595f059d49",
+          "path": "repo/megatron/core/models/gpt/conceptlm_v21.py",
+          "symbol": "ConceptLMV21Model._build_encoder_concept_states / _build_decoder_encoder_states / _build_decoder_concept_states",
+          "parameter": null,
+          "role": "Build encoder-to-HLM and encoder/HLM-to-decoder route sources.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/a489526d1dff4161a60dccc5034c2d595f059d49/repo/megatron/core/models/gpt/conceptlm_v21.py"
+        }
+      ],
+      "validation": {
+        "comparison": "No intermediate-state reads across modules versus learned encoder/HLM/decoder residual-read routes.",
+        "conditions": "Retrospective inspection of the shared initial snapshot; no isolated A/B artifact.",
+        "metrics": {},
+        "artifact_locators": [],
+        "conclusion": "Cross-module routes are pinned and independently switchable; their effect is unverified.",
+        "limitations": [
+          "Shared snapshot does not reveal a separate introduction time.",
+          "No route ablation result."
+        ]
+      },
+      "diff_ids": [
+        "D06b"
+      ],
+      "decision_status": "adjudicated"
+    },
+    "feat-concept-hlm-backbone-window": {
+      "boundary_confidence": "high",
+      "grouped_commits": [
+        "93fadb42872024a53b5d3750f8d47e44175d51da",
+        "4c5c9536d6b015ce099172e550b4f5865d23e9b3"
+      ],
+      "evidence_only_commits": [],
+      "reason": "Implementation and default flip jointly establish one attention mechanism.",
+      "category": "architecture",
+      "validation_status": "unverified",
+      "admission": "admitted",
+      "recommended_for_merge": true,
+      "has_effect_evidence": false,
+      "primary_locators": [
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "93fadb42872024a53b5d3750f8d47e44175d51da",
+          "path": "repo/megatron/core/models/gpt/conceptlm_v2.py",
+          "symbol": "ConceptCausalBlock._sliding_window_causal_bias",
+          "parameter": null,
+          "role": "Implement HLM sliding-window attention.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/93fadb42872024a53b5d3750f8d47e44175d51da/repo/megatron/core/models/gpt/conceptlm_v2.py"
+        },
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "4c5c9536d6b015ce099172e550b4f5865d23e9b3",
+          "path": "repo/examples/public_training_bench/train_concept_v22_vq_olmo3_7b.sh",
+          "symbol": "CONCEPTLM_HLM_ATTENTION_MODE",
+          "parameter": "conceptlm-hlm-attention-mode",
+          "role": "Select backbone_window as the default.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/4c5c9536d6b015ce099172e550b4f5865d23e9b3/repo/examples/public_training_bench/train_concept_v22_vq_olmo3_7b.sh"
+        }
+      ],
+      "validation": {
+        "comparison": "Full causal HLM attention versus backbone sliding/full attention cadence.",
+        "conditions": "No isolated A/B run is committed.",
+        "metrics": {},
+        "artifact_locators": [],
+        "conclusion": "Mechanism and default are pinned; effect is unverified.",
+        "limitations": [
+          "No quality, memory or throughput comparison."
+        ]
+      },
+      "diff_ids": [
+        "D07"
+      ],
+      "decision_status": "adjudicated"
+    },
+    "feat-concept-hlm-olmo3-layer-reuse": {
+      "boundary_confidence": "medium",
+      "grouped_commits": [
+        "7512755321ee4238b43ad08eb3ecfbc5fe2f2e6e"
+      ],
+      "evidence_only_commits": [],
+      "reason": "Conditional sibling of D07 under D04b; downgrade to D04b implementation evidence if custom and OLMo3 blocks are structurally and numerically equivalent.",
+      "category": "architecture",
+      "validation_status": "unverified",
+      "admission": "conditional",
+      "recommended_for_merge": false,
+      "has_effect_evidence": false,
+      "primary_locators": [
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "7512755321ee4238b43ad08eb3ecfbc5fe2f2e6e",
+          "path": "repo/megatron/core/models/gpt/conceptlm_v21.py",
+          "symbol": "ConceptPredictorV21.hlm_block",
+          "parameter": null,
+          "role": "Replace custom HLM blocks with the configured OLMo3 TransformerBlock.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/7512755321ee4238b43ad08eb3ecfbc5fe2f2e6e/repo/megatron/core/models/gpt/conceptlm_v21.py"
+        }
+      ],
+      "validation": {
+        "comparison": "Custom ConceptCausalBlock HLM versus shared OLMo3 TransformerBlock implementation.",
+        "conditions": "Patch inspection; no parity or training A/B artifact.",
+        "metrics": {},
+        "artifact_locators": [],
+        "conclusion": "Implementation replacement is clear; Feature status depends on unresolved structural/numerical equivalence.",
+        "limitations": [
+          "No checkpoint migration or numerical parity result.",
+          "If equivalent, downgrade this proposal to D04b implementation evidence."
+        ]
+      },
+      "diff_ids": [
+        "D08"
+      ],
+      "decision_status": "adjudicated",
+      "conditional_review": {
+        "question": "Are ConceptCausalBlock and the OLMo3 TransformerBlock path structurally and numerically equivalent under the same HLM configuration?",
+        "if_equivalent": "Downgrade D08 to implementation evidence of feat-concept-hlm-predictor.",
+        "if_not_equivalent": "Retain D08 as a sibling of D07 under feat-concept-hlm-predictor.",
+        "owner": "algorithm review"
+      }
+    },
+    "feat-concept-cumsum-self-dd": {
+      "boundary_confidence": "high",
+      "grouped_commits": [
+        "98719543fc9a3aa076a75ffd579e26d412c64141",
+        "8d359faf0ae492d323edb86e704e1398af2ad7cc"
+      ],
+      "evidence_only_commits": [
+        "93e1120c73350333405e9cf89e37c21e41e72653"
+      ],
+      "reason": "Core recurrent state and all-module application form one mechanism; the A/B launcher is evidence only.",
+      "category": "architecture",
+      "validation_status": "unverified",
+      "admission": "admitted",
+      "recommended_for_merge": true,
+      "has_effect_evidence": false,
+      "primary_locators": [
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "98719543fc9a3aa076a75ffd579e26d412c64141",
+          "path": "repo/megatron/core/models/gpt/conceptlm_v21.py",
+          "symbol": "V21SelfCumsumDD",
+          "parameter": null,
+          "role": "Replace full layer-history self-DD with recurrent cumsum state.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/98719543fc9a3aa076a75ffd579e26d412c64141/repo/megatron/core/models/gpt/conceptlm_v21.py"
+        },
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "8d359faf0ae492d323edb86e704e1398af2ad7cc",
+          "path": "repo/megatron/core/models/gpt/conceptlm_v21.py",
+          "symbol": "ConceptLMV21Model._run_v21_decoder",
+          "parameter": null,
+          "role": "Apply cumsum state across encoder/HLM/decoder paths.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/8d359faf0ae492d323edb86e704e1398af2ad7cc/repo/megatron/core/models/gpt/conceptlm_v21.py"
+        }
+      ],
+      "validation": {
+        "comparison": "Full previous-layer history DD versus one recurrent cumsum state.",
+        "conditions": "A/B submission script exists but no result artifact.",
+        "metrics": {},
+        "artifact_locators": [],
+        "conclusion": "Architecture is implemented; effect is unverified.",
+        "limitations": [
+          "No memory, speed, loss or quality result from the planned A/B."
+        ]
+      },
+      "diff_ids": [
+        "D09"
+      ],
+      "decision_status": "adjudicated"
+    },
+    "feat-concept-cross-module-cumsum-routes": {
+      "boundary_confidence": "high",
+      "grouped_commits": [
+        "28a1ec57c9a0e5eed1eb5224b2d0883cc560a51a"
+      ],
+      "evidence_only_commits": [],
+      "reason": "Cross-module source semantics build only on D06b; similarity to D09 does not make D09 the parent.",
+      "category": "architecture",
+      "validation_status": "unverified",
+      "admission": "admitted",
+      "recommended_for_merge": true,
+      "has_effect_evidence": false,
+      "primary_locators": [
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "28a1ec57c9a0e5eed1eb5224b2d0883cc560a51a",
+          "path": "repo/megatron/core/models/gpt/conceptlm_v21.py",
+          "symbol": "ConceptLMV21Model._build_encoder_concept_states",
+          "parameter": null,
+          "role": "Expose and consume single cumsum sources across encoder, concept and decoder modules.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/28a1ec57c9a0e5eed1eb5224b2d0883cc560a51a/repo/megatron/core/models/gpt/conceptlm_v21.py"
+        }
+      ],
+      "validation": {
+        "comparison": "Cross-module reads over per-layer histories versus one cumsum source per module.",
+        "conditions": "Code and submission-path review; no A/B result.",
+        "metrics": {},
+        "artifact_locators": [],
+        "conclusion": "Routing semantics are explicit; effect is unverified.",
+        "limitations": [
+          "No route-quality, throughput or convergence comparison."
+        ]
+      },
+      "diff_ids": [
+        "D10"
+      ],
+      "decision_status": "adjudicated"
+    },
+    "feat-concept-stage1-scale-resume": {
+      "boundary_confidence": "medium",
+      "grouped_commits": [
+        "1f85baff62a930b57427302e65f7822c0cd8b3a8",
+        "bb08a0f4dc32549c79b904d9ba38c38c3fea280a",
+        "9f0fb4a1211304b586f2daaf8f97d8f9bc82fda7"
+      ],
+      "evidence_only_commits": [
+        "505b06820f2e4098ea0d973e07e995375508de85",
+        "2d71d3fc2aa14c071e4ff514c66426b48f7a22bd",
+        "7f4d92a3b0f37f99e14b41b54a5ab7971c3f9383",
+        "82a7c1acaf91c7bfe2fc67262ec2360656d45c57",
+        "34935e7c3c36e57823683f2c9bed2136ad77070b"
+      ],
+      "reason": "A reproducible training configuration branch on the routed Concept model; short smokes do not validate full training effect.",
+      "category": "training_configuration",
+      "validation_status": "unverified",
+      "admission": "admitted",
+      "recommended_for_merge": false,
+      "has_effect_evidence": false,
+      "primary_locators": [
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "6ae216283d88f8db0cb35e18c818018617b50f65",
+          "path": "full_train_dd_diag_256g_0611/scripts/pretrain_concept_olmo_stage_1.sh",
+          "symbol": "shell entrypoint",
+          "parameter": "cards=256, load_dir, save_interval, save_full_state",
+          "role": "Define the canonical 256-H200 Stage-1 resource and checkpoint workflow.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/full_train_dd_diag_256g_0611/scripts/pretrain_concept_olmo_stage_1.sh"
+        },
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "6ae216283d88f8db0cb35e18c818018617b50f65",
+          "path": "repo/examples/public_training_bench/concept_v22_vq_olmo3_config.sh",
+          "symbol": "Concept V2.2-VQ Stage-1 environment",
+          "parameter": null,
+          "role": "Bind model, optimizer and route configuration consumed by the launcher.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/examples/public_training_bench/concept_v22_vq_olmo3_config.sh"
+        }
+      ],
+      "validation": {
+        "comparison": "Routed Concept model without a canonical scale/recovery plan versus 256-H200 Stage-1 plus full-state resume and monitoring.",
+        "conditions": "Short 2/4-step monitoring smokes; not a full Stage-1 run.",
+        "metrics": {
+          "sampled_grad_nan_count": 0,
+          "sampled_update_nan_count": 0
+        },
+        "artifact_locators": [
+          "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/monitor.md"
+        ],
+        "conclusion": "Short health smokes support implementation integrity but do not validate the training configuration's model effect.",
+        "limitations": [
+          "No completed Stage-1 convergence or checkpoint-content artifact."
+        ]
+      },
+      "diff_ids": [
+        "D11",
+        "D12"
+      ],
+      "decision_status": "pending"
+    },
+    "feat-concept-segmented-inference-runtime": {
+      "boundary_confidence": "high",
+      "grouped_commits": [
+        "7802ff627c0abc4e1a489a34353ad8ebe7b52eea",
+        "2119d24b231730b12953100e1e40bc2134993a18"
+      ],
+      "evidence_only_commits": [],
+      "reason": "The custom cache domains and GPU batched decode are one runtime capability, independent of Stage-1 launch configuration.",
+      "category": "runtime",
+      "validation_status": "mixed",
+      "admission": "admitted",
+      "recommended_for_merge": false,
+      "has_effect_evidence": true,
+      "primary_locators": [
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "6ae216283d88f8db0cb35e18c818018617b50f65",
+          "path": "repo/experiments/vllm_inference/segmented_kv.py",
+          "symbol": "SegmentedConceptKV",
+          "parameter": null,
+          "role": "Maintain separate encoder, HLM and decoder cache domains.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/segmented_kv.py"
+        },
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "6ae216283d88f8db0cb35e18c818018617b50f65",
+          "path": "repo/experiments/vllm_inference/inference.py",
+          "symbol": "ConceptLMInferencer",
+          "parameter": null,
+          "role": "Expose GPU-only batched decode.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/inference.py"
+        }
+      ],
+      "validation": {
+        "comparison": "Full-prefix Concept forward versus segmented-KV incremental decode.",
+        "conditions": "One H200; greedy 32-token decode at prompt lengths 12, 256 and 1024; strict checkpoint metadata fingerprinting.",
+        "metrics": {
+          "decode_speedup_12": "1.039x",
+          "decode_speedup_256": "1.012x",
+          "decode_speedup_1024": "1.075x",
+          "teacher_forced_top1": "32/32 at all three lengths",
+          "short_free_generation_match": false,
+          "checkpoint_mutated": false
+        },
+        "artifact_locators": [
+          "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/RESULTS_2026-07-17.md"
+        ],
+        "conclusion": "Incremental runtime works and can be faster, but generation is not universally equivalent.",
+        "limitations": [
+          "Single-device limited prompt set.",
+          "Stock vLLM serving unsupported."
+        ]
+      },
+      "diff_ids": [
+        "D13"
+      ],
+      "decision_status": "pending"
+    },
+    "feat-concept-strict-hf-export": {
+      "boundary_confidence": "medium",
+      "grouped_commits": [
+        "56e4c613757570fa1090947633c4efe9245b6a89"
+      ],
+      "evidence_only_commits": [],
+      "reason": "Potential deployment capability, but currently close to a pure export and lacks an artifact/reload result.",
+      "category": "runtime",
+      "validation_status": "unverified",
+      "admission": "ambiguous",
+      "recommended_for_merge": false,
+      "has_effect_evidence": false,
+      "primary_locators": [
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "56e4c613757570fa1090947633c4efe9245b6a89",
+          "path": "repo/experiments/vllm_inference/export_hf.py",
+          "symbol": "main / strict state-key validation",
+          "parameter": null,
+          "role": "Export a custom model-only Hugging Face artifact with strict key checks.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/56e4c613757570fa1090947633c4efe9245b6a89/repo/experiments/vllm_inference/export_hf.py"
+        }
+      ],
+      "validation": {
+        "comparison": "Megatron distributed checkpoint only versus a custom HF model-only export path.",
+        "conditions": "Exporter code/launcher only; no content-addressed export and reload artifact.",
+        "metrics": {},
+        "artifact_locators": [],
+        "conclusion": "Deployment value is plausible but not demonstrated; admission remains ambiguous.",
+        "limitations": [
+          "Could be evidence-only pure export.",
+          "No artifact digest or independent reload result."
+        ]
+      },
+      "diff_ids": [
+        "D14"
+      ],
+      "decision_status": "pending"
+    },
+    "feat-concept-variable-length-batching": {
+      "boundary_confidence": "medium",
+      "grouped_commits": [
+        "236bfa37b8e55a78a4b5c8d2737bf958b7760434",
+        "06002575e5db02fde4b4a67aec28f7e1e3437ffe",
+        "ea921d04a02c3670e9e6c5d2aa72e9678e220c68",
+        "832100f5fcc2cf6f37d0700fb0d52ce4b7abc934",
+        "78cbce74c3e049d44973ab4b61ecc3a5d7287197"
+      ],
+      "evidence_only_commits": [
+        "49ccae9b46d440b676fd12c8a31c2e6cb7addfca"
+      ],
+      "reason": "Varlen state and shape-stable execution build directly on the segmented runtime, not HF export.",
+      "category": "runtime",
+      "validation_status": "unverified",
+      "admission": "admitted",
+      "recommended_for_merge": false,
+      "has_effect_evidence": false,
+      "primary_locators": [
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "6ae216283d88f8db0cb35e18c818018617b50f65",
+          "path": "repo/experiments/vllm_inference/segmented_kv.py",
+          "symbol": "VarlenConceptKVCaches",
+          "parameter": null,
+          "role": "Maintain request-local state for heterogeneous prompt lengths.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/segmented_kv.py"
+        },
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "ea921d04a02c3670e9e6c5d2aa72e9678e220c68",
+          "path": "repo/experiments/vllm_inference/compile_shape_sweep.py",
+          "symbol": "main",
+          "parameter": null,
+          "role": "Measure and constrain prompt-length route recompilation.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/ea921d04a02c3670e9e6c5d2aa72e9678e220c68/repo/experiments/vllm_inference/compile_shape_sweep.py"
+        }
+      ],
+      "validation": {
+        "comparison": "Fixed/equal-length segmented batches versus request-local variable-length batches.",
+        "conditions": "Implementation and smoke claims with Flash Decode disabled; no full parity matrix.",
+        "metrics": {},
+        "artifact_locators": [],
+        "conclusion": "Runtime mode is implemented but parent-relative behavior/effect remains insufficiently measured.",
+        "limitations": [
+          "No broad batch-size/length numerical parity metrics.",
+          "Flash Decode is outside this contract."
+        ]
+      },
+      "diff_ids": [
+        "D15"
+      ],
+      "decision_status": "pending"
+    },
+    "feat-concept-flash-decode-evaluation": {
+      "boundary_confidence": "high",
+      "grouped_commits": [
+        "4dc4c2dda6db0879defb31019bc97366e20ac2ad",
+        "d57481c5f4b36e1d6846e01c18dd56cc077b3c0e"
+      ],
+      "evidence_only_commits": [
+        "f17d00a49521219b210b4c18fd153915817e7196",
+        "9fdc384f139448aa5f915a2501d0e19aabd84372",
+        "6ae216283d88f8db0cb35e18c818018617b50f65"
+      ],
+      "reason": "A distinct mixed runtime mode branching from segmented inference; it is incompatible with random varlen batching.",
+      "category": "runtime",
+      "validation_status": "mixed",
+      "admission": "admitted",
+      "recommended_for_merge": false,
+      "has_effect_evidence": true,
+      "primary_locators": [
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "6ae216283d88f8db0cb35e18c818018617b50f65",
+          "path": "repo/experiments/vllm_inference/flash_decode_diagnose.py",
+          "symbol": "main",
+          "parameter": null,
+          "role": "Diagnose long-context Flash Decode numerical behavior.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/flash_decode_diagnose.py"
+        },
+        {
+          "repository": "https://github.com/Liu-yuliang/concept_olmo",
+          "revision": "6ae216283d88f8db0cb35e18c818018617b50f65",
+          "path": "repo/experiments/vllm_inference/gsm8k_eval.py",
+          "symbol": "main",
+          "parameter": null,
+          "role": "Run deterministic sharded GSM8K Flash on/off evaluation.",
+          "url": "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/gsm8k_eval.py"
+        }
+      ],
+      "validation": {
+        "comparison": "Segmented runtime with Flash Decode off versus repaired Flash Decode on.",
+        "conditions": "Eight matched H200 GSM8K shards plus long-context numerical gates.",
+        "metrics": {
+          "strict_off": "522/1319",
+          "strict_on": "525/1319",
+          "paired_p_value": 0.8199,
+          "makespan_speedup": "1.106x",
+          "identical_generations": "817/1319",
+          "worst_relative_l2": 0.9201,
+          "minimum_cosine": 0.6655
+        },
+        "artifact_locators": [
+          "https://github.com/Liu-yuliang/concept_olmo/blob/6ae216283d88f8db0cb35e18c818018617b50f65/repo/experiments/vllm_inference/README.md"
+        ],
+        "conclusion": "Faster with neutral aggregate accuracy in one run, but logits and generations are not equivalent; keep default off.",
+        "limitations": [
+          "Not compatible with random variable-length batching.",
+          "One task A/B is not universal quality evidence."
+        ]
+      },
+      "diff_ids": [
+        "D16"
+      ],
+      "decision_status": "pending"
+    }
+  },
+  "diff_review": {
+    "total": 19,
+    "structural_count": 10,
+    "pending_count": 9,
+    "records": [
+      {
+        "id": "D01",
+        "category": "training_configuration",
+        "decision": "pending",
+        "feature_ids": [
+          "feat-olmo3-150b-training-recipe"
+        ]
+      },
+      {
+        "id": "D02",
+        "category": "model_configuration",
+        "decision": "pending",
+        "feature_ids": [
+          "feat-olmo3-1b-dense-preset"
+        ]
+      },
+      {
+        "id": "D03",
+        "category": "model_configuration",
+        "decision": "pending",
+        "feature_ids": [
+          "feat-olmo3-3b-dense-preset"
+        ]
+      },
+      {
+        "id": "D04a",
+        "category": "architecture",
+        "decision": "new_feature",
+        "feature_ids": [
+          "feat-concept-segmented-topology"
+        ]
+      },
+      {
+        "id": "D04b",
+        "category": "architecture",
+        "decision": "new_feature",
+        "feature_ids": [
+          "feat-concept-hlm-predictor"
+        ]
+      },
+      {
+        "id": "D05a",
+        "category": "architecture",
+        "decision": "new_feature",
+        "feature_ids": [
+          "feat-concept-chunk-representation"
+        ]
+      },
+      {
+        "id": "D05b",
+        "category": "architecture",
+        "decision": "new_feature",
+        "feature_ids": [
+          "feat-concept-product-vq"
+        ]
+      },
+      {
+        "id": "D06a",
+        "category": "architecture",
+        "decision": "new_feature",
+        "feature_ids": [
+          "feat-concept-self-dd"
+        ]
+      },
+      {
+        "id": "D06b",
+        "category": "architecture",
+        "decision": "new_feature",
+        "feature_ids": [
+          "feat-concept-cross-module-residual-read"
+        ]
+      },
+      {
+        "id": "D07",
+        "category": "architecture",
+        "decision": "new_feature",
+        "feature_ids": [
+          "feat-concept-hlm-backbone-window"
+        ]
+      },
+      {
+        "id": "D08",
+        "category": "architecture",
+        "decision": "conditional_feature",
+        "feature_ids": [
+          "feat-concept-hlm-olmo3-layer-reuse"
+        ]
+      },
+      {
+        "id": "D09",
+        "category": "architecture",
+        "decision": "new_feature",
+        "feature_ids": [
+          "feat-concept-cumsum-self-dd"
+        ]
+      },
+      {
+        "id": "D10",
+        "category": "architecture",
+        "decision": "new_feature",
+        "feature_ids": [
+          "feat-concept-cross-module-cumsum-routes"
+        ]
+      },
+      {
+        "id": "D11",
+        "category": "training_configuration",
+        "decision": "pending",
+        "feature_ids": [
+          "feat-concept-stage1-scale-resume"
+        ]
+      },
+      {
+        "id": "D12",
+        "category": "training_configuration",
+        "decision": "pending",
+        "feature_ids": [
+          "feat-concept-stage1-scale-resume"
+        ]
+      },
+      {
+        "id": "D13",
+        "category": "runtime",
+        "decision": "pending",
+        "feature_ids": [
+          "feat-concept-segmented-inference-runtime"
+        ]
+      },
+      {
+        "id": "D14",
+        "category": "runtime",
+        "decision": "pending",
+        "feature_ids": [
+          "feat-concept-strict-hf-export"
+        ]
+      },
+      {
+        "id": "D15",
+        "category": "runtime",
+        "decision": "pending",
+        "feature_ids": [
+          "feat-concept-variable-length-batching"
+        ]
+      },
+      {
+        "id": "D16",
+        "category": "runtime",
+        "decision": "pending",
+        "feature_ids": [
+          "feat-concept-flash-decode-evaluation"
+        ]
+      }
+    ]
+  },
+  "migration": {
+    "superseded_feature_ids": [
+      {
+        "id": "feat-concept-olmo-v22-vq-snapshot",
+        "status": "superseded",
+        "replaced_by": [
+          "feat-concept-chunk-representation",
+          "feat-concept-cross-module-residual-read",
+          "feat-concept-hlm-predictor",
+          "feat-concept-product-vq",
+          "feat-concept-segmented-topology",
+          "feat-concept-self-dd"
+        ],
+        "reason": "The aggregated snapshot node mixed six independently ablatable structural dimensions."
+      }
+    ]
+  },
+  "commit_classification": [
+    {
+      "commit": "a489526d1dff4161a60dccc5034c2d595f059d49",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/a489526d1dff4161a60dccc5034c2d595f059d49",
+      "message": "Initial logic snapshot",
+      "disposition": "feature_implementation",
+      "feature_ids": [
+        "feat-concept-chunk-representation",
+        "feat-concept-cross-module-residual-read",
+        "feat-concept-hlm-predictor",
+        "feat-concept-product-vq",
+        "feat-concept-segmented-topology",
+        "feat-concept-self-dd"
+      ],
+      "reason": "One commit supplies shared implementation/evidence for multiple independently reviewed Features.",
+      "evidence_role": "shared_initial_snapshot_evidence"
+    },
+    {
+      "commit": "505b06820f2e4098ea0d973e07e995375508de85",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/505b06820f2e4098ea0d973e07e995375508de85",
+      "message": "Monitoring note update",
+      "disposition": "feature_evidence",
+      "feature_id": "feat-concept-stage1-scale-resume"
+    },
+    {
+      "commit": "2d71d3fc2aa14c071e4ff514c66426b48f7a22bd",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/2d71d3fc2aa14c071e4ff514c66426b48f7a22bd",
+      "message": "Grad/update monitoring",
+      "disposition": "feature_evidence",
+      "feature_id": "feat-concept-stage1-scale-resume"
+    },
+    {
+      "commit": "93fadb42872024a53b5d3750f8d47e44175d51da",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/93fadb42872024a53b5d3750f8d47e44175d51da",
+      "message": "HLM backbone-window implementation",
+      "disposition": "feature_implementation",
+      "feature_id": "feat-concept-hlm-backbone-window"
+    },
+    {
+      "commit": "4c5c9536d6b015ce099172e550b4f5865d23e9b3",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/4c5c9536d6b015ce099172e550b4f5865d23e9b3",
+      "message": "Backbone-window default",
+      "disposition": "feature_implementation",
+      "feature_id": "feat-concept-hlm-backbone-window"
+    },
+    {
+      "commit": "c5e4a029e6018cdcdbe500c5f13dc020c9d9fa4f",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/c5e4a029e6018cdcdbe500c5f13dc020c9d9fa4f",
+      "message": "Route fastpaths",
+      "disposition": "feature_evidence",
+      "feature_ids": [
+        "feat-concept-cross-module-residual-read",
+        "feat-concept-self-dd"
+      ],
+      "reason": "One commit supplies shared implementation/evidence for multiple independently reviewed Features."
+    },
+    {
+      "commit": "7512755321ee4238b43ad08eb3ecfbc5fe2f2e6e",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/7512755321ee4238b43ad08eb3ecfbc5fe2f2e6e",
+      "message": "OLMo3 layer reuse",
+      "disposition": "feature_implementation",
+      "feature_id": "feat-concept-hlm-olmo3-layer-reuse"
+    },
+    {
+      "commit": "98719543fc9a3aa076a75ffd579e26d412c64141",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/98719543fc9a3aa076a75ffd579e26d412c64141",
+      "message": "Cumsum self-DD core",
+      "disposition": "feature_implementation",
+      "feature_id": "feat-concept-cumsum-self-dd"
+    },
+    {
+      "commit": "8d359faf0ae492d323edb86e704e1398af2ad7cc",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/8d359faf0ae492d323edb86e704e1398af2ad7cc",
+      "message": "Cumsum across modules",
+      "disposition": "feature_implementation",
+      "feature_id": "feat-concept-cumsum-self-dd"
+    },
+    {
+      "commit": "93e1120c73350333405e9cf89e37c21e41e72653",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/93e1120c73350333405e9cf89e37c21e41e72653",
+      "message": "Cumsum A/B launcher",
+      "disposition": "feature_evidence",
+      "feature_id": "feat-concept-cumsum-self-dd"
+    },
+    {
+      "commit": "28a1ec57c9a0e5eed1eb5224b2d0883cc560a51a",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/28a1ec57c9a0e5eed1eb5224b2d0883cc560a51a",
+      "message": "Cross-module cumsum routes",
+      "disposition": "feature_implementation",
+      "feature_id": "feat-concept-cross-module-cumsum-routes"
+    },
+    {
+      "commit": "7f4d92a3b0f37f99e14b41b54a5ab7971c3f9383",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/7f4d92a3b0f37f99e14b41b54a5ab7971c3f9383",
+      "message": "MFU probe",
+      "disposition": "feature_evidence",
+      "feature_id": "feat-concept-stage1-scale-resume"
+    },
+    {
+      "commit": "1f85baff62a930b57427302e65f7822c0cd8b3a8",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/1f85baff62a930b57427302e65f7822c0cd8b3a8",
+      "message": "Save/resume smoke",
+      "disposition": "feature_implementation",
+      "feature_id": "feat-concept-stage1-scale-resume"
+    },
+    {
+      "commit": "82a7c1acaf91c7bfe2fc67262ec2360656d45c57",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/82a7c1acaf91c7bfe2fc67262ec2360656d45c57",
+      "message": "RJob/cache hardening",
+      "disposition": "feature_evidence",
+      "feature_id": "feat-concept-stage1-scale-resume"
+    },
+    {
+      "commit": "34935e7c3c36e57823683f2c9bed2136ad77070b",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/34935e7c3c36e57823683f2c9bed2136ad77070b",
+      "message": "Training updates merge",
+      "disposition": "feature_evidence",
+      "feature_id": "feat-concept-stage1-scale-resume"
+    },
+    {
+      "commit": "bb08a0f4dc32549c79b904d9ba38c38c3fea280a",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/bb08a0f4dc32549c79b904d9ba38c38c3fea280a",
+      "message": "Canonical Stage-1 launcher",
+      "disposition": "feature_implementation",
+      "feature_id": "feat-concept-stage1-scale-resume"
+    },
+    {
+      "commit": "9f0fb4a1211304b586f2daaf8f97d8f9bc82fda7",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/9f0fb4a1211304b586f2daaf8f97d8f9bc82fda7",
+      "message": "Experiment organization/config separation",
+      "disposition": "feature_implementation",
+      "feature_id": "feat-concept-stage1-scale-resume"
+    },
+    {
+      "commit": "9ec27a113876f0c6d4ee9bc6ce7be55fd8690ca2",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/9ec27a113876f0c6d4ee9bc6ce7be55fd8690ca2",
+      "message": "Remove upstream test suite",
+      "disposition": "rejected_engineering",
+      "reason": "Repository-size cleanup removes an upstream test tree but adds no Concept capability."
+    },
+    {
+      "commit": "7802ff627c0abc4e1a489a34353ad8ebe7b52eea",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/7802ff627c0abc4e1a489a34353ad8ebe7b52eea",
+      "message": "Inference runtime bring-up",
+      "disposition": "feature_implementation",
+      "feature_id": "feat-concept-segmented-inference-runtime"
+    },
+    {
+      "commit": "2119d24b231730b12953100e1e40bc2134993a18",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/2119d24b231730b12953100e1e40bc2134993a18",
+      "message": "GPU batched decode",
+      "disposition": "feature_implementation",
+      "feature_id": "feat-concept-segmented-inference-runtime"
+    },
+    {
+      "commit": "56e4c613757570fa1090947633c4efe9245b6a89",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/56e4c613757570fa1090947633c4efe9245b6a89",
+      "message": "Strict HF export",
+      "disposition": "feature_implementation",
+      "feature_id": "feat-concept-strict-hf-export"
+    },
+    {
+      "commit": "236bfa37b8e55a78a4b5c8d2737bf958b7760434",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/236bfa37b8e55a78a4b5c8d2737bf958b7760434",
+      "message": "Batched Flash stability gates",
+      "disposition": "feature_implementation",
+      "feature_id": "feat-concept-variable-length-batching"
+    },
+    {
+      "commit": "06002575e5db02fde4b4a67aec28f7e1e3437ffe",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/06002575e5db02fde4b4a67aec28f7e1e3437ffe",
+      "message": "True variable-length batching",
+      "disposition": "feature_implementation",
+      "feature_id": "feat-concept-variable-length-batching"
+    },
+    {
+      "commit": "49ccae9b46d440b676fd12c8a31c2e6cb7addfca",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/49ccae9b46d440b676fd12c8a31c2e6cb7addfca",
+      "message": "Job-name standardization",
+      "disposition": "feature_evidence",
+      "feature_id": "feat-concept-variable-length-batching"
+    },
+    {
+      "commit": "ea921d04a02c3670e9e6c5d2aa72e9678e220c68",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/ea921d04a02c3670e9e6c5d2aa72e9678e220c68",
+      "message": "Route compile shape reuse",
+      "disposition": "feature_implementation",
+      "feature_id": "feat-concept-variable-length-batching"
+    },
+    {
+      "commit": "832100f5fcc2cf6f37d0700fb0d52ce4b7abc934",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/832100f5fcc2cf6f37d0700fb0d52ce4b7abc934",
+      "message": "Explicit precision lengths",
+      "disposition": "feature_implementation",
+      "feature_id": "feat-concept-variable-length-batching"
+    },
+    {
+      "commit": "78cbce74c3e049d44973ab4b61ecc3a5d7287197",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/78cbce74c3e049d44973ab4b61ecc3a5d7287197",
+      "message": "Fixed-batch throughput benchmark",
+      "disposition": "feature_implementation",
+      "feature_id": "feat-concept-variable-length-batching"
+    },
+    {
+      "commit": "4dc4c2dda6db0879defb31019bc97366e20ac2ad",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/4dc4c2dda6db0879defb31019bc97366e20ac2ad",
+      "message": "Flash HLM rotary repair",
+      "disposition": "feature_implementation",
+      "feature_id": "feat-concept-flash-decode-evaluation"
+    },
+    {
+      "commit": "d57481c5f4b36e1d6846e01c18dd56cc077b3c0e",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/d57481c5f4b36e1d6846e01c18dd56cc077b3c0e",
+      "message": "Sharded Flash GSM8K evaluation",
+      "disposition": "feature_implementation",
+      "feature_id": "feat-concept-flash-decode-evaluation"
+    },
+    {
+      "commit": "f17d00a49521219b210b4c18fd153915817e7196",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/f17d00a49521219b210b4c18fd153915817e7196",
+      "message": "Inference workflow documentation",
+      "disposition": "feature_evidence",
+      "feature_id": "feat-concept-flash-decode-evaluation"
+    },
+    {
+      "commit": "9fdc384f139448aa5f915a2501d0e19aabd84372",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/9fdc384f139448aa5f915a2501d0e19aabd84372",
+      "message": "PR branch merge commit",
+      "disposition": "feature_evidence",
+      "feature_id": "feat-concept-flash-decode-evaluation"
+    },
+    {
+      "commit": "6ae216283d88f8db0cb35e18c818018617b50f65",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/6ae216283d88f8db0cb35e18c818018617b50f65",
+      "message": "Main PR merge commit",
+      "disposition": "feature_evidence",
+      "feature_id": "feat-concept-flash-decode-evaluation"
+    }
+  ],
+  "branch_commit_classification": [
+    {
+      "commit": "9125bb9dcd27c8c717cda66c1b4ccbf374b5e06b",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/9125bb9dcd27c8c717cda66c1b4ccbf374b5e06b",
+      "message": "Add OLMo3 1B and 3B vanilla launch presets",
+      "disposition": "candidate_implementation",
+      "feature_ids": [
+        "feat-olmo3-150b-training-recipe",
+        "feat-olmo3-1b-dense-preset",
+        "feat-olmo3-3b-dense-preset"
+      ],
+      "reason": "Introduces substantive shared training defaults and explicit 1B/3B model/resource interventions."
+    },
+    {
+      "commit": "e3a07a986ff7069d5ce4edd053ffe86d962f976a",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/e3a07a986ff7069d5ce4edd053ffe86d962f976a",
+      "message": "Organize OLMo3 vanilla training recipes",
+      "disposition": "candidate_implementation",
+      "feature_ids": [
+        "feat-olmo3-150b-training-recipe",
+        "feat-olmo3-1b-dense-preset",
+        "feat-olmo3-3b-dense-preset"
+      ],
+      "reason": "Moves the interventions into a structured catalog/recipe/CLI with parameter validation and dry-run resolution."
+    },
+    {
+      "commit": "79f65577f5a14d5ada43ccab5382d9be01114a77",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/79f65577f5a14d5ada43ccab5382d9be01114a77",
+      "message": "Improve OLMo3 vanilla training guide",
+      "disposition": "candidate_evidence",
+      "feature_ids": [
+        "feat-olmo3-150b-training-recipe"
+      ],
+      "reason": "Documentation clarifies the existing recipe but adds no independent intervention."
+    },
+    {
+      "commit": "49d1d1a33bbae26c03471d9088479061b5540e87",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/49d1d1a33bbae26c03471d9088479061b5540e87",
+      "message": "Generalize architecture extension template",
+      "disposition": "candidate_evidence",
+      "feature_ids": [
+        "feat-olmo3-150b-training-recipe"
+      ],
+      "reason": "Template/generalization work supports the recipe surface without changing the admitted model or training configuration."
+    }
+  ],
+  "branch_disposition": {
+    "revision": "49d1d1a33bbae26c03471d9088479061b5540e87",
+    "status": "unmerged_configuration_candidates",
+    "reason": "The branch contains three policy-admissible configuration candidates, but remains unmerged and has no effect evidence."
+  }
+}

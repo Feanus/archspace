@@ -1,0 +1,201 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://internspace.local/schema/structural-feature-admission.schema.json",
+  "title": "InternSpace structural Feature admission review v1",
+  "description": "Contract for recording a human structural-boundary decision. It validates the decision record, not architectural semantics or numerical equivalence.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["policy_version", "cases"],
+  "properties": {
+    "policy_version": {
+      "const": "1.0.0"
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/admissionCase"
+      }
+    }
+  },
+  "$defs": {
+    "nullableLocator": {
+      "anyOf": [
+        { "type": "string", "minLength": 1 },
+        { "type": "null" }
+      ]
+    },
+    "admissionCase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "description",
+        "change_kind",
+        "technique",
+        "subject",
+        "parameter_scope",
+        "independent_switch",
+        "configuration_key",
+        "independent_ablation",
+        "ablation_id",
+        "semantic_equivalence",
+        "shared_snapshot_group",
+        "evidence_revision",
+        "decision",
+        "rationale",
+        "downgrade_condition"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^case-[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "change_kind": {
+          "enum": ["structural_dimension", "parameter_choice", "implementation_replacement"]
+        },
+        "technique": {
+          "type": "string",
+          "minLength": 1
+        },
+        "subject": {
+          "type": "string",
+          "minLength": 1
+        },
+        "parameter_scope": {
+          "enum": ["mechanism", "within_mechanism"]
+        },
+        "independent_switch": {
+          "type": "boolean"
+        },
+        "configuration_key": {
+          "$ref": "#/$defs/nullableLocator"
+        },
+        "independent_ablation": {
+          "type": "boolean"
+        },
+        "ablation_id": {
+          "$ref": "#/$defs/nullableLocator"
+        },
+        "semantic_equivalence": {
+          "enum": ["not_applicable", "different", "equivalent", "unresolved"]
+        },
+        "shared_snapshot_group": {
+          "$ref": "#/$defs/nullableLocator"
+        },
+        "evidence_revision": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "decision": {
+          "enum": ["admit_feature", "keep_in_parent", "evidence_only", "conditional_proposal"]
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1
+        },
+        "downgrade_condition": {
+          "$ref": "#/$defs/nullableLocator"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "independent_switch": { "const": true } },
+            "required": ["independent_switch"]
+          },
+          "then": {
+            "properties": { "configuration_key": { "type": "string", "minLength": 1 } }
+          },
+          "else": {
+            "properties": { "configuration_key": { "type": "null" } }
+          }
+        },
+        {
+          "if": {
+            "properties": { "independent_ablation": { "const": true } },
+            "required": ["independent_ablation"]
+          },
+          "then": {
+            "properties": { "ablation_id": { "type": "string", "minLength": 1 } }
+          },
+          "else": {
+            "properties": { "ablation_id": { "type": "null" } }
+          }
+        },
+        {
+          "if": {
+            "properties": { "decision": { "const": "admit_feature" } },
+            "required": ["decision"]
+          },
+          "then": {
+            "properties": {
+              "change_kind": { "const": "structural_dimension" },
+              "parameter_scope": { "const": "mechanism" },
+              "semantic_equivalence": { "enum": ["not_applicable", "different"] },
+              "downgrade_condition": { "type": "null" }
+            },
+            "anyOf": [
+              { "properties": { "independent_switch": { "const": true } }, "required": ["independent_switch"] },
+              { "properties": { "independent_ablation": { "const": true } }, "required": ["independent_ablation"] }
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": { "decision": { "const": "keep_in_parent" } },
+            "required": ["decision"]
+          },
+          "then": {
+            "properties": {
+              "change_kind": { "const": "parameter_choice" },
+              "parameter_scope": { "const": "within_mechanism" },
+              "downgrade_condition": { "type": "null" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "decision": { "const": "evidence_only" } },
+            "required": ["decision"]
+          },
+          "then": {
+            "properties": {
+              "change_kind": { "const": "implementation_replacement" },
+              "semantic_equivalence": { "const": "equivalent" },
+              "downgrade_condition": { "type": "null" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "decision": { "const": "conditional_proposal" } },
+            "required": ["decision"]
+          },
+          "then": {
+            "properties": {
+              "change_kind": { "const": "implementation_replacement" },
+              "parameter_scope": { "const": "mechanism" },
+              "semantic_equivalence": { "const": "unresolved" },
+              "downgrade_condition": { "type": "string", "minLength": 1 }
+            },
+            "anyOf": [
+              { "properties": { "independent_switch": { "const": true } }, "required": ["independent_switch"] },
+              { "properties": { "independent_ablation": { "const": true } }, "required": ["independent_ablation"] }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

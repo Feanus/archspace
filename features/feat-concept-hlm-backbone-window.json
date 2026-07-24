@@ -1,0 +1,164 @@
+{
+  "id": "feat-concept-hlm-backbone-window",
+  "record_type": "feature",
+  "title": "HLM backbone-window attention",
+  "kind": "feature",
+  "parent_id": "feat-concept-hlm-predictor",
+  "status": "implementing",
+  "summary": "Make the chunk-rate HLM tower follow the backbone sliding/full attention schedule instead of always using full causal attention.",
+  "hypothesis": "The HLM tower can reduce attention cost and align its inductive bias by inheriting the backbone window cadence.",
+  "design": "Add per-layer sliding-window causal bias support and a full/backbone_window mode, then make backbone_window the default.",
+  "baseline": null,
+  "delta": {
+    "summary": "Make the chunk-rate HLM tower follow the backbone sliding/full attention schedule instead of always using full causal attention.",
+    "operations": [
+      {
+        "target": "concept.hlm.attention_pattern",
+        "before": "full causal attention",
+        "after": "inherit backbone window_size and window_attn_skip_freq",
+        "rationale": "Retain an independently switchable full-attention alternative.",
+        "evidence_ids": [
+          "ev-concept-window-implementation",
+          "ev-concept-window-default"
+        ]
+      }
+    ]
+  },
+  "implementation": {
+    "commits": [
+      {
+        "id": "hlm-window-mode",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/93fadb42872024a53b5d3750f8d47e44175d51da",
+        "summary": "Window-aware HLM implementation.",
+        "evidence_ids": [
+          "ev-concept-window-implementation"
+        ]
+      },
+      {
+        "id": "hlm-window-default",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/4c5c9536d6b015ce099172e550b4f5865d23e9b3",
+        "summary": "Default selection change.",
+        "evidence_ids": [
+          "ev-concept-window-default"
+        ]
+      }
+    ],
+    "sessions": [],
+    "code_symbols": [
+      {
+        "id": "concept-causal-window",
+        "locator": "https://github.com/Liu-yuliang/concept_olmo/blob/93fadb42872024a53b5d3750f8d47e44175d51da/repo/megatron/core/models/gpt/conceptlm_v2.py",
+        "summary": "ConceptCausalBlock._sliding_window_causal_bias and layer scheduling.",
+        "evidence_ids": [
+          "ev-concept-window-implementation"
+        ]
+      }
+    ],
+    "component_changes": []
+  },
+  "experiments": [],
+  "analysis": {
+    "outcome": "inconclusive",
+    "conclusion": "The code and default are pinned, but no isolated quality or throughput result is committed.",
+    "limitations": [
+      "No A/B result establishes the effect of HLM windowing.",
+      "The concept-window to token receptive-field mapping needs algorithm-owner confirmation."
+    ],
+    "evidence_ids": [
+      "ev-concept-window-implementation",
+      "ev-concept-window-default"
+    ]
+  },
+  "evidence": [
+    {
+      "id": "ev-concept-window-implementation",
+      "type": "commit",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/93fadb42872024a53b5d3750f8d47e44175d51da",
+      "revision": "93fadb42872024a53b5d3750f8d47e44175d51da",
+      "summary": "Adds causal sliding-window masks and backbone-window configuration to the HLM tower."
+    },
+    {
+      "id": "ev-concept-window-default",
+      "type": "commit",
+      "locator": "https://github.com/Liu-yuliang/concept_olmo/commit/4c5c9536d6b015ce099172e550b4f5865d23e9b3",
+      "revision": "4c5c9536d6b015ce099172e550b4f5865d23e9b3",
+      "summary": "Changes the launcher/model default from full HLM attention to backbone_window."
+    }
+  ],
+  "depends_on": [],
+  "related_to": [
+    "feat-concept-hlm-olmo3-layer-reuse"
+  ],
+  "provenance": {
+    "sources": {
+      "work-repo": {
+        "state": "pinned",
+        "source_ids": [
+          "ev-concept-window-implementation",
+          "ev-concept-window-default"
+        ],
+        "note": "Derived private work-repository evidence; never root or official OLMo-3 provenance."
+      }
+    },
+    "fields": {
+      "id": "work-repo",
+      "record_type": "work-repo",
+      "title": "work-repo",
+      "category": "work-repo",
+      "kind": "work-repo",
+      "parent_id": "work-repo",
+      "status": "work-repo",
+      "summary": "work-repo",
+      "hypothesis": "work-repo",
+      "design": "work-repo",
+      "baseline": "work-repo",
+      "delta": "work-repo",
+      "implementation": "work-repo",
+      "experiments": "work-repo",
+      "analysis": "work-repo",
+      "evidence": "work-repo",
+      "depends_on": "work-repo",
+      "related_to": "work-repo",
+      "title_zh": "work-repo",
+      "summary_zh": "work-repo",
+      "validation_status": "work-repo",
+      "code_locators": "work-repo",
+      "validation": "work-repo"
+    }
+  },
+  "title_zh": "HLM 注意力继承骨干窗口节奏",
+  "summary_zh": "将 HLM 内部注意力从每层全因果改为继承 OLMo3 骨干的 local/global 交替节奏，包括 window_size 与 window_attn_skip_freq。",
+  "category": "architecture",
+  "validation_status": "unverified",
+  "code_locators": [
+    {
+      "repository": "https://github.com/Liu-yuliang/concept_olmo",
+      "revision": "93fadb42872024a53b5d3750f8d47e44175d51da",
+      "path": "repo/megatron/core/models/gpt/conceptlm_v2.py",
+      "symbol": "ConceptCausalBlock._sliding_window_causal_bias",
+      "role": "ConceptCausalBlock._sliding_window_causal_bias and layer scheduling.",
+      "url": "https://github.com/Liu-yuliang/concept_olmo/blob/93fadb42872024a53b5d3750f8d47e44175d51da/repo/megatron/core/models/gpt/conceptlm_v2.py"
+    }
+  ],
+  "validation": {
+    "comparison": "Full-causal HLM attention versus the inherited backbone local/global window cadence.",
+    "conditions": [
+      "Commit-pinned implementation inspection.",
+      "No isolated parent-relative result artifact is available."
+    ],
+    "metrics": {},
+    "observations": [
+      "The code and default are pinned, but no isolated quality or throughput result is committed."
+    ],
+    "artifacts": [],
+    "conclusion": "The code and default are pinned, but no isolated quality or throughput result is committed.",
+    "limitations": [
+      "No A/B result establishes the effect of HLM windowing.",
+      "The concept-window to token receptive-field mapping needs algorithm-owner confirmation."
+    ],
+    "evidence_ids": [
+      "ev-concept-window-implementation",
+      "ev-concept-window-default"
+    ]
+  }
+}

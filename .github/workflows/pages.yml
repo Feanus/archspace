@@ -1,0 +1,79 @@
+name: Deploy GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout triggering commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install validation dependency
+        run: python3 -m pip install --disable-pip-version-check jsonschema==4.26.0
+
+      - name: Install Web dependencies
+        run: npm ci --prefix web
+
+      - name: Verify canonical projection and schema
+        run: |
+          python3 scripts/build_feature_tree.py --check
+          python3 scripts/validate_feature_tree.py
+          python3 scripts/validate_experiments.py
+          python3 -m unittest discover -s tests/model -p 'test_*.py'
+
+      - name: Run Web Node tests
+        run: npm test --prefix web
+
+      - name: Run deployment contract tests
+        run: python3 -m unittest discover -s tests/deploy -p 'test_*.py' -v
+
+      - name: Build and inspect Pages artifact
+        run: python3 scripts/build_pages_artifact.py --output "$RUNNER_TEMP/internspace-pages"
+
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ runner.temp }}/internspace-pages
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Deploy exact verified artifact
+        id: deployment
+        uses: actions/deploy-pages@v4
