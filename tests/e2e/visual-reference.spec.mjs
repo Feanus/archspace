@@ -260,12 +260,12 @@ test("GitHub Pages root, web, canonical data, experiment data, CSS and JS assets
   const results = [];
   try {
     for (const path of [
-      "/InternSpace/",
-      "/InternSpace/web/",
-      "/InternSpace/data/feature-tree.json",
-      "/InternSpace/data/experiments.json",
-      "/InternSpace/web/styles.css",
-      "/InternSpace/web/src/app.js",
+      "/archspace/",
+      "/archspace/web/",
+      "/archspace/data/feature-tree.json",
+      "/archspace/data/experiments.json",
+      "/archspace/web/styles.css",
+      "/archspace/web/src/app.js",
     ]) {
       const response = await context.get(path, { failOnStatusCode: false, timeout: 15_000 });
       results.push({ path, status: response.status() });

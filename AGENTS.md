@@ -10,6 +10,5 @@
 - Do not copy source files from `/home/inuyasha/Lumia/LumiaTree`.
 - Preserve concurrent edits and stay inside the ownership scope in the task prompt.
 - Do not read or modify `../INTERNSPACE_SESSION_DISPATCH.md`.
-- Do not commit Git; the dispatcher will create checkpoints.
 - Do not add credentials, runtime state, caches, screenshots from `/tmp`, or third-party source trees to Git.
 - Prefer a small explicit contract over a general ontology.

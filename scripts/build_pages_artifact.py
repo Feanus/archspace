@@ -24,7 +24,7 @@ except ModuleNotFoundError:  # pragma: no cover - direct script execution fallba
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT = Path(tempfile.gettempdir()) / "internspace-pages"
-PROJECT_BASE = "/InternSpace/"
+PROJECT_BASE = "/archspace/"
 
 FIXED_RUNTIME_FILES = (
     Path(".nojekyll"),

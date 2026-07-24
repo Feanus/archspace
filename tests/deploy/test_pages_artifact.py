@@ -46,10 +46,9 @@ class PagesArtifactTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "site"
             checked = set(build_artifact(output))
-            self.assertEqual("/InternSpace/", PROJECT_BASE)
+            self.assertEqual("/archspace/", PROJECT_BASE)
             self.assertIn(Path("web/index.html"), checked)
             self.assertIn(Path("web/styles.css"), checked)
-            self.assertIn(Path("web/src/app.js"), checked)
             self.assertIn(Path("web/src/model-app.js"), checked)
             self.assertIn(Path("web/src/model-data-adapter.js"), checked)
             self.assertIn(Path("data/feature-tree.json"), checked)

@@ -109,7 +109,7 @@ def render(results: dict[str, tuple[str, str]], report_path: Path) -> str:
         "",
         f"结果：**{passed} PASS / {failed} FAIL / {unresolved} UNRESOLVED**",
         "",
-        "上线 URL：`https://inuyashayang.github.io/InternSpace/`",
+        "上线 URL：`https://feanus.github.io/archspace/`",
         "",
         f"浏览器原始报告：`{report_path}`",
         "",

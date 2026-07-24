@@ -3,7 +3,7 @@
 从 `OLMo-3 标准态` 单一根点向外展开的 Feature 演进树。一个可见点就是一个 Feature；
 commit、Python symbol、实验和论文只作为详情或 evidence。
 
-- 在线站点：<https://inuyashayang.github.io/InternSpace/>
+- 在线站点：<https://feanus.github.io/archspace/>
 - 项目定义：[Project.md](Project.md)
 - Feature 准入：[FEATURE_ADMISSION_POLICY.md](FEATURE_ADMISSION_POLICY.md)
 - 结构 Feature 边界：[STRUCTURAL_FEATURE_POLICY.md](STRUCTURAL_FEATURE_POLICY.md)
@@ -72,7 +72,7 @@ telemetry 字段写入正式 Feature canonical。
 1. 以 `${{ github.sha }}` checkout 精确 revision，且不持久化 checkout credential；
 2. 运行 canonical builder `--check`、schema/semantic validator 与模型测试；
 3. 运行 Web Node 单元测试和部署 artifact 合同测试；
-4. 构建严格白名单 artifact，并检查 project Pages `/InternSpace/` 与本地 `/web/` 路径；
+4. 构建严格白名单 artifact，并检查 project Pages `/archspace/` 与本地 `/web/` 路径；
 5. 使用 GitHub 官方 Pages artifact/deploy actions 发布。
 
 发布 artifact 只包含：

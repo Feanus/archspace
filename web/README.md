@@ -34,7 +34,7 @@ npm run serve --prefix web
 ```
 
 本地地址为 <http://127.0.0.1:4173/web/>，GitHub Pages 路径模拟为
-<http://127.0.0.1:4173/InternSpace/>。
+<http://127.0.0.1:4173/archspace/>。
 
 ## 主要文件
 

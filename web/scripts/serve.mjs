@@ -26,10 +26,10 @@ createServer((request, response) => {
   }
   const decodedPath = normalize(decodeURIComponent(url.pathname)).replace(/^\/+/, "");
   let relativePath = decodedPath;
-  if (decodedPath === "InternSpace" || decodedPath === "InternSpace/") {
+  if (decodedPath === "archspace" || decodedPath === "archspace/") {
     relativePath = "web/index.html";
-  } else if (decodedPath.startsWith("InternSpace/")) {
-    const pagesPath = decodedPath.slice("InternSpace/".length);
+  } else if (decodedPath.startsWith("archspace/")) {
+    const pagesPath = decodedPath.slice("archspace/".length);
     relativePath = pagesPath.startsWith("data/") || pagesPath.startsWith("web/")
       ? pagesPath
       : join("web", pagesPath);
@@ -58,5 +58,5 @@ createServer((request, response) => {
   stream.pipe(response);
 }).listen(port, host, () => {
   console.log(`InternSpace Feature Tree: http://${host}:${port}/web/`);
-  console.log(`GitHub Pages smoke: http://${host}:${port}/InternSpace/`);
+  console.log(`GitHub Pages smoke: http://${host}:${port}/archspace/`);
 });

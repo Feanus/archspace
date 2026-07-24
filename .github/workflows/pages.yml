@@ -3,6 +3,8 @@ name: Deploy GitHub Pages
 on:
   push:
     branches: [main]
+  repository_dispatch:
+    types: [template-test-changed]
   workflow_dispatch:
 
 concurrency:
@@ -35,10 +37,32 @@ jobs:
           cache-dependency-path: web/package-lock.json
 
       - name: Install validation dependency
-        run: python3 -m pip install --disable-pip-version-check jsonschema==4.26.0
+        run: python3 -m pip install --disable-pip-version-check jsonschema==4.25.1
 
       - name: Install Web dependencies
         run: npm ci --prefix web
+
+      - name: Verify snapshot refresh source
+        if: github.event_name == 'repository_dispatch'
+        env:
+          SOURCE_REPOSITORY: ${{ github.event.client_payload.source_repository }}
+        run: |
+          if [ "$SOURCE_REPOSITORY" != "JT-Ushio/template-test" ]; then
+            echo "::error::Unexpected snapshot source: $SOURCE_REPOSITORY"
+            exit 1
+          fi
+
+      - name: Fetch current template-test snapshot
+        run: |
+          node web/scripts/github-template-test-fetcher-v4.mjs \
+            JT-Ushio template-test \
+            > "$RUNNER_TEMP/template-test-raw.json"
+
+      - name: Build sanitized browser snapshot
+        run: |
+          node web/scripts/build-template-test-data-v2.mjs \
+            "$RUNNER_TEMP/template-test-raw.json" \
+            data/template-test-data.json
 
       - name: Verify canonical projection and schema
         run: |
