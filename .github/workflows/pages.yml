@@ -40,6 +40,7 @@ jobs:
         run: python3 -m pip install --disable-pip-version-check jsonschema==4.25.1
 
       - name: Install Web dependencies
+        if: github.event_name != 'repository_dispatch'
         run: npm ci --prefix web
 
       - name: Verify snapshot refresh source
@@ -65,6 +66,7 @@ jobs:
             data/template-test-data.json
 
       - name: Verify canonical projection and schema
+        if: github.event_name != 'repository_dispatch'
         run: |
           python3 scripts/build_feature_tree.py --check
           python3 scripts/validate_feature_tree.py
@@ -72,10 +74,16 @@ jobs:
           python3 -m unittest discover -s tests/model -p 'test_*.py'
 
       - name: Run Web Node tests
+        if: github.event_name != 'repository_dispatch'
         run: npm test --prefix web
 
       - name: Run deployment contract tests
+        if: github.event_name != 'repository_dispatch'
         run: python3 -m unittest discover -s tests/deploy -p 'test_*.py' -v
+
+      - name: Validate refreshed model snapshot
+        if: github.event_name == 'repository_dispatch'
+        run: node --test web/tests/unit/model-data-adapter.test.mjs
 
       - name: Build and inspect Pages artifact
         run: python3 scripts/build_pages_artifact.py --output "$RUNNER_TEMP/internspace-pages"
