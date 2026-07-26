@@ -14,7 +14,7 @@ import {
   hasLabel,
 } from "../../scripts/github-template-test-fetcher-v2.mjs";
 
-test("parses the scv11 Issue schema with Existing Results", () => {
+test("parses the JT-Ushio Issue schema with Existing Results", () => {
   const parsed = parseArchitectureProposalIssue(`### Architecture Name
 
 Olmo3
@@ -38,7 +38,7 @@ The prototype reduced validation loss.
 ### Experiments Plan
 
 Run the full comparison.`, {
-    owner: "scv11",
+    owner: "JT-Ushio",
     repo: "template-test",
   });
 
@@ -111,7 +111,7 @@ Ready.
 - [x] Linked proposal verified.
 `;
   const links = parseArchiveLinks(body);
-  const parsed = parsePullRequest(body, { owner: "scv11", repo: "template-test" });
+  const parsed = parsePullRequest(body, { owner: "JT-Ushio", repo: "template-test" });
 
   assert.deepEqual(links.map(({ key, label }) => ({ key, label })), [
     { key: "wandbReport", label: "WandB Report" },

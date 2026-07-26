@@ -2,7 +2,7 @@
 
 import { fileURLToPath } from "node:url";
 
-const DEFAULT_OWNER = "scv11";
+const DEFAULT_OWNER = "JT-Ushio";
 const DEFAULT_REPO = "template-test";
 export const DEFAULT_ISSUE_LABEL = "architecture proposal";
 export const DEFAULT_PULL_REQUEST_LABEL = "architecure implement";

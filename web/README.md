@@ -1,7 +1,7 @@
 # Issue model lineage browser
 
-当前 Web 入口只读加载 `/data/template-test-data.json`，数据来自
-`scv11/template-test`，并将 Architecture Proposal Issue 映射为模型节点：
+当前 Web 入口只读加载 `/data/template-test-data.json`，数据刷新来源配置为
+`JT-Ushio/template-test`，并将 Architecture Proposal Issue 映射为模型节点：
 
 - 一个 Issue 对应一个模型节点；
 - `parentIssue: null` 表示该模型是谱系根节点；

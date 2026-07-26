@@ -48,7 +48,7 @@ jobs:
         env:
           SOURCE_REPOSITORY: ${{ github.event.client_payload.source_repository }}
         run: |
-          if [ "$SOURCE_REPOSITORY" != "scv11/template-test" ]; then
+          if [ "$SOURCE_REPOSITORY" != "JT-Ushio/template-test" ]; then
             echo "::error::Unexpected snapshot source: $SOURCE_REPOSITORY"
             exit 1
           fi
@@ -56,7 +56,7 @@ jobs:
       - name: Fetch current template-test snapshot
         run: |
           node web/scripts/github-template-test-fetcher-v4.mjs \
-            scv11 template-test \
+            JT-Ushio template-test \
             > "$RUNNER_TEMP/template-test-raw.json"
 
       - name: Build sanitized browser snapshot

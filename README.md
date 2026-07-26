@@ -11,8 +11,9 @@ commit、Python symbol、实验和论文只作为详情或 evidence。
 
 ## 当前 Web 数据模式
 
-当前页面使用 `data/template-test-data.json` 中来自 `scv11/template-test` 的离线 GitHub
-快照展示模型谱系。Architecture Proposal Issue 生成模型节点；`parentIssue: null`
+当前页面的数据刷新来源配置为 `JT-Ushio/template-test`，并使用
+`data/template-test-data.json` 中的离线 GitHub 快照展示模型谱系。Architecture Proposal
+Issue 生成模型节点；`parentIssue: null`
 表示根节点，Issue 引用连接父模型或
 外部父 Issue 占位节点；关联 Pull Request
 在模型详情的 Implementation 折叠栏中展示。仅当 PR 的 `merged` 为 `true` 时显示默认展开的
