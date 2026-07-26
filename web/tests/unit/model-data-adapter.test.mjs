@@ -19,9 +19,9 @@ function payloadWithPullRequest(reportUrl = "https://reports.example.com/run") {
     merged: false,
     mergedAt: null,
     labels: ["architecture proposal", "under review"],
-    url: "https://github.com/scv11/template-test/pull/10",
+    url: "https://github.com/JT-Ushio/template-test/pull/10",
     author: "contributor",
-    base: { repo: "scv11/template-test", branch: "main" },
+    base: { repo: "JT-Ushio/template-test", branch: "main" },
     head: { repo: "contributor/template-test", branch: "implementation" },
     parsed: {
       metadata: {
@@ -178,7 +178,7 @@ test("renders model Issue and its unique PR as collapsible detail sections", () 
   assert.match(proposalHtml, /class="pull-request-panel"/);
   assert.match(proposalHtml, /class="pull-request-toggle"/);
   assert.ok(proposalHtml.includes(`data-detail-tab="pr-${pullRequest.number}"`));
-  assert.match(proposalHtml, /<span class="pull-request-copy">\s*<strong>Implementation<\/strong>\s*<\/span>/);
+  assert.match(proposalHtml, /<span class="pull-request-copy">\s*<strong>Progress<\/strong>\s*<\/span>/);
   assert.match(proposalHtml, /<em class="pr-lifecycle-under-review">Under Review<\/em>/);
   assert.match(proposalHtml, new RegExp(`data-detail-tab="pr-${pullRequest.number}"[^>]+aria-expanded="false"`));
   assert.match(pullRequestHtml, new RegExp(`data-detail-tab="pr-${pullRequest.number}"[^>]+aria-expanded="true"`));
@@ -192,7 +192,7 @@ test("renders model Issue and its unique PR as collapsible detail sections", () 
   assert.doesNotMatch(proposalHtml, /解析方式|Parent issue 为空，作为谱系根节点/);
   assert.match(proposalHtml, /Motivations/);
   assert.match(proposalHtml, /Proposed Architecture/);
-  assert.match(proposalHtml, /Existing Results/);
+  assert.match(proposalHtml, /Preliminary results \(if any\)/);
   assert.match(proposalHtml, /Experiments Plan/);
   assert.doesNotMatch(proposalHtml, /Related work/i);
   assert.ok(pullRequestHtml.includes(`PR #${pullRequest.number}`));
@@ -221,6 +221,17 @@ test("renders model Issue and its unique PR as collapsible detail sections", () 
   assert.doesNotMatch(pullRequestHtml, /Commits|Changed files/);
 });
 
+test("omits the optional Preliminary results section when an Issue leaves it empty", () => {
+  const graphPayload = payloadWithPullRequest();
+  const rootIssue = graphPayload.issues.find((issue) => !issue.parsed?.parentIssue?.number);
+  rootIssue.parsed.preliminaryResults = "";
+  delete rootIssue.parsed.existingResults;
+  const graph = normalizeModelGraph(graphPayload);
+  const html = renderModelDetail(graph.byId.get(graph.rootId), graph, "", true);
+
+  assert.doesNotMatch(html, /Preliminary results \(if any\)/);
+});
+
 test("omits PR accordion status when no lifecycle label is present", () => {
   const graphPayload = payloadWithPullRequest();
   graphPayload.pullRequests[0].labels = ["architecture proposal"];
@@ -240,13 +251,16 @@ test("renders every Archive link in an open merged-model section only for a merg
   const html = renderModelDetail(graph.byId.get(graph.rootId), graph);
 
   assert.match(html, /<details class="done-pr-panel" open>/);
-  assert.match(html, />The model is merged<\/strong>/);
+  assert.match(html, />This idea is verified<\/strong>/);
+  assert.match(html, /merge from contributor-implementation into <a class="done-target-branch-link"/);
+  assert.match(html, /href="https:\/\/github\.com\/JT-Ushio\/template-test\/tree\/main"/);
+  assert.match(html, /aria-label="Open target branch JT-Ushio-main">JT-Ushio-main/);
   assert.equal((html.match(/class="done-report-link"/g) ?? []).length, 3);
   assert.match(html, /class="done-report-link"[^>]+href="https:\/\/reports\.example\.com\/run"/);
   assert.match(html, />WandB Report<\/span>/);
   assert.match(html, />HuggingFace Collection<\/span>/);
   assert.match(html, />More Info<\/span>/);
-  assert.doesNotMatch(html, /class="done-report-link"[^>]+href="https:\/\/github\.com\/scv11\/template-test\/pull\/10"/);
+  assert.doesNotMatch(html, /class="done-report-link"[^>]+href="https:\/\/github\.com\/JT-Ushio\/template-test\/pull\/10"/);
   assert.ok(html.indexOf('class="pull-request-panel"') < html.indexOf('class="done-pr-panel"'));
 
   const expandedHtml = renderModelDetail(
@@ -262,13 +276,13 @@ test("renders every Archive link in an open merged-model section only for a merg
   assert.doesNotMatch(unmergedHtml, /class="done-pr-panel"/);
 });
 
-test("omits Implementation and the merged-model section for models without PRs", () => {
+test("omits Progress and the verified-idea section for models without PRs", () => {
   const graph = normalizeModelGraph(payloadWithPullRequest());
   const modelWithoutPullRequests = graph.models.find((model) => model.pullRequests.length === 0);
   const html = renderModelDetail(modelWithoutPullRequests, graph);
 
   assert.doesNotMatch(html, /class="pull-request-panel"/);
-  assert.doesNotMatch(html, /<strong>Implementation<\/strong>/);
+  assert.doesNotMatch(html, /<strong>Progress<\/strong>/);
   assert.doesNotMatch(html, /data-detail-tab=/);
   assert.doesNotMatch(html, /class="done-pr-panel"/);
 });
@@ -282,4 +296,29 @@ test("offline data and rendered links contain no credential query parameters", (
 
   assert.doesNotMatch(JSON.stringify(payload), /access.?token|github_pat_|Bearer /i);
   assert.doesNotMatch(pullRequestHtml, /access.?token|github_pat_|Bearer /i);
+});
+
+test("renders sanitized Markdown and HTML images from Issue and PR fields", () => {
+  const graphPayload = payloadWithPullRequest();
+  const rootIssue = graphPayload.issues.find((issue) => !issue.parsed?.parentIssue?.number);
+  rootIssue.parsed.preliminaryResults = `Before
+
+<img width="942" height="289" alt="Issue diagram" src="https://images.example.com/issue.png?accessToken=secret">
+
+After`;
+  graphPayload.pullRequests[0].parsed.implementationDetails =
+    "Implemented.\n\n![PR diagram](https://images.example.com/pr.png?secret=hidden)";
+  graphPayload.pullRequests[0].parsed.experimentalValidation.sections[0].content =
+    "*Hypothesis:* Visual result.\n\n![Validation plot](https://images.example.com/validation.png)";
+  const graph = normalizeModelGraph(graphPayload);
+  const model = graph.byId.get(graph.rootId);
+  const proposalHtml = renderModelDetail(model, graph, "", true);
+  const progressHtml = renderModelDetail(model, graph, "pr-10");
+
+  assert.match(proposalHtml, /Preliminary results \(if any\)/);
+  assert.match(proposalHtml, /<img[^>]+src="https:\/\/images\.example\.com\/issue\.png"[^>]+alt="Issue diagram"[^>]+width="942"[^>]+height="289"/);
+  assert.match(progressHtml, /<img[^>]+src="https:\/\/images\.example\.com\/pr\.png"[^>]+alt="PR diagram"/);
+  assert.match(progressHtml, /<img[^>]+src="https:\/\/images\.example\.com\/validation\.png"[^>]+alt="Validation plot"/);
+  assert.doesNotMatch(`${proposalHtml}${progressHtml}`, /<figcaption>/);
+  assert.doesNotMatch(`${proposalHtml}${progressHtml}`, /accessToken|secret=|!\[PR diagram\]|<img width=/);
 });

@@ -9,10 +9,13 @@
 - 快照中缺失的父 Issue 显示为共享的外部父 Issue 占位节点；
 - Pull Request 按 `Architecture Proposal (issue #)` 关联到模型；
 - Issue 使用 `architecture proposal` label 过滤，PR 使用 `architecture implementation` label 过滤；
-- 点击模型后，使用 Proposal、Implementation 和 The model is merged 区域查看提案与实现信息；
+- `declined` 模型不在树、搜索、统计或详情选择中显示；
+- 点击模型后，使用 Proposal、Progress 和 This idea is verified 区域查看提案与实现信息；
 - `parsed.archive` 是有序的可扩展字段数组，会保留模板与 PR 中新增的所有 Archive 链接；
 - `parsed.experimentalValidation` 按 Markdown 子标题解析为可变长度层级树，前端不会直接显示
   `####` 等 Markdown 标记。
+- Issue 的 `Preliminary results (if any)` 为可选字段，并兼容旧的 `Existing Results` 标题；
+- Issue 和 PR 的 Markdown 内容支持经 URL 脱敏的 GitHub `<img>` 与 `![alt](url)` 图片。
 
 页面不调用 GitHub API，也不实时请求外部 Report Link。所有内容均来自仓库内的脱敏离线快照。
 无法关联到当前 Issue 集合的 PR 会显示在仓库根节点中。

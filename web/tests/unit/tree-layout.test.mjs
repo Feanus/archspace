@@ -34,6 +34,16 @@ test("collapsed visibility keeps root and its first level", () => {
   ]);
 });
 
+test("layout and visibility can omit filtered nodes without leaving positions", () => {
+  const includeNode = (node) => node.id !== "feat-optimizer-stability";
+  const layout = layoutTree(tree, { includeNode });
+  const visible = visibleFeatureIds(tree, new Set([tree.rootId]), includeNode);
+
+  assert.equal(layout.positions.has("feat-optimizer-stability"), false);
+  assert.equal(visible.has("feat-optimizer-stability"), false);
+  assert.equal(layout.positions.has("feat-context-prediction"), true);
+});
+
 test("ancestors reveal a deep search result", () => {
   assert.deepEqual(ancestorIds(tree, "feat-context-window"), [
     "feat-olmo3-standard",

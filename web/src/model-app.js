@@ -74,6 +74,10 @@ function statusFor(model) {
   return STATUS_META[model?.state] ?? { label: model?.state || "Unknown", key: "unknown" };
 }
 
+function isDisplayableModel(model) {
+  return Boolean(model) && model.lifecycleStatus !== "declined" && model.state !== "declined";
+}
+
 function compactBadgeLabel(label, limit = 22) {
   return label.length > limit ? `${label.slice(0, limit - 1)}…` : label;
 }
@@ -107,8 +111,8 @@ function modelFooter(model) {
   if (pullRequest) {
     return `${pullRequest.draft ? "Draft " : ""}PR #${pullRequest.number}`;
   }
-  if (model.lifecycleStatus === "under-review") return "Awaiting decision";
-  if (model.lifecycleStatus === "in-progress") return "Implementation pending";
+  if (model.lifecycleStatus === "under-review") return "";
+  if (model.lifecycleStatus === "in-progress") return "Awaiting PR";
   if (model.lifecycleStatus === "declined") return "Not planned";
   if (model.lifecycleStatus === "done") return "Implementation complete";
   return "Proposal only";
@@ -125,7 +129,7 @@ function curveBetween(source, target) {
 
 function renderTree() {
   if (!state.tree) return;
-  const visible = visibleFeatureIds(state.tree, state.expanded);
+  const visible = visibleFeatureIds(state.tree, state.expanded, isDisplayableModel);
   elements.nodes.replaceChildren();
   elements.edges.replaceChildren();
 
@@ -153,7 +157,7 @@ function renderTree() {
     const status = statusFor(model);
     const issueStatus = STATUS_META[model.issueState] ?? { label: model.issueState || "Unknown", key: "unknown" };
     const point = state.layout.positions.get(id);
-    const children = state.tree.childrenById.get(id) ?? [];
+    const children = (state.tree.childrenById.get(id) ?? []).filter(isDisplayableModel);
     const dimmed = emphasized.size && !emphasized.has(id);
     const categoryDimmed = !state.enabledCategories.has(category);
     const group = svgElement("g", {
@@ -291,7 +295,7 @@ function closeDrawer() {
 }
 
 function selectModel(id, { reveal = false } = {}) {
-  if (!state.tree?.byId.has(id)) return;
+  if (!state.tree?.byId.has(id) || !isDisplayableModel(state.tree.byId.get(id))) return;
   if (reveal) for (const ancestor of ancestorIds(state.tree, id)) state.expanded.add(ancestor);
   state.selectedId = id;
   state.activeDetailTab = "";
@@ -342,7 +346,7 @@ function actualSize() {
 
 function fitTree() {
   if (!state.tree) return;
-  const visible = visibleFeatureIds(state.tree, state.expanded);
+  const visible = visibleFeatureIds(state.tree, state.expanded, isDisplayableModel);
   const bounds = boundsForIds(state.layout, visible);
   const width = elements.svg.viewBox.baseVal.width;
   const height = elements.svg.viewBox.baseVal.height;
@@ -355,7 +359,9 @@ function fitTree() {
 
 function searchModels(query) {
   if (!state.tree || !query.trim()) return [];
-  return state.tree.features.filter((model) => matchesModelSearch(model, query)).slice(0, 8);
+  return state.tree.features
+    .filter((model) => isDisplayableModel(model) && matchesModelSearch(model, query))
+    .slice(0, 8);
 }
 
 function renderSearchResults() {
@@ -385,14 +391,15 @@ function renderSearchResults() {
 }
 
 function renderStats() {
-  elements.statModels.textContent = String(state.tree.stats.models);
-  elements.statOpenIssues.textContent = String(state.tree.stats.openIssues);
-  elements.statPullRequests.textContent = String(state.tree.stats.pullRequests);
-  elements.statParentLinks.textContent = String(state.tree.stats.parentLinks);
+  const models = state.tree.models.filter(isDisplayableModel);
+  elements.statModels.textContent = String(models.length);
+  elements.statOpenIssues.textContent = String(models.filter((model) => model.issueState === "open").length);
+  elements.statPullRequests.textContent = String(models.reduce((total, model) => total + model.pullRequests.length, 0));
+  elements.statParentLinks.textContent = String(models.filter((model) => model.parentResolution !== "root").length);
 }
 
 function renderCategoryFilters() {
-  const categories = [...new Set(state.tree.features.map((model) => model.category))];
+  const categories = [...new Set(state.tree.features.filter(isDisplayableModel).map((model) => model.category))];
   state.enabledCategories = new Set(categories);
   elements.categoryFilters.replaceChildren();
   for (const category of categories) {
@@ -428,10 +435,16 @@ async function initialize() {
   elements.svg.classList.remove("is-unavailable");
   try {
     state.tree = await loadModelGraph(offlineDataUrl());
-    state.layout = layoutTree(state.tree, { originX: 70, originY: 58, depthGap: 274, rowGap: 116 });
+    state.layout = layoutTree(state.tree, {
+      originX: 70,
+      originY: 58,
+      depthGap: 274,
+      rowGap: 116,
+      includeNode: isDisplayableModel,
+    });
     state.expanded = new Set(
       state.tree.features
-        .filter((model) => (state.tree.childrenById.get(model.id) ?? []).length)
+        .filter((model) => isDisplayableModel(model) && (state.tree.childrenById.get(model.id) ?? []).some(isDisplayableModel))
         .map((model) => model.id),
     );
     state.selectedId = state.tree.rootId;
@@ -444,7 +457,7 @@ async function initialize() {
     renderTree();
     fitTree();
     document.documentElement.dataset.ready = "true";
-    document.documentElement.dataset.modelCount = String(state.tree.stats.models);
+    document.documentElement.dataset.modelCount = String(state.tree.models.filter(isDisplayableModel).length);
     document.documentElement.dataset.pullRequestCount = String(state.tree.stats.pullRequests);
     document.documentElement.dataset.parentLinkCount = String(state.tree.stats.parentLinks);
   } catch (error) {

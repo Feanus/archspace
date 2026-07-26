@@ -37,11 +37,11 @@ export const ISSUE_FIELDS = [
     required: true,
   },
   {
-    key: "existingResults",
+    key: "preliminaryResults",
     templateId: "existing_results",
-    label: "Existing Results",
+    label: "Preliminary results (if any)",
     type: "markdown",
-    required: true,
+    required: false,
   },
   {
     key: "experimentsPlan",
@@ -228,7 +228,7 @@ export function parseArchitectureProposalIssue(body, context = {}) {
     parentIssue: firstLinkOrRef(parentIssueRaw, context),
     motivations: get("Motivations"),
     proposedArchitecture: get("Proposed Architecture"),
-    existingResults: get("Existing Results"),
+    preliminaryResults: get("Preliminary results (if any)") || get("Existing Results"),
     experimentsPlan: get("Experiments Plan"),
   };
 }

@@ -9,12 +9,13 @@ export const LAYOUT = Object.freeze({
 });
 
 export function layoutTree(tree, options = {}) {
-  const config = { ...LAYOUT, ...options };
+  const { includeNode = () => true, ...layoutOptions } = options;
+  const config = { ...LAYOUT, ...layoutOptions };
   const positions = new Map();
   let nextRow = 0;
 
   function place(id, depth) {
-    const children = tree.childrenById.get(id) ?? [];
+    const children = (tree.childrenById.get(id) ?? []).filter(includeNode);
     let y;
     if (!children.length) {
       y = config.originY + nextRow++ * config.rowGap;
@@ -41,16 +42,16 @@ export function layoutTree(tree, options = {}) {
   });
 }
 
-export function visibleFeatureIds(tree, expandedIds) {
-  const visible = new Set([tree.rootId]);
+export function visibleFeatureIds(tree, expandedIds, includeNode = () => true) {
+  const visible = new Set(includeNode(tree.byId.get(tree.rootId)) ? [tree.rootId] : []);
   const walk = (id) => {
     if (!expandedIds.has(id)) return;
-    for (const child of tree.childrenById.get(id) ?? []) {
+    for (const child of (tree.childrenById.get(id) ?? []).filter(includeNode)) {
       visible.add(child.id);
       walk(child.id);
     }
   };
-  walk(tree.rootId);
+  if (visible.size) walk(tree.rootId);
   return visible;
 }
 

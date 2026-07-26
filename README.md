@@ -16,13 +16,16 @@ commit、Python symbol、实验和论文只作为详情或 evidence。
 Issue 生成模型节点；`parentIssue: null`
 表示根节点，Issue 引用连接父模型或
 外部父 Issue 占位节点；关联 Pull Request
-在模型详情的 Implementation 折叠栏中展示。仅当 PR 的 `merged` 为 `true` 时显示默认展开的
-`The model is merged` 区域，其中包含该 PR 的全部 Archive 链接。页面运行时不调用 GitHub API。
+在模型详情的 Progress 折叠栏中展示。仅当 PR 的 `merged` 为 `true` 时显示默认展开的
+`This idea is verified` 区域，其中包含 merge 来源/目标分支和该 PR 的全部 Archive 链接。
+`declined` 节点不在树、搜索、统计或详情选择中显示。页面运行时不调用 GitHub API。
 
 抓取器分别使用 `architecture proposal` 过滤 Issue、使用
 `architecture implementation` 过滤 Pull Request。PR 的 `Archive` 保存为有序的可扩展
 字段数组，PR body 中新增的归档链接字段也会保留。`Experimental Validation` 会按 Markdown
 子标题解析为可变长度的层级树，前端按标题层级展示，不直接输出 `####` 等 Markdown 标记。
+Issue 的 `Preliminary results (if any)` 为可选字段，并兼容旧的 `Existing Results` 标题；
+Issue 和 PR 内容中的 Markdown/HTML 图片会经过 URL 脱敏后显示。
 
 更新离线数据：
 

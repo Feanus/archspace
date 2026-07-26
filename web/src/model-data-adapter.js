@@ -75,7 +75,7 @@ function modelSearchText(issue, pullRequests) {
       parentIssue: issue?.parsed?.parentIssue,
       motivations: issue?.parsed?.motivations,
       proposedArchitecture: issue?.parsed?.proposedArchitecture,
-      existingResults: issue?.parsed?.existingResults,
+      preliminaryResults: issue?.parsed?.preliminaryResults || issue?.parsed?.existingResults,
       experimentsPlan: issue?.parsed?.experimentsPlan,
     },
     pullRequests: pullRequests.map((pullRequest) => pullRequest.parsed ?? {}),

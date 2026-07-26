@@ -14,7 +14,7 @@ import {
   hasLabel,
 } from "../../scripts/github-template-test-fetcher-v2.mjs";
 
-test("parses the JT-Ushio Issue schema with Existing Results", () => {
+test("parses the optional Preliminary results field from the JT-Ushio Issue schema", () => {
   const parsed = parseArchitectureProposalIssue(`### Architecture Name
 
 Olmo3
@@ -31,7 +31,7 @@ Improve the baseline.
 
 Add the proposed change.
 
-### Existing Results
+### Preliminary results (if any)
 
 The prototype reduced validation loss.
 
@@ -47,11 +47,11 @@ Run the full comparison.`, {
     "parentIssue",
     "motivations",
     "proposedArchitecture",
-    "existingResults",
+    "preliminaryResults",
     "experimentsPlan",
   ]);
   assert.equal(parsed.parentIssue, null);
-  assert.equal(parsed.existingResults, "The prototype reduced validation loss.");
+  assert.equal(parsed.preliminaryResults, "The prototype reduced validation loss.");
   assert.equal("relatedWork" in parsed, false);
   assert.equal("proposalType" in parsed, false);
 });
@@ -62,10 +62,20 @@ test("exports field definitions matching the current Issue template", () => {
     "parentIssue",
     "motivations",
     "proposedArchitecture",
-    "existingResults",
+    "preliminaryResults",
     "experimentsPlan",
   ]);
-  assert.equal(ISSUE_FIELDS.find((field) => field.key === "existingResults")?.templateId, "existing_results");
+  const preliminaryResults = ISSUE_FIELDS.find((field) => field.key === "preliminaryResults");
+  assert.equal(preliminaryResults?.templateId, "existing_results");
+  assert.equal(preliminaryResults?.label, "Preliminary results (if any)");
+  assert.equal(preliminaryResults?.required, false);
+});
+
+test("keeps parsing the former Existing Results heading for old Issues", () => {
+  const parsed = parseArchitectureProposalIssue(`### Existing Results
+
+Legacy result.`);
+  assert.equal(parsed.preliminaryResults, "Legacy result.");
 });
 
 test("uses separate labels for Issue and PR filtering", () => {

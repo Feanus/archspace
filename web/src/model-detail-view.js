@@ -40,10 +40,72 @@ function safeExternalUrl(value) {
   }
 }
 
+const EMBEDDED_IMAGE_PATTERN = /!\[[^\]]*\]\(\s*<?https?:\/\/[^)\s>]+>?(?:\s+(?:"[^"]*"|'[^']*'))?\s*\)|<img\b[^>]*>/gi;
+
+function htmlAttribute(source, name) {
+  const match = String(source || "").match(
+    new RegExp(`\\b${name}\\s*=\\s*(?:"([^"]*)"|'([^']*)'|([^\\s>]+))`, "i"),
+  );
+  return match?.[1] ?? match?.[2] ?? match?.[3] ?? "";
+}
+
+function parseEmbeddedImage(token) {
+  if (token.startsWith("![")) {
+    const match = token.match(
+      /^!\[([^\]]*)\]\(\s*<?(https?:\/\/[^)\s>]+)>?(?:\s+(?:"[^"]*"|'[^']*'))?\s*\)$/i,
+    );
+    if (!match) return null;
+    const url = safeExternalUrl(match[2]);
+    return url ? { url, alt: cleanDisplay(match[1]), width: "", height: "" } : null;
+  }
+
+  const url = safeExternalUrl(htmlAttribute(token, "src"));
+  if (!url) return null;
+  const width = htmlAttribute(token, "width");
+  const height = htmlAttribute(token, "height");
+  return {
+    url,
+    alt: cleanDisplay(htmlAttribute(token, "alt")),
+    width: /^\d+$/.test(width) ? width : "",
+    height: /^\d+$/.test(height) ? height : "",
+  };
+}
+
+function renderEmbeddedImage(image) {
+  const alt = image.alt || "Attached image";
+  const dimensions = [
+    image.width ? ` width="${escapeHtml(image.width)}"` : "",
+    image.height ? ` height="${escapeHtml(image.height)}"` : "",
+  ].join("");
+  return `<figure class="embedded-image">
+    <a href="${escapeHtml(image.url)}" target="_blank" rel="noreferrer" aria-label="Open ${escapeHtml(alt)}">
+      <img src="${escapeHtml(image.url)}" alt="${escapeHtml(alt)}"${dimensions} loading="lazy" decoding="async">
+    </a>
+  </figure>`;
+}
+
+function renderEmbeddedContent(value, renderText) {
+  const source = cleanDisplay(value);
+  const chunks = [];
+  let cursor = 0;
+  EMBEDDED_IMAGE_PATTERN.lastIndex = 0;
+  for (const match of source.matchAll(EMBEDDED_IMAGE_PATTERN)) {
+    if (match.index > cursor) chunks.push(renderText(source.slice(cursor, match.index)));
+    const image = parseEmbeddedImage(match[0]);
+    chunks.push(image ? renderEmbeddedImage(image) : renderText(match[0]));
+    cursor = match.index + match[0].length;
+  }
+  if (cursor < source.length) chunks.push(renderText(source.slice(cursor)));
+  return chunks.filter(Boolean).join("");
+}
+
 function textBlock(value, empty = "Not provided") {
   const text = cleanDisplay(value);
   if (!text) return `<span class="empty-value">${escapeHtml(empty)}</span>`;
-  return `<p class="copy-block">${escapeHtml(text).replace(/\n/g, "<br>")}</p>`;
+  return renderEmbeddedContent(text, (chunk) => {
+    const copy = cleanDisplay(chunk);
+    return copy ? `<p class="copy-block">${escapeHtml(copy).replace(/\n/g, "<br>")}</p>` : "";
+  });
 }
 
 function externalLink(url, label = "Open source") {
@@ -71,6 +133,7 @@ function renderProposal(model, tree) {
   const issue = model.issue;
   const parsed = issue?.parsed ?? {};
   const parent = tree.byId.get(model.parent_id);
+  const preliminaryResults = parsed.preliminaryResults || parsed.existingResults;
 
   return `
     ${section("", facts([
@@ -80,7 +143,7 @@ function renderProposal(model, tree) {
     ]), "model-relation")}
     ${section("Motivations", textBlock(parsed.motivations))}
     ${section("Proposed Architecture", textBlock(parsed.proposedArchitecture))}
-    ${section("Existing Results", textBlock(parsed.existingResults))}
+    ${cleanDisplay(preliminaryResults) ? section("Preliminary results (if any)", textBlock(preliminaryResults)) : ""}
     ${section("Experiments Plan", textBlock(parsed.experimentsPlan))}
   `;
 }
@@ -109,13 +172,15 @@ function renderCheckboxes(items) {
 }
 
 function renderSectionTreeContent(value) {
-  const lines = cleanDisplay(value).split(/\n+/).map((line) => line.trim()).filter(Boolean);
-  if (!lines.length) return "";
-  return `<div class="section-tree-copy">${lines.map((line) => {
-    const labeled = line.match(/^\*{1,2}([^*]+?):\*{1,2}\s*(.*)$/);
-    if (!labeled) return `<p>${escapeHtml(line)}</p>`;
-    return `<p><strong>${escapeHtml(labeled[1])}:</strong>${labeled[2] ? ` ${escapeHtml(labeled[2])}` : ""}</p>`;
-  }).join("")}</div>`;
+  return renderEmbeddedContent(value, (chunk) => {
+    const lines = cleanDisplay(chunk).split(/\n+/).map((line) => line.trim()).filter(Boolean);
+    if (!lines.length) return "";
+    return `<div class="section-tree-copy">${lines.map((line) => {
+      const labeled = line.match(/^\*{1,2}([^*]+?):\*{1,2}\s*(.*)$/);
+      if (!labeled) return `<p>${escapeHtml(line)}</p>`;
+      return `<p><strong>${escapeHtml(labeled[1])}:</strong>${labeled[2] ? ` ${escapeHtml(labeled[2])}` : ""}</p>`;
+    }).join("")}</div>`;
+  });
 }
 
 function renderSectionTreeNodes(nodes, depth = 0) {
@@ -229,6 +294,40 @@ function renderDonePullRequest(model) {
   const mergedPullRequest = model.pullRequests.find((pullRequest) => pullRequest.merged === true);
   if (!mergedPullRequest) return "";
 
+  const branchUrl = (reference) => {
+    const repo = cleanDisplay(reference?.repo);
+    const branch = cleanDisplay(reference?.branch);
+    if (!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repo) || !branch) return "";
+    const encodedBranch = branch.split("/").map(encodeURIComponent).join("/");
+    return safeExternalUrl(`https://github.com/${repo}/tree/${encodedBranch}`);
+  };
+  const mergeRefLabel = (reference, fallbackOwner = "unknown") => {
+    const owner = cleanDisplay(reference?.repo).split("/")[0] || fallbackOwner;
+    const branch = cleanDisplay(reference?.branch) || "unknown";
+    return `${owner}-${branch}`;
+  };
+  const mergeSource = mergeRefLabel(
+    mergedPullRequest.head ?? {
+      repo: mergedPullRequest.headRepo,
+      branch: mergedPullRequest.headBranch,
+    },
+    mergedPullRequest.author || "unknown",
+  );
+  const mergeTarget = mergeRefLabel(
+    mergedPullRequest.base ?? {
+      repo: mergedPullRequest.baseRepo,
+      branch: mergedPullRequest.baseBranch,
+    },
+  );
+  const mergeTargetReference = mergedPullRequest.base ?? {
+    repo: mergedPullRequest.baseRepo,
+    branch: mergedPullRequest.baseBranch,
+  };
+  const mergeTargetUrl = branchUrl(mergeTargetReference);
+  const mergeTargetContent = mergeTargetUrl
+    ? `<a class="done-target-branch-link" href="${escapeHtml(mergeTargetUrl)}" target="_blank" rel="noreferrer" aria-label="Open target branch ${escapeHtml(mergeTarget)}">${escapeHtml(mergeTarget)}<span aria-hidden="true">↗</span></a>`
+    : escapeHtml(mergeTarget);
+
   const links = archiveLinkEntries(
     mergedPullRequest.parsed?.archive ?? mergedPullRequest.parsed?.reportLinks,
   )
@@ -243,7 +342,10 @@ function renderDonePullRequest(model) {
   return `
     <details class="done-pr-panel" open>
       <summary class="done-pr-header">
-        <strong>The model is merged</strong>
+        <span class="done-pr-copy">
+          <strong>This idea is verified</strong>
+          <small>merge from ${escapeHtml(mergeSource)} into ${mergeTargetContent}</small>
+        </span>
         <span class="done-pr-chevron" aria-hidden="true"></span>
       </summary>
       ${links ? `<div class="done-pr-list">${links}</div>` : ""}
@@ -313,7 +415,7 @@ export function renderModelDetail(model, tree, requestedTab = "", overviewExpand
       <section class="pull-request-panel">
         <button class="pull-request-toggle" type="button" data-detail-tab="${escapeHtml(pullRequestTab.id)}" aria-expanded="${pullRequestTab.id === activeTab}" aria-controls="pr-content-${escapeHtml(pullRequestTab.number)}">
           <span class="pull-request-copy">
-            <strong>Implementation</strong>
+            <strong>Progress</strong>
           </span>
           <span class="pull-request-actions">
             ${pullRequestTab.lifecycleStatus ? `<em class="pr-lifecycle-${escapeHtml(pullRequestTab.lifecycleStatus)}">${escapeHtml(pullRequestTab.lifecycleStatusLabel)}</em>` : ""}
