@@ -10,7 +10,7 @@ import {
   parsePullRequest,
 } from "./github-template-test-fetcher-v2.mjs";
 
-const DEFAULT_OWNER = "JT-Ushio";
+const DEFAULT_OWNER = "scv11";
 const DEFAULT_REPO = "template-test";
 
 export function omitProposalType(value) {

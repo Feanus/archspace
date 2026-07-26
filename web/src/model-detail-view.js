@@ -1,4 +1,15 @@
-import { modelSubtitle, modelTitle } from "./model-data-adapter.js";
+import {
+  lifecycleStatusFromLabels,
+  modelSubtitle,
+  modelTitle,
+} from "./model-data-adapter.js";
+
+const LIFECYCLE_STATUS_LABELS = Object.freeze({
+  "under-review": "Under Review",
+  "in-progress": "In Progress",
+  declined: "Declined",
+  done: "Done",
+});
 
 function escapeHtml(value) {
   return String(value ?? "").replace(/[&<>"']/g, (character) => ({
@@ -29,35 +40,23 @@ function safeExternalUrl(value) {
   }
 }
 
-function textBlock(value, empty = "未填写") {
+function textBlock(value, empty = "Not provided") {
   const text = cleanDisplay(value);
   if (!text) return `<span class="empty-value">${escapeHtml(empty)}</span>`;
   return `<p class="copy-block">${escapeHtml(text).replace(/\n/g, "<br>")}</p>`;
 }
 
-function externalLink(url, label = "打开来源") {
+function externalLink(url, label = "Open source") {
   const safe = safeExternalUrl(url);
   return safe
     ? `<a class="source-link" href="${escapeHtml(safe)}" target="_blank" rel="noreferrer">${escapeHtml(label)}</a>`
     : "";
 }
 
-function urlsFromText(value) {
-  const links = [];
-  const seen = new Set();
-  for (const match of String(value ?? "").matchAll(/https?:\/\/[^\s)\]]+/g)) {
-    const safe = safeExternalUrl(match[0]);
-    if (safe && !seen.has(safe)) {
-      seen.add(safe);
-      links.push(safe);
-    }
-  }
-  return links;
-}
-
 function section(title, content, className = "") {
   if (!content) return "";
-  return `<section class="detail-section ${className}"><h3>${escapeHtml(title)}</h3><div>${content}</div></section>`;
+  const heading = title ? `<h3>${escapeHtml(title)}</h3>` : "";
+  return `<section class="detail-section ${className}">${heading}<div>${content}</div></section>`;
 }
 
 function facts(entries) {
@@ -68,57 +67,21 @@ function facts(entries) {
   return rows ? `<dl class="fact-list">${rows}</dl>` : "";
 }
 
-function labeledBlocks(entries) {
-  return entries
-    .filter(([, value]) => cleanDisplay(value))
-    .map(([label, value]) => `<div class="labeled-copy"><span>${escapeHtml(label)}</span>${textBlock(value)}</div>`)
-    .join("");
-}
-
-function evidenceBlock(evidence) {
-  const entries = [
-    ["论文或技术报告", evidence?.papers],
-    ["相关实现", evidence?.implementations],
-    ["实验依据", evidence?.experimentalEvidence],
-  ].filter(([, value]) => cleanDisplay(value));
-  if (!entries.length) return "";
-  return entries.map(([label, value]) => {
-    const links = urlsFromText(value)
-      .map((url) => externalLink(url, new URL(url).hostname))
-      .join("");
-    return `<div class="labeled-copy"><span>${escapeHtml(label)}</span>${textBlock(value)}${links ? `<div class="source-links">${links}</div>` : ""}</div>`;
-  }).join("");
-}
-
-function relatedWorkBlock(relatedWork) {
-  if (!relatedWork) return "";
-  const links = (Array.isArray(relatedWork.references) ? relatedWork.references : [])
-    .map((reference) => externalLink(reference?.url, reference?.label || "打开来源"))
-    .filter(Boolean)
-    .join("");
-  return [
-    textBlock(relatedWork.raw, ""),
-    links ? `<div class="source-links">${links}</div>` : "",
-  ].filter(Boolean).join("");
-}
-
 function renderProposal(model, tree) {
   const issue = model.issue;
   const parsed = issue?.parsed ?? {};
   const parent = tree.byId.get(model.parent_id);
-  const issueLink = externalLink(issue?.url, `打开 Issue #${issue?.number}`);
 
   return `
-    ${section("模型关系", facts([
-      ["模型节点", modelTitle(model)],
-      ["Parent", model.parentResolution === "root" ? "根节点" : parent ? modelTitle(parent) : "未解析"],
+    ${section("", facts([
+      ["Architecture Name", parsed.architectureName || parsed.architectureId || "Not provided"],
+      ["Parent Architecture", model.parentResolution === "root" ? "Root node" : parent ? modelTitle(parent) : "Unresolved"],
       ["Parent issue", model.parentIssueRaw || "None"],
-      ["Architecture Name", parsed.architectureName || parsed.architectureId || "未填写"],
-    ]) + issueLink, "model-relation")}
+    ]), "model-relation")}
     ${section("Motivations", textBlock(parsed.motivations))}
     ${section("Proposed Architecture", textBlock(parsed.proposedArchitecture))}
+    ${section("Existing Results", textBlock(parsed.existingResults))}
     ${section("Experiments Plan", textBlock(parsed.experimentsPlan))}
-    ${section("Related work", relatedWorkBlock(parsed.relatedWork))}
   `;
 }
 
@@ -145,17 +108,80 @@ function renderCheckboxes(items) {
   return `<ul class="check-list">${items.map((item) => `<li class="${item.checked ? "is-checked" : ""}"><span aria-hidden="true">${item.checked ? "✓" : "○"}</span>${escapeHtml(item.label)}</li>`).join("")}</ul>`;
 }
 
-function renderReportLink(reportLinks) {
-  const reportLink = reportLinks?.reportLink;
-  const url = safeExternalUrl(reportLink?.url);
-  return url
-    ? `<div class="source-links">${externalLink(url, "Report")}</div>`
-    : "";
+function renderSectionTreeContent(value) {
+  const lines = cleanDisplay(value).split(/\n+/).map((line) => line.trim()).filter(Boolean);
+  if (!lines.length) return "";
+  return `<div class="section-tree-copy">${lines.map((line) => {
+    const labeled = line.match(/^\*{1,2}([^*]+?):\*{1,2}\s*(.*)$/);
+    if (!labeled) return `<p>${escapeHtml(line)}</p>`;
+    return `<p><strong>${escapeHtml(labeled[1])}:</strong>${labeled[2] ? ` ${escapeHtml(labeled[2])}` : ""}</p>`;
+  }).join("")}</div>`;
+}
+
+function renderSectionTreeNodes(nodes, depth = 0) {
+  if (!Array.isArray(nodes)) return "";
+  return nodes.map((node) => {
+    const title = cleanDisplay(node?.title);
+    const content = cleanDisplay(node?.content);
+    const children = renderSectionTreeNodes(node?.children, depth + 1);
+    if (!title && !content && !children) return "";
+    const headingLevel = Math.min(6, 4 + depth);
+    return `
+      <section class="section-tree-node depth-${Math.min(depth + 1, 3)}">
+        ${title ? `<h${headingLevel}>${escapeHtml(title)}</h${headingLevel}>` : ""}
+        ${content ? renderSectionTreeContent(content) : ""}
+        ${children ? `<div class="section-tree-children">${children}</div>` : ""}
+      </section>
+    `;
+  }).join("");
+}
+
+function renderSectionTree(summary) {
+  if (typeof summary === "string") return textBlock(summary);
+  if (!summary || typeof summary !== "object") return "";
+  const intro = cleanDisplay(summary.intro);
+  const sections = renderSectionTreeNodes(summary.sections);
+  if (!intro && !sections) return "";
+  return `<div class="section-tree">
+    ${intro ? `<div class="section-tree-intro">${textBlock(intro)}</div>` : ""}
+    ${sections}
+  </div>`;
+}
+
+function archiveLinkEntries(archive) {
+  const fields = Array.isArray(archive)
+    ? archive
+    : Object.entries(archive || {}).map(([key, value]) => ({
+      key,
+      label: key === "reportLink" ? "Report Link" : key,
+      value,
+    }));
+  return fields.map((field) => {
+    const value = field?.value ?? field;
+    const url = safeExternalUrl(typeof value === "string" ? value : value?.url);
+    if (!url) return null;
+    const label = cleanDisplay(field.label)
+      .replace(/\s+Link$/i, "")
+      .replace(/\s*\([^)]*\)\s*$/, "") || "Open";
+    return { label, url };
+  }).filter(Boolean);
+}
+
+function renderArchiveLinks(archive) {
+  const links = archiveLinkEntries(archive)
+    .map(({ label, url }) => externalLink(url, label))
+    .join("");
+  return links ? `<div class="source-links">${links}</div>` : "";
 }
 
 function renderPullRequest(pullRequest) {
   const parsed = pullRequest?.parsed ?? {};
-  const basic = parsed.basicInformation ?? {};
+  const metadata = parsed.metadata ?? {};
+  const legacyBasic = parsed.basicInformation ?? {};
+  const architectureProposal = parsed.architectureProposalIssue ?? legacyBasic.proposalIssue;
+  const archive = parsed.archive ?? parsed.reportLinks;
+  const implementationDetails = parsed.implementationDetails ?? parsed.implementationSummary;
+  const experimentalValidation = parsed.experimentalValidation ?? parsed.experimentsSummary;
   const base = pullRequest.base
     ? `${pullRequest.base.repo || ""}:${pullRequest.base.branch || ""}`
     : `${pullRequest.baseRepo || ""}:${pullRequest.baseBranch || ""}`;
@@ -167,100 +193,140 @@ function renderPullRequest(pullRequest) {
     <section class="pr-summary">
       <div>
         <span class="pr-state pr-state-${escapeHtml(pullRequest.state)}">${escapeHtml(pullRequest.merged ? "merged" : pullRequest.state)}</span>
-        <strong>${escapeHtml(parsed.templateTitle || parsed.title || pullRequest.title)}</strong>
+        <strong>${escapeHtml(metadata.title || parsed.templateTitle || parsed.title || pullRequest.title)}</strong>
         <small>PR #${escapeHtml(pullRequest.number)} · ${escapeHtml(pullRequest.author || "unknown")}</small>
       </div>
-      ${externalLink(pullRequest.url, "打开 Pull Request")}
+      ${externalLink(pullRequest.url, "Open Pull Request")}
     </section>
-    ${section("关联与进度", facts([
-      ["Architecture Name", basic.architectureName],
-      ["Proposal Issue", basic.proposalIssue?.label],
+    ${section("", facts([
+      ["Architecture Name", metadata.architectureName || legacyBasic.architectureName],
+      ["About", metadata.about],
+      ["Architecture Proposal", architectureProposal?.label],
       ["Base", base],
       ["Head", head],
-    ]))}
-    ${section("Report Link", renderReportLink(parsed.reportLinks))}
-    ${section("Implementation summary", textBlock(parsed.implementationSummary))}
-    ${section("Experiments summary", textBlock(parsed.experimentsSummary))}
-    ${section("Experiments outcome", renderCheckboxes(parsed.experimentsOutcome))}
-    ${section("Reproduction status", renderCheckboxes(parsed.reproductionStatus))}
-    ${section("Conclusion", textBlock(parsed.conclusion))}
-    ${section("Merge checklist", renderCheckboxes(parsed.mergeChecklist))}
+    ]), "pr-association")}
+    ${section("Implementation Details", textBlock(implementationDetails))}
+    ${section("Experimental Validation", renderSectionTree(experimentalValidation))}
+    ${section("Archive", renderArchiveLinks(archive))}
+    ${section("Reviewer Assessment", textBlock(parsed.reviewerAssessment))}
+    ${section("Merge Checklist", renderCheckboxes(parsed.mergeChecklist))}
   `;
 }
 
-function tabsForModel(model) {
-  if (model.nodeType === "model") {
-    return [
-      {
-        id: "proposal",
-        label: cleanDisplay(model.issue?.parsed?.architectureName) || modelTitle(model),
-      },
-      ...model.pullRequests.map((pullRequest) => ({
-        id: `pr-${pullRequest.number}`,
-        label: cleanDisplay(pullRequest.parsed?.basicInformation?.architectureName)
-          || cleanDisplay(pullRequest.title)
-          || `PR #${pullRequest.number}`,
-      })),
-    ];
-  }
-  if (model.nodeType === "repository") {
-    return [
-      { id: "overview", label: "快照概览" },
-      ...model.pullRequests.map((pullRequest) => ({ id: `pr-${pullRequest.number}`, label: `未关联 PR #${pullRequest.number}` })),
-    ];
-  }
-  return [{ id: "overview", label: "外部父 Issue" }];
+function pullRequestSummary(model) {
+  const pullRequest = model.pullRequests[0];
+  if (!pullRequest) return null;
+  const lifecycleStatus = lifecycleStatusFromLabels(pullRequest.labels);
+  return {
+    id: `pr-${pullRequest.number}`,
+    number: pullRequest.number,
+    lifecycleStatus,
+    lifecycleStatusLabel: LIFECYCLE_STATUS_LABELS[lifecycleStatus] || "",
+  };
+}
+
+function renderDonePullRequest(model) {
+  const mergedPullRequest = model.pullRequests.find((pullRequest) => pullRequest.merged === true);
+  if (!mergedPullRequest) return "";
+
+  const links = archiveLinkEntries(
+    mergedPullRequest.parsed?.archive ?? mergedPullRequest.parsed?.reportLinks,
+  )
+    .map(({ label, url }) => `
+      <a class="done-report-link" href="${escapeHtml(url)}" target="_blank" rel="noreferrer">
+        <span>${escapeHtml(label)}</span>
+        <i aria-hidden="true">↗</i>
+      </a>
+    `)
+    .join("");
+
+  return `
+    <details class="done-pr-panel" open>
+      <summary class="done-pr-header">
+        <strong>The model is merged</strong>
+        <span class="done-pr-chevron" aria-hidden="true"></span>
+      </summary>
+      ${links ? `<div class="done-pr-list">${links}</div>` : ""}
+    </details>
+  `;
 }
 
 function renderOverview(model, tree) {
   if (model.nodeType === "parent_issue") {
     const childModels = (tree.childrenById.get(model.id) ?? []).filter((node) => node.nodeType === "model");
     return `
-      ${section("外部父 Issue", facts([
+      ${section("External parent Issue", facts([
         ["Issue", `#${model.parentIssueNumber}`],
-        ["引用模型数", childModels.length],
-        ["说明", model.summary],
-      ]) + externalLink(model.parentIssue?.url, `打开 Issue #${model.parentIssueNumber}`))}
-      ${section("直接派生模型", `<ul class="model-link-list">${childModels.map((node) => `<li><strong>${escapeHtml(modelTitle(node))}</strong><span>Issue #${node.issueNumber}</span></li>`).join("")}</ul>`)}
+        ["Referenced models", childModels.length],
+        ["Description", model.summary],
+      ]) + externalLink(model.parentIssue?.url, `Open Issue #${model.parentIssueNumber}`))}
+      ${section("Direct descendant models", `<ul class="model-link-list">${childModels.map((node) => `<li><strong>${escapeHtml(modelTitle(node))}</strong><span>Issue #${node.issueNumber}</span></li>`).join("")}</ul>`)}
     `;
   }
 
   return `
-    ${section("离线数据源", facts([
+    ${section("Offline data source", facts([
       ["Repository", tree.source?.repo],
       ["Branch", tree.source?.defaultBranch],
       ["Fetched at", tree.source?.fetchedAt],
-      ["模型 Issue", tree.stats.models],
+      ["Model Issues", tree.stats.models],
       ["Pull Requests", tree.stats.pullRequests],
-      ["已关联 PR", tree.stats.linkedPullRequests],
-      ["外部父 Issue", tree.stats.externalParentIssues],
+      ["Linked Pull Requests", tree.stats.linkedPullRequests],
+      ["External parent Issues", tree.stats.externalParentIssues],
     ]))}
-    ${section("关系规则", textBlock("Issue 生成模型节点；parentIssue 为空时作为谱系根节点，引用快照内 Issue 时连接对应父模型，引用快照外 Issue 时连接共享的外部父 Issue 占位节点。PR 按 Basic information 中的 Proposal Issue 关联到模型。"))}
-    ${tree.unmatchedPullRequests.length ? section("未关联 Pull Requests", textBlock("这些 PR 指向的 Proposal Issue 不在当前离线快照中，可通过上方选项卡查看。")) : ""}
+    ${section("Relationship rules", textBlock("Each Issue creates a model node. An empty parentIssue marks the lineage root; an Issue in the snapshot connects to its parent model, while an Issue outside the snapshot connects to a shared external-parent placeholder. Pull Requests are associated through Architecture Proposal (issue #)."))}
+    ${tree.unmatchedPullRequests.length ? section("Unmatched Pull Requests", textBlock("These Pull Requests reference Proposal Issues that are not present in the current offline snapshot.")) : ""}
   `;
 }
 
-export function renderModelDetail(model, tree, requestedTab = "") {
-  const tabs = tabsForModel(model);
-  const activeTab = tabs.some((tab) => tab.id === requestedTab) ? requestedTab : tabs[0].id;
-  const pullRequest = activeTab.startsWith("pr-")
-    ? model.pullRequests.find((item) => `pr-${item.number}` === activeTab)
-    : null;
-  const content = pullRequest
-    ? renderPullRequest(pullRequest)
-    : activeTab === "proposal"
-      ? renderProposal(model, tree)
-      : renderOverview(model, tree);
+export function renderModelDetail(model, tree, requestedTab = "", overviewExpanded = false) {
+  const pullRequestTab = model.nodeType === "model" ? pullRequestSummary(model) : null;
+  const activeTab = pullRequestTab?.id === requestedTab ? requestedTab : "";
+  const pullRequest = model.nodeType === "model" ? model.pullRequests[0] : null;
+  const pullRequestExpanded = Boolean(pullRequest && pullRequestTab?.id === activeTab);
+  const overview = model.nodeType === "model"
+    ? renderProposal(model, tree)
+    : renderOverview(model, tree);
+  const issueLink = model.nodeType === "model"
+    ? externalLink(model.issue?.url, "Open Issue")
+    : "";
 
   return `
     <div class="detail-header model-detail-header">
       <div class="detail-eyebrow"><span class="status-dot"></span>${escapeHtml(model.state)}<span class="detail-category">${escapeHtml(model.category)}</span></div>
       <h1>${escapeHtml(modelTitle(model))}</h1>
-      <code>${escapeHtml(modelSubtitle(model))}</code>
+      <div class="detail-header-meta">
+        <code>${escapeHtml(modelSubtitle(model))}</code>
+        ${issueLink}
+      </div>
     </div>
-    <div class="model-tabs" role="tablist" aria-label="${escapeHtml(modelTitle(model))} 信息">
-      ${tabs.map((tab) => `<button type="button" role="tab" data-detail-tab="${escapeHtml(tab.id)}" aria-selected="${tab.id === activeTab}">${escapeHtml(tab.label)}</button>`).join("")}
-    </div>
-    <div class="model-tab-panel" role="tabpanel">${content}</div>
+    <section class="overview-panel">
+      <button class="overview-toggle" type="button" data-overview-toggle aria-expanded="${overviewExpanded}" aria-controls="overview-content">
+        <span>Proposal</span>
+        <span class="overview-chevron" aria-hidden="true">↓</span>
+      </button>
+      <div id="overview-content" class="overview-content${overviewExpanded ? " is-expanded" : ""}" aria-hidden="${!overviewExpanded}">
+        <div class="collapsible-inner">${overview}</div>
+      </div>
+    </section>
+    ${model.nodeType === "model" && pullRequestTab ? `
+      <section class="pull-request-panel">
+        <button class="pull-request-toggle" type="button" data-detail-tab="${escapeHtml(pullRequestTab.id)}" aria-expanded="${pullRequestTab.id === activeTab}" aria-controls="pr-content-${escapeHtml(pullRequestTab.number)}">
+          <span class="pull-request-copy">
+            <strong>Implementation</strong>
+          </span>
+          <span class="pull-request-actions">
+            ${pullRequestTab.lifecycleStatus ? `<em class="pr-lifecycle-${escapeHtml(pullRequestTab.lifecycleStatus)}">${escapeHtml(pullRequestTab.lifecycleStatusLabel)}</em>` : ""}
+            <i class="pull-request-chevron" aria-hidden="true">↓</i>
+          </span>
+        </button>
+        ${pullRequest ? `
+          <div id="pr-content-${escapeHtml(pullRequest.number)}" class="model-tab-panel${pullRequestExpanded ? " is-expanded" : ""}" role="tabpanel" aria-hidden="${!pullRequestExpanded}">
+            <div class="collapsible-inner">${renderPullRequest(pullRequest)}</div>
+          </div>
+        ` : ""}
+      </section>
+    ` : ""}
+    ${model.nodeType === "model" ? renderDonePullRequest(model) : ""}
   `;
 }

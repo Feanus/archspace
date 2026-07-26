@@ -11,17 +11,22 @@ commit、Python symbol、实验和论文只作为详情或 evidence。
 
 ## 当前 Web 数据模式
 
-当前页面使用 `data/template-test-data.json` 的离线 GitHub 快照展示模型谱系。Architecture
-Proposal Issue 生成模型节点；`parentIssue: null` 表示根节点，Issue 引用连接父模型或
+当前页面使用 `data/template-test-data.json` 中来自 `scv11/template-test` 的离线 GitHub
+快照展示模型谱系。Architecture Proposal Issue 生成模型节点；`parentIssue: null`
+表示根节点，Issue 引用连接父模型或
 外部父 Issue 占位节点；关联 Pull Request
-在模型详情选项卡中展示。页面运行时不调用 GitHub API。
+在模型详情的 Implementation 折叠栏中展示。仅当 PR 的 `merged` 为 `true` 时显示默认展开的
+`The model is merged` 区域，其中包含该 PR 的全部 Archive 链接。页面运行时不调用 GitHub API。
+
+抓取器分别使用 `architecture proposal` 过滤 Issue、使用
+`architecure implement` 过滤 Pull Request。PR 的 `Archive` 保存为有序的可扩展
+字段数组，PR body 中新增的归档链接字段也会保留。`Experimental Validation` 会按 Markdown
+子标题解析为可变长度的层级树，前端按标题层级展示，不直接输出 `####` 等 Markdown 标记。
 
 更新离线数据：
 
 ```bash
-node web/scripts/build-template-test-data.mjs \
-  ../outputs/template-test-data.json \
-  data/template-test-data.json
+bash web/scripts/reload_data.bash
 ```
 
 未来的新节点采用 Git review 驱动：贡献者提交独立 Feature 文件，CI 验证后由 Pull

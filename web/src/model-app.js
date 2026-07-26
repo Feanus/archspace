@@ -18,12 +18,15 @@ const CATEGORY_META = Object.freeze({
   model: { label: "Model proposal", color: "#fb923c" },
 });
 const STATUS_META = Object.freeze({
+  "under-review": { label: "Under review", key: "under-review" },
+  "in-progress": { label: "In progress", key: "in-progress" },
+  declined: { label: "Declined", key: "declined" },
+  done: { label: "Done", key: "done" },
   open: { label: "Open", key: "open" },
   closed: { label: "Closed", key: "closed" },
   reference: { label: "Reference", key: "reference" },
   offline: { label: "Offline", key: "offline" },
 });
-
 const elements = {
   app: document.querySelector("#app-shell"),
   svg: document.querySelector("#tree-canvas"),
@@ -52,6 +55,7 @@ const state = {
   enabledCategories: new Set(),
   selectedId: null,
   activeDetailTab: "",
+  overviewExpanded: false,
   drawerOpen: false,
   scale: 1,
   translateX: 0,
@@ -70,15 +74,14 @@ function statusFor(model) {
   return STATUS_META[model?.state] ?? { label: model?.state || "Unknown", key: "unknown" };
 }
 
-function labelsForModel(model, fallbackLabel) {
-  const labels = Array.isArray(model.issue?.labels)
-    ? model.issue.labels.map((label) => String(label).trim()).filter(Boolean)
-    : [];
-  return labels.length ? labels : [fallbackLabel];
-}
-
 function compactBadgeLabel(label, limit = 22) {
   return label.length > limit ? `${label.slice(0, limit - 1)}…` : label;
+}
+
+function modelRelationLabel(model) {
+  if (model.parentResolution === "root") return "Root architecture";
+  const parent = state.tree.byId.get(model.parent_id);
+  return parent ? `Parent: ${modelTitle(parent)}` : "Parent unresolved";
 }
 
 function modelFooter(model) {
@@ -89,11 +92,26 @@ function modelFooter(model) {
     const count = (state.tree.childrenById.get(model.id) ?? []).filter((node) => node.nodeType === "model").length;
     return `${count} direct model${count === 1 ? "" : "s"}`;
   }
-  const pullRequestCount = model.pullRequests.length;
-  if (model.parentResolution === "root") {
-    return `${pullRequestCount} PR${pullRequestCount === 1 ? "" : "s"} · lineage root`;
+  const pullRequest = model.pullRequests[0];
+  if (pullRequest?.merged) {
+    const mergedAt = pullRequest.mergedAt ? new Date(pullRequest.mergedAt) : null;
+    const mergedDate = !mergedAt || Number.isNaN(mergedAt.getTime())
+      ? ""
+      : new Intl.DateTimeFormat("en", {
+        month: "short",
+        day: "numeric",
+        timeZone: "UTC",
+      }).format(mergedAt);
+    return mergedDate ? `Merged ${mergedDate}` : "Merged implementation";
   }
-  return `${pullRequestCount} PR${pullRequestCount === 1 ? "" : "s"} · parent #${model.parentIssueNumber || "unresolved"}`;
+  if (pullRequest) {
+    return `${pullRequest.draft ? "Draft " : ""}PR #${pullRequest.number}`;
+  }
+  if (model.lifecycleStatus === "under-review") return "Awaiting decision";
+  if (model.lifecycleStatus === "in-progress") return "Implementation pending";
+  if (model.lifecycleStatus === "declined") return "Not planned";
+  if (model.lifecycleStatus === "done") return "Implementation complete";
+  return "Proposal only";
 }
 
 function curveBetween(source, target) {
@@ -133,6 +151,7 @@ function renderTree() {
     const category = model.category;
     const categoryMeta = CATEGORY_META[category] ?? CATEGORY_META.model;
     const status = statusFor(model);
+    const issueStatus = STATUS_META[model.issueState] ?? { label: model.issueState || "Unknown", key: "unknown" };
     const point = state.layout.positions.get(id);
     const children = state.tree.childrenById.get(id) ?? [];
     const dimmed = emphasized.size && !emphasized.has(id);
@@ -142,11 +161,13 @@ function renderTree() {
       transform: `translate(${point.x} ${point.y})`,
       tabindex: "0",
       role: "treeitem",
-      "aria-label": `${modelTitle(model)}，${status.label}`,
+      "aria-label": `${modelTitle(model)}, ${status.label}, ${issueStatus.label}`,
       "aria-selected": state.selectedId === id ? "true" : "false",
       "aria-expanded": children.length ? String(state.expanded.has(id)) : "false",
       "data-model-id": id,
       "data-category": category,
+      "data-lifecycle-status": model.lifecycleStatus || "",
+      "data-issue-state": model.issueState || "",
     });
     const card = svgElement("g", { class: "node-card" });
     card.append(svgElement("rect", {
@@ -156,7 +177,7 @@ function renderTree() {
       rx: 8,
     }));
     card.append(svgElement("rect", {
-      class: "category-accent",
+      class: "category-accent lifecycle-accent",
       width: 4,
       height: state.layout.config.nodeHeight,
       rx: 2,
@@ -175,25 +196,19 @@ function renderTree() {
     let footerY = 84;
 
     if (model.nodeType === "model") {
-      const issueLabels = labelsForModel(model, categoryMeta.label);
-      let labelX = 16;
-      for (const [index, rawLabel] of issueLabels.slice(0, 2).entries()) {
-        const suffix = index === 1 && issueLabels.length > 2 ? ` +${issueLabels.length - 2}` : "";
-        const label = compactBadgeLabel(`${rawLabel}${suffix}`);
-        const labelWidth = Math.min(112, 16 + label.length * 4.3);
-        const badge = svgElement("g", {
-          class: "node-badge category-badge issue-label-badge",
-          transform: `translate(${labelX} 44)`,
-        });
-        badge.append(svgElement("rect", { width: labelWidth, height: 15, rx: 7.5 }));
-        const labelText = svgElement("text", { x: 7, y: 10.5 });
-        labelText.textContent = label;
-        badge.append(labelText);
-        card.append(badge);
-        labelX += labelWidth + 6;
-      }
+      const relationLabel = compactBadgeLabel(modelRelationLabel(model), 30);
+      const relationWidth = Math.min(164, 16 + relationLabel.length * 4.3);
+      const relationBadge = svgElement("g", {
+        class: "node-badge category-badge lineage-badge",
+        transform: "translate(16 44)",
+      });
+      relationBadge.append(svgElement("rect", { width: relationWidth, height: 15, rx: 7.5 }));
+      const relationText = svgElement("text", { x: 7, y: 10.5 });
+      relationText.textContent = relationLabel;
+      relationBadge.append(relationText);
+      card.append(relationBadge);
       const labelTitle = svgElement("title");
-      labelTitle.textContent = issueLabels.join(", ");
+      labelTitle.textContent = modelRelationLabel(model);
       card.append(labelTitle);
       statusY = 65;
       footerX = statusX + statusWidth + 10;
@@ -242,7 +257,18 @@ function renderTree() {
 function renderDrawer() {
   if (!state.tree || !state.selectedId) return;
   const model = state.tree.byId.get(state.selectedId);
-  elements.detailContent.innerHTML = renderModelDetail(model, state.tree, state.activeDetailTab);
+  elements.detailContent.innerHTML = renderModelDetail(
+    model,
+    state.tree,
+    state.activeDetailTab,
+    state.overviewExpanded,
+  );
+}
+
+function setDisclosureState(toggle, panel, expanded) {
+  toggle.setAttribute("aria-expanded", String(expanded));
+  panel?.setAttribute("aria-hidden", String(!expanded));
+  panel?.classList.toggle("is-expanded", expanded);
 }
 
 function openDrawer() {
@@ -269,6 +295,7 @@ function selectModel(id, { reveal = false } = {}) {
   if (reveal) for (const ancestor of ancestorIds(state.tree, id)) state.expanded.add(ancestor);
   state.selectedId = id;
   state.activeDetailTab = "";
+  state.overviewExpanded = false;
   renderDrawer();
   openDrawer();
   renderTree();
@@ -340,7 +367,7 @@ function renderSearchResults() {
   elements.searchResults.replaceChildren();
   if (!results.length) {
     const empty = document.createElement("p");
-    empty.textContent = "没有匹配的模型、Issue 或 PR";
+    empty.textContent = "No matching models, Issues, or Pull Requests";
     elements.searchResults.append(empty);
   }
   for (const model of results) {
@@ -391,7 +418,7 @@ function offlineDataUrl() {
 function showError(error) {
   elements.empty.hidden = false;
   elements.emptyMessage.textContent = error instanceof ModelDataError
-    ? [error.message, ...error.details].join("；")
+    ? [error.message, ...error.details].join("; ")
     : error.message;
   elements.svg.classList.add("is-unavailable");
 }
@@ -409,6 +436,7 @@ async function initialize() {
     );
     state.selectedId = state.tree.rootId;
     state.activeDetailTab = "";
+    state.overviewExpanded = false;
     elements.svg.setAttribute("viewBox", `0 0 ${Math.max(state.layout.width, 1180)} ${Math.max(state.layout.height, 680)}`);
     renderStats();
     renderCategoryFilters();
@@ -529,10 +557,23 @@ elements.categoryFilters.addEventListener("click", (event) => {
   renderTree();
 });
 elements.detailContent.addEventListener("click", (event) => {
+  const overviewToggle = event.target.closest("[data-overview-toggle]");
+  if (overviewToggle) {
+    state.overviewExpanded = !state.overviewExpanded;
+    setDisclosureState(
+      overviewToggle,
+      elements.detailContent.querySelector("#overview-content"),
+      state.overviewExpanded,
+    );
+    return;
+  }
   const tab = event.target.closest("[data-detail-tab]");
   if (!tab) return;
-  state.activeDetailTab = tab.dataset.detailTab;
-  renderDrawer();
+  const expanded = state.activeDetailTab !== tab.dataset.detailTab;
+  state.activeDetailTab = expanded ? tab.dataset.detailTab : "";
+  const panelId = tab.getAttribute("aria-controls");
+  const panel = panelId ? elements.detailContent.querySelector(`#${panelId}`) : null;
+  setDisclosureState(tab, panel, expanded);
 });
 elements.detailClose.addEventListener("click", closeDrawer);
 

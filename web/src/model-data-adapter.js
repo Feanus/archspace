@@ -18,6 +18,24 @@ function cleanText(value) {
     .trim();
 }
 
+const LIFECYCLE_STATUS_ALIASES = Object.freeze({
+  "under review": "under-review",
+  "under-review": "under-review",
+  "in progress": "in-progress",
+  "in-progress": "in-progress",
+  "in-progess": "in-progress",
+  declined: "declined",
+  done: "done",
+});
+
+export function lifecycleStatusFromLabels(labels) {
+  for (const label of asArray(labels)) {
+    const normalized = cleanText(label).toLocaleLowerCase("en-US");
+    if (LIFECYCLE_STATUS_ALIASES[normalized]) return LIFECYCLE_STATUS_ALIASES[normalized];
+  }
+  return "";
+}
+
 function issueModelTitle(issue) {
   return cleanText(issue?.parsed?.architectureName)
     || cleanText(issue?.parsed?.architectureId)
@@ -41,6 +59,8 @@ function parentIssueAnchorId(issueNumber) {
 }
 
 function proposalIssueNumber(pullRequest) {
+  const architectureProposal = Number(pullRequest?.parsed?.architectureProposalIssue?.number);
+  if (Number.isInteger(architectureProposal) && architectureProposal > 0) return architectureProposal;
   const current = Number(pullRequest?.parsed?.basicInformation?.proposalIssue?.number);
   if (Number.isInteger(current) && current > 0) return current;
   const direct = Number(pullRequest?.parsed?.relatedArchitecture?.proposalIssue?.number);
@@ -53,9 +73,9 @@ function modelSearchText(issue, pullRequests) {
     issue: {
       architectureName: issue?.parsed?.architectureName,
       parentIssue: issue?.parsed?.parentIssue,
-      relatedWork: issue?.parsed?.relatedWork,
       motivations: issue?.parsed?.motivations,
       proposedArchitecture: issue?.parsed?.proposedArchitecture,
+      existingResults: issue?.parsed?.existingResults,
       experimentsPlan: issue?.parsed?.experimentsPlan,
     },
     pullRequests: pullRequests.map((pullRequest) => pullRequest.parsed ?? {}),
@@ -87,7 +107,7 @@ function repairCycles(nodes, byId, rootId, warnings) {
     let cursor = node;
     while (cursor.parent_id) {
       if (visited.has(cursor.parent_id)) {
-        warnings.push(`${node.id} 的 parentIssue 形成循环，已挂到离线仓库根节点`);
+        warnings.push(`${node.id} has a parentIssue cycle and was attached to the offline repository root`);
         node.parent_id = rootId;
         break;
       }
@@ -103,11 +123,11 @@ function repairCycles(nodes, byId, rootId, warnings) {
 
 export function normalizeModelGraph(payload) {
   if (!payload || typeof payload !== "object") {
-    throw new ModelDataError("离线 GitHub 数据必须是 JSON 对象");
+    throw new ModelDataError("Offline GitHub data must be a JSON object");
   }
   const issues = asArray(payload.issues);
   const pullRequests = asArray(payload.pullRequests);
-  if (!issues.length) throw new ModelDataError("离线数据中没有 Issue");
+  if (!issues.length) throw new ModelDataError("The offline snapshot contains no Issues");
 
   const issueByNumber = new Map(issues.map((issue) => [Number(issue.number), issue]));
   const pullRequestsByIssue = new Map(issues.map((issue) => [Number(issue.number), []]));
@@ -138,7 +158,7 @@ export function normalizeModelGraph(payload) {
       nodeType: "repository",
       title: sourceRepo,
       title_zh: sourceRepo,
-      summary: "离线 Issue 与 Pull Request 快照",
+      summary: "Offline Issue and Pull Request snapshot",
       parent_id: null,
       category: "repository",
       state: "offline",
@@ -161,8 +181,8 @@ export function normalizeModelGraph(payload) {
       id,
       nodeType: "parent_issue",
       title: `Issue #${parentIssueNumber}`,
-      title_zh: `外部父 Issue #${parentIssueNumber}`,
-      summary: "该父 Issue 不在当前离线快照中，其子模型仍按 parentIssue 关系归组。",
+      title_zh: `External Parent Issue #${parentIssueNumber}`,
+      summary: "This parent Issue is outside the current offline snapshot; its child models remain grouped by parentIssue.",
       parent_id: rootId,
       category: "parent_issue",
       state: "reference",
@@ -182,6 +202,8 @@ export function normalizeModelGraph(payload) {
     const parentIssueNumber = issueReference(parentIssue);
     const parentIssueRaw = cleanText(parentIssue?.raw || parentIssue?.label || parentIssue?.url);
     const pullRequestsForIssue = pullRequestsByIssue.get(issueNumber) ?? [];
+    const issueState = cleanText(issue.state) || "unknown";
+    const lifecycleStatus = lifecycleStatusFromLabels(issue?.labels);
     let parentId = rootId;
     let parentResolution = "root";
 
@@ -206,7 +228,9 @@ export function normalizeModelGraph(payload) {
         || cleanText(issue?.parsed?.motivation?.currentLimitation),
       parent_id: parentId,
       category: parentResolution === "root" ? "root_model" : "model",
-      state: cleanText(issue.state) || "unknown",
+      state: lifecycleStatus || issueState,
+      issueState,
+      lifecycleStatus,
       issue,
       issueNumber,
       parentIssue,
@@ -239,7 +263,7 @@ export function normalizeModelGraph(payload) {
     warnings: Object.freeze(warnings),
     stats: Object.freeze({
       models: modelNodes.length,
-      openIssues: modelNodes.filter((node) => node.state === "open").length,
+      openIssues: modelNodes.filter((node) => node.issueState === "open").length,
       pullRequests: pullRequests.length,
       linkedPullRequests: pullRequests.length - unmatchedPullRequests.length,
       parentLinks: modelNodes.filter((node) => node.parentResolution !== "root").length,
@@ -253,19 +277,19 @@ export async function loadModelGraph(url = "../data/template-test-data.json", fe
   try {
     response = await fetchImpl(url, { headers: { Accept: "application/json" }, cache: "no-store" });
   } catch (error) {
-    throw new ModelDataError(`无法连接离线模型数据: ${error.message}`);
+    throw new ModelDataError(`Could not load offline model data: ${error.message}`);
   }
-  if (!response.ok) throw new ModelDataError(`离线模型数据返回 ${response.status}`);
+  if (!response.ok) throw new ModelDataError(`Offline model data returned ${response.status}`);
   try {
     return normalizeModelGraph(await response.json());
   } catch (error) {
     if (error instanceof ModelDataError) throw error;
-    throw new ModelDataError(`离线模型 JSON 无法解析: ${error.message}`);
+    throw new ModelDataError(`Could not parse offline model JSON: ${error.message}`);
   }
 }
 
 export function modelTitle(model) {
-  return model?.title_zh || model?.title || model?.id || "未命名模型";
+  return model?.title_zh || model?.title || model?.id || "Unnamed model";
 }
 
 export function modelSubtitle(model) {

@@ -2,19 +2,12 @@
 
 import { fileURLToPath } from "node:url";
 
-const DEFAULT_OWNER = "JT-Ushio";
+const DEFAULT_OWNER = "scv11";
 const DEFAULT_REPO = "template-test";
-const DEFAULT_LABEL = "architecture proposal";
+export const DEFAULT_ISSUE_LABEL = "architecture proposal";
+export const DEFAULT_PULL_REQUEST_LABEL = "architecure implement";
 
 export const ISSUE_FIELDS = [
-  {
-    key: "proposalType",
-    templateId: "proposal_type",
-    label: "Proposal type",
-    type: "select",
-    required: true,
-    options: ["Root architecture", "Modification to an existing architecture"],
-  },
   {
     key: "architectureName",
     templateId: "proposal_name",
@@ -30,13 +23,6 @@ export const ISSUE_FIELDS = [
     required: false,
   },
   {
-    key: "relatedWork",
-    templateId: "related_work",
-    label: "Related work",
-    type: "markdownWithLinks",
-    required: false,
-  },
-  {
     key: "motivations",
     templateId: "problem_and_hypothesis",
     label: "Motivations",
@@ -47,6 +33,13 @@ export const ISSUE_FIELDS = [
     key: "proposedArchitecture",
     templateId: "proposed_change",
     label: "Proposed Architecture",
+    type: "markdown",
+    required: true,
+  },
+  {
+    key: "existingResults",
+    templateId: "existing_results",
+    label: "Existing Results",
     type: "markdown",
     required: true,
   },
@@ -90,7 +83,7 @@ export const PR_FIELD_GROUPS = [
     label: "Summaries",
     fields: [
       { key: "implementationSummary", label: "Implementation Summary", type: "markdown" },
-      { key: "experimentsSummary", label: "Experiments Summary", type: "markdown" },
+      { key: "experimentsSummary", label: "Experiments Summary", type: "sectionTree" },
     ],
   },
   {
@@ -113,7 +106,8 @@ export const PR_FIELD_GROUPS = [
 export async function fetchArchitectureProposalData(options = {}) {
   const owner = options.owner || DEFAULT_OWNER;
   const repo = options.repo || DEFAULT_REPO;
-  const requiredLabel = options.label || DEFAULT_LABEL;
+  const issueLabel = options.issueLabel || options.label || DEFAULT_ISSUE_LABEL;
+  const pullRequestLabel = options.pullRequestLabel || DEFAULT_PULL_REQUEST_LABEL;
   const token = options.token || process.env.GITHUB_TOKEN || process.env.GH_TOKEN || "";
   const client = createGitHubClient({ token });
 
@@ -126,7 +120,7 @@ export async function fetchArchitectureProposalData(options = {}) {
     client.getText(
       `/repos/${owner}/${repo}/contents/${issueTemplatePath}?ref=${encodeURIComponent(defaultBranch)}`,
     ),
-    client.getText(
+    client.getOptionalText(
       `/repos/${owner}/${repo}/contents/${pullRequestTemplatePath}?ref=${encodeURIComponent(defaultBranch)}`,
     ),
     client.getAllPages(`/repos/${owner}/${repo}/issues?state=all`),
@@ -134,7 +128,7 @@ export async function fetchArchitectureProposalData(options = {}) {
   ]);
 
   const issues = issueItems
-    .filter((item) => !item.pull_request && hasLabel(item, requiredLabel))
+    .filter((item) => !item.pull_request && hasLabel(item, issueLabel))
     .map((issue) => {
       const parsed = parseArchitectureProposalIssue(issue.body || "", { owner, repo });
       return {
@@ -146,7 +140,7 @@ export async function fetchArchitectureProposalData(options = {}) {
 
   // Filter list results before requesting each PR's details, issue metadata, and reviews.
   const pullRequests = await Promise.all(
-    pullItems.filter((item) => hasLabel(item, requiredLabel)).map(async (pullSummary) => {
+    pullItems.filter((item) => hasLabel(item, pullRequestLabel)).map(async (pullSummary) => {
       const [pull, issueMeta, reviews] = await Promise.all([
         client.getJson(`/repos/${owner}/${repo}/pulls/${pullSummary.number}`),
         client.getJson(`/repos/${owner}/${repo}/issues/${pullSummary.number}`),
@@ -196,7 +190,11 @@ export async function fetchArchitectureProposalData(options = {}) {
     source: {
       repo: `${owner}/${repo}`,
       defaultBranch,
-      labelFilter: requiredLabel,
+      labelFilter: issueLabel,
+      labelFilters: {
+        issues: issueLabel,
+        pullRequests: pullRequestLabel,
+      },
       fetchedAt: new Date().toISOString(),
     },
     templates: {
@@ -224,18 +222,13 @@ export function parseArchitectureProposalIssue(body, context = {}) {
   const sections = parseHeadingBlocks(body);
   const get = (label) => cleanMarkdown(findSection(sections, label)?.content || "");
   const parentIssueRaw = get("Parent issue");
-  const relatedWorkRaw = get("Related work");
 
   return {
-    proposalType: emptyToNull(get("Proposal type")),
     architectureName: emptyToNull(get("Architecture Name")),
     parentIssue: firstLinkOrRef(parentIssueRaw, context),
-    relatedWork: {
-      raw: relatedWorkRaw,
-      references: parseLinksAndRefs(relatedWorkRaw, context),
-    },
     motivations: get("Motivations"),
     proposedArchitecture: get("Proposed Architecture"),
+    existingResults: get("Existing Results"),
     experimentsPlan: get("Experiments Plan"),
   };
 }
@@ -260,7 +253,7 @@ export function parsePullRequest(body, context = {}) {
       benchmarkRun: firstLinkOrText(wandb["Benchmark Run Link"] || "", context),
     },
     implementationSummary: getDirect("Implementation Summary"),
-    experimentsSummary: getDirect("Experiments Summary"),
+    experimentsSummary: parseHierarchicalSection(body, "Experiments Summary"),
     experimentsOutcome: parseCheckboxes(get("Experiments Outcome")),
     reproductionStatus: parseCheckboxes(get("Reproduction Status")),
     conclusion: getDirect("Conclusion"),
@@ -312,6 +305,14 @@ function createGitHubClient({ token }) {
       const response = await request(path, "application/vnd.github.raw");
       return response.text();
     },
+    async getOptionalText(path) {
+      try {
+        return await this.getText(path);
+      } catch (error) {
+        if (/\b404\b/.test(error.message)) return "";
+        throw error;
+      }
+    },
     async getAllPages(path) {
       const all = [];
       for (let page = 1; ; page += 1) {
@@ -342,7 +343,7 @@ function commonIssueMeta(issue) {
   };
 }
 
-function hasLabel(item, requiredLabel) {
+export function hasLabel(item, requiredLabel) {
   const wanted = normalizeLabel(requiredLabel);
   return (item.labels || []).some((label) => {
     const name = typeof label === "string" ? label : label?.name;
@@ -376,7 +377,9 @@ function fillFieldGroups(groups, parsed) {
 }
 
 function parseHeadingBlocks(markdown) {
-  const source = String(markdown || "").replace(/\r\n/g, "\n");
+  const source = String(markdown || "")
+    .replace(/<!--[^]*?-->/g, "")
+    .replace(/\r\n/g, "\n");
   const regex = /^(#{1,6})\s+(.+?)\s*$/gm;
   const matches = [];
   let match;
@@ -406,6 +409,33 @@ function parseHeadingBlocks(markdown) {
       content: source.slice(current.bodyStart, sectionEnd).trim(),
     };
   });
+}
+
+function parseHierarchicalSection(markdown, label) {
+  const root = findSection(parseHeadingBlocks(markdown), label);
+  if (!root) return { intro: null, sections: [] };
+
+  const children = parseHeadingBlocks(root.content);
+  const introEnd = children[0]?.start ?? root.content.length;
+  const intro = emptyToNull(cleanMarkdown(root.content.slice(0, introEnd)));
+  const sections = [];
+  const stack = [];
+
+  for (const child of children) {
+    const level = Math.max(1, child.level - root.level);
+    const node = {
+      title: cleanMarkdown(child.title),
+      level,
+      content: emptyToNull(cleanMarkdown(child.directContent)),
+      children: [],
+    };
+    while (stack.length && stack.at(-1).level >= level) stack.pop();
+    if (stack.length) stack.at(-1).node.children.push(node);
+    else sections.push(node);
+    stack.push({ level, node });
+  }
+
+  return { intro, sections };
 }
 
 function findSection(sections, label) {

@@ -1,20 +1,24 @@
 {
   "source": {
-    "repo": "JT-Ushio/template-test",
+    "repo": "scv11/template-test",
     "defaultBranch": "main",
     "labelFilter": "architecture proposal",
-    "fetchedAt": "2026-07-24T06:02:20.874Z"
+    "labelFilters": {
+      "issues": "architecture proposal",
+      "pullRequests": "architecure implement"
+    },
+    "fetchedAt": "2026-07-26T10:55:29.688Z"
   },
   "templates": {
     "issue": {
       "path": ".github/ISSUE_TEMPLATE/architecture-proposal.yml",
-      "url": "https://github.com/JT-Ushio/template-test/blob/main/.github/ISSUE_TEMPLATE/architecture-proposal.yml",
-      "content": "name: 🏗️ Architecture proposal\ndescription: Propose and validate one change to the LLM architecture.\ntitle: \"[ARCH-PROP] \"\nlabels:\n  - under review\n\nbody:\n  - type: markdown\n    attributes:\n      value: |\n        # Architecture proposal\n\n        Use this form to propose one architecture change. Keep the proposal focused and submit unrelated changes separately.\n\n  # - type: dropdown\n  #   id: proposal_type\n  #   attributes:\n  #     label: Proposal type\n  #     options:\n  #       - Root architecture\n  #       - Modification to an existing architecture\n  #   validations:\n  #     required: true\n\n  - type: input\n    id: proposal_name\n    attributes:\n      label: Architecture Name\n      description: Give the proposed base architecture or modification a short, descriptive name.\n      placeholder: \"Example: OLMo3\"\n    validations:\n      required: true\n\n  - type: input\n    id: base_architecture_issue\n    attributes:\n      label: Parent issue\n      description: For a modification, link the issue that tracks the base architecture. Leave blank for a root architecture.\n      placeholder: \"Example: #123\"\n    validations:\n      required: false\n\n  - type: textarea\n    id: related_work\n    attributes:\n      label: Related work\n      description: Optionally link related issues, pull requests, papers, experiments, or implementations.\n      placeholder: |\n        - #123\n        - [Relevant paper](https://...)\n    validations:\n      required: false\n\n  - type: textarea\n    id: problem_and_hypothesis\n    attributes:\n      label: Motivations\n      description: Describe the current limitation or opportunity, the measurable outcome you expect, and any supporting rationale or evidence.\n      placeholder: Explain the problem and the expected outcome.\n    validations:\n      required: true\n\n  - type: textarea\n    id: proposed_change\n    attributes:\n      label: Proposed Architecture\n      description: Describe what changes from the base architecture, what remains unchanged, and the expected impact on parameters, compute, memory, or latency if known.\n      placeholder: Explain the proposed architecture change.\n    validations:\n      required: true\n\n  - type: textarea\n    id: validation_plan\n    attributes:\n      label: Experiments Plan\n      description: Identify the baseline, evaluation method and metrics, measurable success criteria, and any notable compute or data requirements.\n      placeholder: Explain how the proposal will be evaluated.\n    validations:\n      required: true\n\n  - type: markdown\n    attributes:\n      value: |\n        ---\n\n        Maintainers review the proposal before implementation starts:\n\n        - `under review`: waiting for a maintainer decision\n        - `in-progress`: approved for implementation\n        - `declined`: rejected or deferred; the Issue is closed\n        - `done`: a linked implementation PR was merged; the Issue is closed\n\n        Status labels are mutually exclusive and maintained by repository automation.\n"
+      "url": "https://github.com/scv11/template-test/blob/main/.github/ISSUE_TEMPLATE/architecture-proposal.yml",
+      "content": "name: 🏗️ Architecture proposal\ndescription: Propose and validate one change to the LLM architecture.\ntitle: \"[ARCH-PROP] \"\nlabels:\n  - under review\n\nbody:\n  - type: markdown\n    attributes:\n      value: |\n        # Architecture proposal\n\n        Use this form to propose one architecture change. Keep the proposal focused and submit unrelated changes separately.\n        \n  - type: input\n    id: proposal_name\n    attributes:\n      label: Architecture Name\n      description: Give the proposed base architecture or modification a short, descriptive name.\n      placeholder: \"Example: OLMo3\"\n    validations:\n      required: true\n\n  - type: input\n    id: base_architecture_issue\n    attributes:\n      label: Parent issue\n      description: For a modification, link the issue that tracks the base architecture. Leave blank for a root architecture.\n      placeholder: \"Example: #123\"\n    validations:\n      required: false\n\n  - type: textarea\n    id: problem_and_hypothesis\n    attributes:\n      label: Motivations\n      description: Describe the current limitation or opportunity, the measurable outcome you expect, and any supporting rationale, evidence, or related work that motivates this proposal.\n      placeholder: Explain the problem and the expected outcome.\n    validations:\n      required: true\n\n  - type: textarea\n    id: proposed_change\n    attributes:\n      label: Proposed Architecture\n      description: Describe what changes from the base architecture, what remains unchanged, and the expected impact on parameters, compute, memory, or latency if known.\n      placeholder: Explain the proposed architecture change.\n    validations:\n      required: true\n\n  - type: textarea\n    id: existing_results\n    attributes:\n      label: Existing Results\n      description: Summarize any existing results, experiments, prototypes, or observations that support this proposal.\n      placeholder: Provide any existing results, preliminary experiments, prototypes, or evidence supporting this proposal.\n    validations:\n      required: true\n\n  - type: textarea\n    id: validation_plan\n    attributes:\n      label: Experiments Plan\n      description: Identify the baseline, evaluation method and metrics, measurable success criteria, and any notable compute or data requirements.\n      placeholder: Explain how the proposal will be evaluated.\n    validations:\n      required: true\n\n  - type: markdown\n    attributes:\n      value: |\n        ---\n\n        Maintainers review the proposal before implementation starts:\n\n        - `under review`: waiting for a maintainer decision\n        - `in-progress`: approved for implementation\n        - `declined`: rejected or deferred; the Issue is closed\n        - `done`: a linked implementation PR was merged; the Issue is closed\n\n        Status labels are mutually exclusive and maintained by repository automation.\n"
     },
     "pullRequest": {
       "path": ".github/pull_request_template.md",
-      "url": "https://github.com/JT-Ushio/template-test/blob/main/.github/pull_request_template.md",
-      "content": "## Title\n\n## Basic information\n\n- **Architecture Name:** \n- **Proposal Issue:** #\n\n## Report Links\n> Report links are required for every training or validation PR.\n> The links must provide reviewers with direct access to the\n> complete training history\n\n- **Report Link:**\n\n## Implementation Summary\n\n## Experiments Summary\n\n### Experiments Outcome\n\n- [x] Positive\n- [ ] Negative\n- [ ] Neutral\n- [ ] Inconclusive\n\n### Reproduction Status\n\n- [x] Basic architecture reproduction validated\n- [ ] Official checkpoint equivalence validated\n- [ ] Full training recipe reproduction validated\n\n## Conclusion\n\n\n## Merge Checklist\n\n- [x] The linked proposal is approved.\n- [x] The implementation matches the official architecture.\n- [x] The upstream source and immutable revision are recorded.\n- [x] Forward, backward, checkpoint, and training validation pass.\n- [x] Training and evaluation configurations are committed.\n- [x] Public W&B logs and benchmark results are linked.\n- [x] Tests, documentation, and CI pass.\n- [x] Required reviewers approve the PR.\n\n> The lifecycle check requires the linked proposal Issue to carry\n> `architecture proposal` + `in-progress`. Merging this PR automatically moves\n> that Issue to `done` and closes it.\n"
+      "url": "https://github.com/scv11/template-test/blob/main/.github/pull_request_template.md",
+      "content": "---\nTitle: \nArchitecture Name: \nAbout: \n\n---\n\n<!-- Link to the corresponding Architecture Proposal issue -->\n<!-- Example: #123 -->\n> **Architecture Proposal (issue #)**: \n\n## Implementation Details:\n<!-- Describe the implemented architecture modification.\nInclude:\n- Modified components\n- Key implementation details\n- Compatibility considerations\n- Any deviations from the original proposal\n-->\n\n## Experimental Validation:\n\n#### Research Question 1\n\n<!-- What hypothesis does this experiment aim to validate? -->\n*Hypothesis:* \n\n<!-- Analyze experimental results.\nExplain observations, comparisons, and potential reasons.\n-->\n*Results & Analysis:* \n\n<!-- Summarize the findings for this research question -->\n*Findings:* \n\n<!-- Add more research questions if needed -->\n\n\n## Archive:\n\n<!-- Example: https://wandb.ai/.../reports/... -->\n- WandB Report (include training and evaluation logs): \n\n<!-- Example: https://huggingface.co/collections/... -->\n- HuggingFace Collection (include model checkpoints): \n\n---\n\n## Reviewer Assessment (for repo reviewers):\n<!-- Repository reviewers provide an overall assessment of the implementation and experimental validation.\nExamples:\n- The implementation is correct and the experimental results support the proposed architecture.\n- Additional experiments are recommended.\n-->\n\n**Merge Checklist**:\n\n- [ ] The implementation PR is linked to an `in-progress` Architecture Proposal issue (#).\n- [ ] The implementation correctness of the proposed architecture is verified.\n- [ ] The effectiveness of the proposed architecture is validated at 1B, 3B, and 8B model scales.\n- [ ] The archive information is complete, including WandB reports and HuggingFace collections of model checkpoints.\n"
     }
   },
   "fieldDefinitions": {
@@ -34,13 +38,6 @@
         "required": false
       },
       {
-        "key": "relatedWork",
-        "templateId": "related_work",
-        "label": "Related work",
-        "type": "markdownWithLinks",
-        "required": false
-      },
-      {
         "key": "motivations",
         "templateId": "problem_and_hypothesis",
         "label": "Motivations",
@@ -55,6 +52,13 @@
         "required": true
       },
       {
+        "key": "existingResults",
+        "templateId": "existing_results",
+        "label": "Existing Results",
+        "type": "markdown",
+        "required": true
+      },
+      {
         "key": "experimentsPlan",
         "templateId": "validation_plan",
         "label": "Experiments Plan",
@@ -64,81 +68,85 @@
     ],
     "pullRequests": [
       {
-        "key": "identity",
-        "label": "Identity",
+        "key": "metadata",
+        "label": "Metadata",
         "fields": [
           {
-            "key": "templateTitle",
-            "path": "templateTitle",
+            "key": "title",
             "label": "Title",
             "type": "text"
-          }
-        ]
-      },
-      {
-        "key": "basicInformation",
-        "label": "Basic information",
-        "fields": [
+          },
           {
             "key": "architectureName",
             "label": "Architecture Name",
             "type": "text"
           },
           {
-            "key": "proposalIssue",
-            "label": "Proposal Issue",
+            "key": "about",
+            "label": "About",
+            "type": "text"
+          }
+        ]
+      },
+      {
+        "key": "architectureProposal",
+        "label": "Architecture Proposal",
+        "fields": [
+          {
+            "key": "architectureProposalIssue",
+            "path": "architectureProposalIssue",
+            "label": "Architecture Proposal (issue #)",
             "type": "link"
           }
         ]
       },
       {
-        "key": "reportLinks",
-        "label": "Report Links",
+        "key": "implementation",
+        "label": "Implementation",
         "fields": [
           {
-            "key": "reportLink",
-            "label": "Report Link",
+            "key": "implementationDetails",
+            "path": "implementationDetails",
+            "label": "Implementation Details",
+            "type": "markdown"
+          },
+          {
+            "key": "experimentalValidation",
+            "path": "experimentalValidation",
+            "label": "Experimental Validation",
+            "type": "sectionTree"
+          }
+        ]
+      },
+      {
+        "key": "archive",
+        "label": "Archive",
+        "fields": [
+          {
+            "key": "wandbReportIncludeTrainingAndEvaluationLogs",
+            "label": "WandB Report (include training and evaluation logs)",
+            "type": "link"
+          },
+          {
+            "key": "huggingfaceCollectionIncludeModelCheckpoints",
+            "label": "HuggingFace Collection (include model checkpoints)",
             "type": "link"
           }
         ]
       },
       {
-        "key": "summaries",
-        "label": "Summaries",
+        "key": "review",
+        "label": "Review",
         "fields": [
           {
-            "key": "implementationSummary",
-            "label": "Implementation Summary",
-            "type": "markdown"
-          },
-          {
-            "key": "experimentsSummary",
-            "label": "Experiments Summary",
-            "type": "markdown"
-          }
-        ]
-      },
-      {
-        "key": "results",
-        "label": "Results",
-        "fields": [
-          {
-            "key": "experimentsOutcome",
-            "label": "Experiments Outcome",
-            "type": "checkboxGroup"
-          },
-          {
-            "key": "reproductionStatus",
-            "label": "Reproduction Status",
-            "type": "checkboxGroup"
-          },
-          {
-            "key": "conclusion",
-            "label": "Conclusion",
+            "key": "reviewerAssessment",
+            "path": "reviewerAssessment",
+            "label": "Reviewer Assessment",
             "type": "markdown"
           },
           {
             "key": "mergeChecklist",
+            "path": "mergeChecklist",
             "label": "Merge Checklist",
             "type": "checkboxGroup"
           }
@@ -148,13 +156,13 @@
   },
   "issues": [
     {
-      "number": 17,
-      "title": "[ARCH-PROP] after depth",
+      "number": 4,
+      "title": "[ARCH-PROP] After Depth Support",
       "state": "open",
-      "url": "https://github.com/JT-Ushio/template-test/issues/17",
-      "author": "Feanus",
-      "createdAt": "2026-07-23T16:06:55Z",
-      "updatedAt": "2026-07-24T04:37:09Z",
+      "url": "https://github.com/scv11/template-test/issues/4",
+      "author": "scv11",
+      "createdAt": "2026-07-25T04:35:33Z",
+      "updatedAt": "2026-07-25T04:35:45Z",
       "closedAt": null,
       "labels": [
         "architecture proposal",
@@ -163,20 +171,17 @@
       "assignees": [],
       "milestone": null,
       "parsed": {
-        "architectureName": "nothing",
+        "architectureName": "After Depth",
         "parentIssue": {
-          "label": "#15",
-          "number": 15,
-          "url": "https://github.com/JT-Ushio/template-test/issues/15",
-          "raw": "#15"
+          "label": "#2",
+          "number": 2,
+          "url": "https://github.com/scv11/template-test/issues/2",
+          "raw": "#2"
         },
-        "relatedWork": {
-          "raw": "www.paper.com",
-          "references": []
-        },
-        "motivations": "for test",
-        "proposedArchitecture": "for test",
-        "experimentsPlan": "use frontend"
+        "motivations": "Motivations",
+        "proposedArchitecture": "Proposed Architecure",
+        "existingResults": "Existing Results",
+        "experimentsPlan": "Experiments Plan"
       },
       "fields": [
         {
@@ -185,7 +190,7 @@
           "label": "Architecture Name",
           "type": "text",
           "required": true,
-          "value": "nothing",
+          "value": "After Depth",
           "status": "filled"
         },
         {
@@ -195,22 +200,10 @@
           "type": "link",
           "required": false,
           "value": {
-            "label": "#15",
-            "number": 15,
-            "url": "https://github.com/JT-Ushio/template-test/issues/15",
-            "raw": "#15"
-          },
-          "status": "filled"
-        },
-        {
-          "key": "relatedWork",
-          "templateId": "related_work",
-          "label": "Related work",
-          "type": "markdownWithLinks",
-          "required": false,
-          "value": {
-            "raw": "www.paper.com",
-            "references": []
+            "label": "#2",
+            "number": 2,
+            "url": "https://github.com/scv11/template-test/issues/2",
+            "raw": "#2"
           },
           "status": "filled"
         },
@@ -220,7 +213,7 @@
           "label": "Motivations",
           "type": "markdown",
           "required": true,
-          "value": "for test",
+          "value": "Motivations",
           "status": "filled"
         },
         {
@@ -229,7 +222,16 @@
           "label": "Proposed Architecture",
           "type": "markdown",
           "required": true,
-          "value": "for test",
+          "value": "Proposed Architecure",
+          "status": "filled"
+        },
+        {
+          "key": "existingResults",
+          "templateId": "existing_results",
+          "label": "Existing Results",
+          "type": "markdown",
+          "required": true,
+          "value": "Existing Results",
           "status": "filled"
         },
         {
@@ -238,47 +240,38 @@
           "label": "Experiments Plan",
           "type": "markdown",
           "required": true,
-          "value": "use frontend",
+          "value": "Experiments Plan",
           "status": "filled"
         }
       ]
     },
     {
-      "number": 16,
+      "number": 3,
       "title": "[ARCH-PROP] MLA & MorphNorm Support",
       "state": "open",
-      "url": "https://github.com/JT-Ushio/template-test/issues/16",
-      "author": "Feanus",
-      "createdAt": "2026-07-23T15:46:56Z",
-      "updatedAt": "2026-07-24T04:37:10Z",
+      "url": "https://github.com/scv11/template-test/issues/3",
+      "author": "scv11",
+      "createdAt": "2026-07-25T04:33:00Z",
+      "updatedAt": "2026-07-25T05:04:54Z",
       "closedAt": null,
       "labels": [
         "architecture proposal",
-        "under review"
+        "declined"
       ],
       "assignees": [],
       "milestone": null,
       "parsed": {
         "architectureName": "MLA & MorphNorm",
         "parentIssue": {
-          "label": "#13",
-          "number": 13,
-          "url": "https://github.com/JT-Ushio/template-test/issues/13",
-          "raw": "#13"
+          "label": "#1",
+          "number": 1,
+          "url": "https://github.com/scv11/template-test/issues/1",
+          "raw": "#1"
         },
-        "relatedWork": {
-          "raw": "https://arxiv.org/abs/2405.04434",
-          "references": [
-            {
-              "label": "https://arxiv.org/abs/2405.04434",
-              "url": "https://arxiv.org/abs/2405.04434",
-              "raw": "https://arxiv.org/abs/2405.04434"
-            }
-          ]
-        },
-        "motivations": "Current OLMo-3 uses standard multi-head attention (MHA), which has high KV cache memory cost and limits inference efficiency at long context lengths. Meanwhile, existing normalization approaches may not fully address representation stability in large-scale Transformer training.\n\nThis proposal introduces:\n- **Multi-head Latent Attention (MLA):** compresses KV representations into a latent space, reducing KV cache size and improving long-context inference efficiency while preserving attention capacity.\n- **MorphNorm:** improves normalization behavior by adapting representation scaling, aiming to improve training stability and model quality.",
-        "proposedArchitecture": "Replace the standard attention and normalization components in OLMo-3 with:\n\n- **MLA:** replace MHA with latent KV compression and latent attention computation to reduce KV cache size.\n- **MorphNorm:** replace the existing normalization layer with MorphNorm for improved representation scaling.\n\nThe rest of the architecture remains unchanged, including tokenizer, Transformer block structure, training objective, and data pipeline.\n\nExpected impact:\n- Reduced KV cache memory footprint during inference.\n- Potentially improved long-context inference throughput.\n- Slight changes in attention compute due to latent projection and reconstruction.\n- Minimal additional overhead from MorphNorm.\n- Parameter and latency impact will be measured through benchmarking.",
-        "experimentsPlan": "**Baseline:**\n- Original OLMo-3 architecture with standard MHA and normalization.\n\n**Success criteria:**\n- Match or improve baseline language modeling performance.\n- Achieve meaningful KV cache reduction and inference efficiency gains.\n- Ensure additional compute overhead remains acceptable.\n\n**Requirements:**\n- Same dataset, tokenizer, and training pipeline.\n- Ablation studies for MLA and MorphNorm individually."
+        "motivations": "Motivations",
+        "proposedArchitecture": "Proposed Architecture",
+        "existingResults": "Existing Results",
+        "experimentsPlan": "Experiments Plan"
       },
       "fields": [
         {
@@ -297,28 +290,10 @@
           "type": "link",
           "required": false,
           "value": {
-            "label": "#13",
-            "number": 13,
-            "url": "https://github.com/JT-Ushio/template-test/issues/13",
-            "raw": "#13"
-          },
-          "status": "filled"
-        },
-        {
-          "key": "relatedWork",
-          "templateId": "related_work",
-          "label": "Related work",
-          "type": "markdownWithLinks",
-          "required": false,
-          "value": {
-            "raw": "https://arxiv.org/abs/2405.04434",
-            "references": [
-              {
-                "label": "https://arxiv.org/abs/2405.04434",
-                "url": "https://arxiv.org/abs/2405.04434",
-                "raw": "https://arxiv.org/abs/2405.04434"
-              }
-            ]
+            "label": "#1",
+            "number": 1,
+            "url": "https://github.com/scv11/template-test/issues/1",
+            "raw": "#1"
           },
           "status": "filled"
         },
@@ -328,7 +303,7 @@
           "label": "Motivations",
           "type": "markdown",
           "required": true,
-          "value": "Current OLMo-3 uses standard multi-head attention (MHA), which has high KV cache memory cost and limits inference efficiency at long context lengths. Meanwhile, existing normalization approaches may not fully address representation stability in large-scale Transformer training.\n\nThis proposal introduces:\n- **Multi-head Latent Attention (MLA):** compresses KV representations into a latent space, reducing KV cache size and improving long-context inference efficiency while preserving attention capacity.\n- **MorphNorm:** improves normalization behavior by adapting representation scaling, aiming to improve training stability and model quality.",
+          "value": "Motivations",
           "status": "filled"
         },
         {
@@ -337,7 +312,16 @@
           "label": "Proposed Architecture",
           "type": "markdown",
           "required": true,
-          "value": "Replace the standard attention and normalization components in OLMo-3 with:\n\n- **MLA:** replace MHA with latent KV compression and latent attention computation to reduce KV cache size.\n- **MorphNorm:** replace the existing normalization layer with MorphNorm for improved representation scaling.\n\nThe rest of the architecture remains unchanged, including tokenizer, Transformer block structure, training objective, and data pipeline.\n\nExpected impact:\n- Reduced KV cache memory footprint during inference.\n- Potentially improved long-context inference throughput.\n- Slight changes in attention compute due to latent projection and reconstruction.\n- Minimal additional overhead from MorphNorm.\n- Parameter and latency impact will be measured through benchmarking.",
+          "value": "Proposed Architecture",
+          "status": "filled"
+        },
+        {
+          "key": "existingResults",
+          "templateId": "existing_results",
+          "label": "Existing Results",
+          "type": "markdown",
+          "required": true,
+          "value": "Existing Results",
           "status": "filled"
         },
         {
@@ -346,52 +330,38 @@
           "label": "Experiments Plan",
           "type": "markdown",
           "required": true,
-          "value": "**Baseline:**\n- Original OLMo-3 architecture with standard MHA and normalization.\n\n**Success criteria:**\n- Match or improve baseline language modeling performance.\n- Achieve meaningful KV cache reduction and inference efficiency gains.\n- Ensure additional compute overhead remains acceptable.\n\n**Requirements:**\n- Same dataset, tokenizer, and training pipeline.\n- Ablation studies for MLA and MorphNorm individually.",
+          "value": "Experiments Plan",
           "status": "filled"
         }
       ]
     },
     {
-      "number": 15,
-      "title": "[ARCH-PROP] Depth-Attention & SiameseNorm Support",
+      "number": 2,
+      "title": "[ARCH-PROP] Depth-Attention & SiameseNorm",
       "state": "open",
-      "url": "https://github.com/JT-Ushio/template-test/issues/15",
-      "author": "Feanus",
-      "createdAt": "2026-07-23T15:41:06Z",
-      "updatedAt": "2026-07-24T04:37:10Z",
+      "url": "https://github.com/scv11/template-test/issues/2",
+      "author": "scv11",
+      "createdAt": "2026-07-25T04:32:00Z",
+      "updatedAt": "2026-07-25T05:04:41Z",
       "closedAt": null,
       "labels": [
         "architecture proposal",
-        "under review"
+        "in-progress"
       ],
       "assignees": [],
       "milestone": null,
       "parsed": {
         "architectureName": "Depth-Attention & SiameseNorm",
         "parentIssue": {
-          "label": "#13",
-          "number": 13,
-          "url": "https://github.com/JT-Ushio/template-test/issues/13",
-          "raw": "#13"
+          "label": "#1",
+          "number": 1,
+          "url": "https://github.com/scv11/template-test/issues/1",
+          "raw": "#1"
         },
-        "relatedWork": {
-          "raw": "https://arxiv.org/abs/2606.05014\nhttps://arxiv.org/abs/2602.08064v2",
-          "references": [
-            {
-              "label": "https://arxiv.org/abs/2606.05014",
-              "url": "https://arxiv.org/abs/2606.05014",
-              "raw": "https://arxiv.org/abs/2606.05014"
-            },
-            {
-              "label": "https://arxiv.org/abs/2602.08064v2",
-              "url": "https://arxiv.org/abs/2602.08064v2",
-              "raw": "https://arxiv.org/abs/2602.08064v2"
-            }
-          ]
-        },
-        "motivations": "Current OLMo-3 uses a standard Transformer architecture with conventional attention and normalization designs. While this architecture provides strong general-purpose performance, there are opportunities to improve depth-wise information propagation and training stability.\n\nExpected measurable outcomes\n- Lower validation perplexity compared with the OLMo-3 baseline.\n- Improved downstream benchmark performance.",
-        "proposedArchitecture": "Replace the standard attention/normalization components in OLMo-3 with:\n\n- **Depth-Attention:** adds attention over intermediate layer representations to improve depth-wise information exchange.\n- **SiameseNorm:** replaces the existing normalization design with shared normalization across paired representations.\n\nThe rest of the architecture remains unchanged, including tokenizer, Transformer blocks, training objective, and data pipeline.",
-        "experimentsPlan": "**Baseline:**\n- Original OLMo-3 architecture with identical training settings.\n\n**Success criteria:**\n- Achieve measurable improvement in validation perplexity and/or downstream accuracy.\n- Demonstrate benefits that justify additional compute or memory overhead.\n\n**Requirements:**\n- Same dataset, tokenizer, and training pipeline as the baseline.\n- Controlled ablation studies for Depth-Attention and SiameseNorm."
+        "motivations": "Motivations",
+        "proposedArchitecture": "Proposed Architecture",
+        "existingResults": "Existing Results",
+        "experimentsPlan": "Experiments Plan"
       },
       "fields": [
         {
@@ -410,33 +380,10 @@
           "type": "link",
           "required": false,
           "value": {
-            "label": "#13",
-            "number": 13,
-            "url": "https://github.com/JT-Ushio/template-test/issues/13",
-            "raw": "#13"
-          },
-          "status": "filled"
-        },
-        {
-          "key": "relatedWork",
-          "templateId": "related_work",
-          "label": "Related work",
-          "type": "markdownWithLinks",
-          "required": false,
-          "value": {
-            "raw": "https://arxiv.org/abs/2606.05014\nhttps://arxiv.org/abs/2602.08064v2",
-            "references": [
-              {
-                "label": "https://arxiv.org/abs/2606.05014",
-                "url": "https://arxiv.org/abs/2606.05014",
-                "raw": "https://arxiv.org/abs/2606.05014"
-              },
-              {
-                "label": "https://arxiv.org/abs/2602.08064v2",
-                "url": "https://arxiv.org/abs/2602.08064v2",
-                "raw": "https://arxiv.org/abs/2602.08064v2"
-              }
-            ]
+            "label": "#1",
+            "number": 1,
+            "url": "https://github.com/scv11/template-test/issues/1",
+            "raw": "#1"
           },
           "status": "filled"
         },
@@ -446,7 +393,7 @@
           "label": "Motivations",
           "type": "markdown",
           "required": true,
-          "value": "Current OLMo-3 uses a standard Transformer architecture with conventional attention and normalization designs. While this architecture provides strong general-purpose performance, there are opportunities to improve depth-wise information propagation and training stability.\n\nExpected measurable outcomes\n- Lower validation perplexity compared with the OLMo-3 baseline.\n- Improved downstream benchmark performance.",
+          "value": "Motivations",
           "status": "filled"
         },
         {
@@ -455,7 +402,16 @@
           "label": "Proposed Architecture",
           "type": "markdown",
           "required": true,
-          "value": "Replace the standard attention/normalization components in OLMo-3 with:\n\n- **Depth-Attention:** adds attention over intermediate layer representations to improve depth-wise information exchange.\n- **SiameseNorm:** replaces the existing normalization design with shared normalization across paired representations.\n\nThe rest of the architecture remains unchanged, including tokenizer, Transformer blocks, training objective, and data pipeline.",
+          "value": "Proposed Architecture",
+          "status": "filled"
+        },
+        {
+          "key": "existingResults",
+          "templateId": "existing_results",
+          "label": "Existing Results",
+          "type": "markdown",
+          "required": true,
+          "value": "Existing Results",
           "status": "filled"
         },
         {
@@ -464,47 +420,33 @@
           "label": "Experiments Plan",
           "type": "markdown",
           "required": true,
-          "value": "**Baseline:**\n- Original OLMo-3 architecture with identical training settings.\n\n**Success criteria:**\n- Achieve measurable improvement in validation perplexity and/or downstream accuracy.\n- Demonstrate benefits that justify additional compute or memory overhead.\n\n**Requirements:**\n- Same dataset, tokenizer, and training pipeline as the baseline.\n- Controlled ablation studies for Depth-Attention and SiameseNorm.",
+          "value": "Experiments Plan",
           "status": "filled"
         }
       ]
     },
     {
-      "number": 13,
+      "number": 1,
       "title": "[ARCH-PROP] Olmo3",
-      "state": "open",
-      "url": "https://github.com/JT-Ushio/template-test/issues/13",
+      "state": "closed",
+      "url": "https://github.com/scv11/template-test/issues/1",
       "author": "scv11",
-      "createdAt": "2026-07-23T15:35:19Z",
-      "updatedAt": "2026-07-24T04:37:11Z",
-      "closedAt": null,
+      "createdAt": "2026-07-25T04:30:47Z",
+      "updatedAt": "2026-07-25T05:16:18Z",
+      "closedAt": "2026-07-25T05:16:18Z",
       "labels": [
         "architecture proposal",
-        "under review"
+        "done"
       ],
       "assignees": [],
       "milestone": null,
       "parsed": {
         "architectureName": "Olmo3",
         "parentIssue": null,
-        "relatedWork": {
-          "raw": "Papers or technical reports: https://arxiv.org/pdf/2501.00656\nRelevant implementations: https://github.com/allenai/olmo",
-          "references": [
-            {
-              "label": "https://arxiv.org/pdf/2501.00656",
-              "url": "https://arxiv.org/pdf/2501.00656",
-              "raw": "https://arxiv.org/pdf/2501.00656"
-            },
-            {
-              "label": "https://github.com/allenai/olmo",
-              "url": "https://github.com/allenai/olmo",
-              "raw": "https://github.com/allenai/olmo"
-            }
-          ]
-        },
-        "motivations": "The repository does not currently have an immutable and reproducible OLMo 3 reference architecture.\nA local implementation based on an official OLMo 3 configuration can provide a reliable root node for future architecture experiments.",
-        "proposedArchitecture": "Reproduce the selected official OLMo 3 Base configuration as a root architecture in this repository.\nParameter count, compute, memory usage, and latency should remain consistent with the selected official OLMo 3 model variant.",
-        "experimentsPlan": "Baseline\nThe selected official OLMo 3 configuration and upstream implementation.\n\nSuccess criteria\nBenchmark degradation <1%\nDecode throughput achieve 1000 tokens/s\n\nCompute or data requirements, if known\n8xH200, 300B tokens"
+        "motivations": "xxxx",
+        "proposedArchitecture": "xxxxx",
+        "existingResults": "xxxxx",
+        "experimentsPlan": "xxxxx"
       },
       "fields": [
         {
@@ -526,35 +468,12 @@
           "status": "missing"
         },
         {
-          "key": "relatedWork",
-          "templateId": "related_work",
-          "label": "Related work",
-          "type": "markdownWithLinks",
-          "required": false,
-          "value": {
-            "raw": "Papers or technical reports: https://arxiv.org/pdf/2501.00656\nRelevant implementations: https://github.com/allenai/olmo",
-            "references": [
-              {
-                "label": "https://arxiv.org/pdf/2501.00656",
-                "url": "https://arxiv.org/pdf/2501.00656",
-                "raw": "https://arxiv.org/pdf/2501.00656"
-              },
-              {
-                "label": "https://github.com/allenai/olmo",
-                "url": "https://github.com/allenai/olmo",
-                "raw": "https://github.com/allenai/olmo"
-              }
-            ]
-          },
-          "status": "filled"
-        },
-        {
           "key": "motivations",
           "templateId": "problem_and_hypothesis",
           "label": "Motivations",
           "type": "markdown",
           "required": true,
-          "value": "The repository does not currently have an immutable and reproducible OLMo 3 reference architecture.\nA local implementation based on an official OLMo 3 configuration can provide a reliable root node for future architecture experiments.",
+          "value": "xxxx",
           "status": "filled"
         },
         {
@@ -563,7 +482,16 @@
           "label": "Proposed Architecture",
           "type": "markdown",
           "required": true,
-          "value": "Reproduce the selected official OLMo 3 Base configuration as a root architecture in this repository.\nParameter count, compute, memory usage, and latency should remain consistent with the selected official OLMo 3 model variant.",
+          "value": "xxxxx",
+          "status": "filled"
+        },
+        {
+          "key": "existingResults",
+          "templateId": "existing_results",
+          "label": "Existing Results",
+          "type": "markdown",
+          "required": true,
+          "value": "xxxxx",
           "status": "filled"
         },
         {
@@ -572,7 +500,7 @@
           "label": "Experiments Plan",
           "type": "markdown",
           "required": true,
-          "value": "Baseline\nThe selected official OLMo 3 configuration and upstream implementation.\n\nSuccess criteria\nBenchmark degradation <1%\nDecode throughput achieve 1000 tokens/s\n\nCompute or data requirements, if known\n8xH200, 300B tokens",
+          "value": "xxxxx",
           "status": "filled"
         }
       ]
@@ -580,16 +508,16 @@
   ],
   "pullRequests": [
     {
-      "number": 19,
-      "title": "Depth attention & siamese norm",
+      "number": 8,
+      "title": "Create debug2.py",
       "state": "open",
-      "url": "https://github.com/JT-Ushio/template-test/pull/19",
+      "url": "https://github.com/scv11/template-test/pull/8",
       "author": "scv11",
-      "createdAt": "2026-07-23T16:21:19Z",
-      "updatedAt": "2026-07-24T05:59:01Z",
+      "createdAt": "2026-07-25T11:49:20Z",
+      "updatedAt": "2026-07-26T10:43:17Z",
       "closedAt": null,
       "labels": [
-        "architecture proposal"
+        "architecure implement"
       ],
       "assignees": [],
       "milestone": null,
@@ -597,318 +525,276 @@
       "merged": false,
       "mergedAt": null,
       "base": {
-        "repo": "JT-Ushio/template-test",
+        "repo": "scv11/template-test",
         "branch": "main",
-        "sha": "e85f8aeaf1e9c3430eb6488a997b78d1d4c47cde"
+        "sha": "4a690894c3efb4bc176aa1f6815a331adb6b4add"
       },
       "head": {
-        "repo": "scv11/template-test-olmo3",
-        "branch": "Depth-Attention-&-SiameseNorm",
-        "sha": "c8c0f9bab917ea963110fc4cd31cb238eb3bec20"
+        "repo": "scv11/template-test",
+        "branch": "debug2",
+        "sha": "d0dc25b3704c1a40d5684653cb75d11d1caf4752"
       },
-      "commitCount": 6,
-      "additions": 1485,
+      "commitCount": 1,
+      "additions": 1,
       "deletions": 0,
-      "changedFiles": 5,
+      "changedFiles": 1,
       "requestedReviewers": [],
       "reviews": [],
       "linkedIssues": [
-        15
+        2,
+        123
       ],
       "taskProgress": {
-        "checked": 10,
-        "total": 15
+        "checked": 4,
+        "total": 4
       },
       "parsed": {
-        "templateTitle": "OLMo-3 1B Base Architecture",
-        "basicInformation": {
-          "architectureName": "Depth attention & siamese norm-1b",
-          "proposalIssue": {
-            "label": "#15",
-            "number": 15,
-            "url": "https://github.com/JT-Ushio/template-test/issues/15",
-            "raw": "#15"
-          }
+        "metadata": {
+          "title": "Depth-Attention & SiameseNorm implementation",
+          "architectureName": "Architecture Implementation",
+          "about": "Implement an approved LLM architecture modification"
         },
-        "implementationSummary": "This PR adds OLMo2-1B as a reproducible root architecture in this\nrepository.\n\nIt includes the model configuration, decoder blocks, training and evaluation\nconfigurations, checkpoint support, and validation required to use OLMo2-1B as a baseline for future architecture experiments.\n\nReference to [olmo2-0425-1b](https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA?accessToken=wz3wz0xj1yw4jhr6i24pmp1uhvcfo8mssjfuiye8mf9bvvk0qknipoq61xbwp7xd)\nfor detailed configurations\n\nNo intentional architectural modification to the upstream model is introduced.",
-        "experimentsSummary": "The training loss decreased consistently throughout the training run.\n\nNo persistent loss spikes, non-finite gradients, or optimizer instability were observed. \nGradient norm remained stable after the initial warmup period. \n\nThe complete loss, learning-rate, gradient-norm, throughput, and step-time curves are available in the linked W&B report.\n\nThe OLMo2 implementation can be constructed, trained, checkpointed, and evaluated successfully in the current repository. \n\nThe training run showed a stable decrease in training and validation loss. No persistent numerical instability was observed. \n\nAll required benchmarks completed successfully.",
-        "experimentsOutcome": [
-          {
-            "key": "positive",
-            "label": "Positive",
-            "checked": true
-          },
-          {
-            "key": "negative",
-            "label": "Negative",
-            "checked": false
-          },
-          {
-            "key": "neutral",
-            "label": "Neutral",
-            "checked": false
-          },
-          {
-            "key": "inconclusive",
-            "label": "Inconclusive",
-            "checked": false
-          }
-        ],
-        "reproductionStatus": [
-          {
-            "key": "basicArchitectureReproductionValidated",
-            "label": "Basic architecture reproduction validated",
-            "checked": true
-          },
-          {
-            "key": "officialCheckpointEquivalenceValidated",
-            "label": "Official checkpoint equivalence validated",
-            "checked": false
-          },
-          {
-            "key": "fullTrainingRecipeReproductionValidated",
-            "label": "Full training recipe reproduction validated",
-            "checked": false
-          }
-        ],
-        "conclusion": "This PR successfully adds OLMo2 as a functional root architecture in the repository. \n\nThe implementation passes model-construction, forward, backward, checkpoint, smoke-training, W&B logging, and benchmark-pipeline validation. \n\nThe architecture is suitable for use as a parent node in future architecture proposals. Full-scale training reproduction and upstream-checkpoint equivalence should be tracked as separate validation work.",
-        "mergeChecklist": [
-          {
-            "key": "theLinkedProposalIsApproved",
-            "label": "The linked proposal is approved.",
-            "checked": true
-          },
-          {
-            "key": "theImplementationMatchesTheOfficialArchitecture",
-            "label": "The implementation matches the official architecture.",
-            "checked": true
-          },
-          {
-            "key": "theUpstreamSourceAndImmutableRevisionAreRecorded",
-            "label": "The upstream source and immutable revision are recorded.",
-            "checked": true
-          },
-          {
-            "key": "forwardBackwardCheckpointAndTrainingValidationPass",
-            "label": "Forward, backward, checkpoint, and training validation pass.",
-            "checked": true
-          },
-          {
-            "key": "trainingAndEvaluationConfigurationsAreCommitted",
-            "label": "Training and evaluation configurations are committed.",
-            "checked": true
-          },
-          {
-            "key": "publicWandbLogsAndBenchmarkResultsAreLinked",
-            "label": "Public W&B logs and benchmark results are linked.",
-            "checked": true
-          },
-          {
-            "key": "testsDocumentationAndCiPass",
-            "label": "Tests, documentation, and CI pass.",
-            "checked": true
-          },
-          {
-            "key": "requiredReviewersApproveThePr",
-            "label": "Required reviewers approve the PR.",
-            "checked": true
-          }
-        ],
-        "reportLinks": {
-          "reportLink": {
-            "label": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA?accessToken=wz3wz0xj1yw4jhr6i24pmp1uhvcfo8mssjfuiye8mf9bvvk0qknipoq61xbwp7xd",
-            "url": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA?accessToken=wz3wz0xj1yw4jhr6i24pmp1uhvcfo8mssjfuiye8mf9bvvk0qknipoq61xbwp7xd",
-            "raw": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA?accessToken=wz3wz0xj1yw4jhr6i24pmp1uhvcfo8mssjfuiye8mf9bvvk0qknipoq61xbwp7xd"
-          }
+        "architectureProposalIssue": {
+          "label": "#2",
+          "number": 2,
+          "url": "https://github.com/scv11/template-test/issues/2",
+          "raw": "#2"
         },
-        "legacyWandbLinks": {
-          "projects": null,
-          "trainingRun": null,
-          "benchmarkRun": null
-        }
-      },
-      "fieldGroups": [
-        {
-          "key": "identity",
-          "label": "Identity",
-          "fields": [
+        "implementationDetails": "This is Implementation Details.",
+        "experimentalValidation": {
+          "intro": null,
+          "sections": [
             {
-              "key": "templateTitle",
-              "path": "templateTitle",
-              "label": "Title",
-              "type": "text",
-              "value": "OLMo-3 1B Base Architecture",
-              "status": "filled"
+              "title": "Research Question 1",
+              "level": 2,
+              "content": "*Hypothesis:* This is Hypothesis 1.\n\n\n*Results & Analysis:* This is Results & Analysis 1.\n\n\n*Findings:* This is Findings 1.",
+              "children": []
+            },
+            {
+              "title": "Research Question 2",
+              "level": 2,
+              "content": "*Hypothesis:* This is Hypothesis 2.\n*Results & Analysis:* This is Results & Analysis 2.\n*Findings:* This is Findings 2.",
+              "children": []
+            },
+            {
+              "title": "Research Question 3",
+              "level": 2,
+              "content": "*Hypothesis:* This is Hypothesis 3.\n*Results & Analysis:* This is Results & Analysis 3.\n*Findings:* This is Findings 3.",
+              "children": []
+            },
+            {
+              "title": "Research Question 4",
+              "level": 2,
+              "content": "*Hypothesis:* This is Hypothesis 4.\n*Results & Analysis:* This is Results & Analysis 4.\n*Findings:* This is Findings 4.",
+              "children": []
             }
           ]
         },
+        "archive": [
+          {
+            "key": "wandbReportIncludeTrainingAndEvaluationLogs",
+            "label": "WandB Report (include training and evaluation logs)",
+            "value": {
+              "label": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA",
+              "url": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA",
+              "raw": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA"
+            }
+          },
+          {
+            "key": "huggingfaceCollectionIncludeModelCheckpoints",
+            "label": "HuggingFace Collection (include model checkpoints)",
+            "value": {
+              "label": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA",
+              "url": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA",
+              "raw": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA"
+            }
+          }
+        ],
+        "reviewerAssessment": "This is Reviewer Assessment.",
+        "mergeChecklist": [
+          {
+            "key": "theImplementationPrIsLinkedToAnInProgressArchitectureProposalIssue",
+            "label": "The implementation PR is linked to an `in-progress` Architecture Proposal issue (#).",
+            "checked": true
+          },
+          {
+            "key": "theImplementationCorrectnessOfTheProposedArchitectureIsVerified",
+            "label": "The implementation correctness of the proposed architecture is verified.",
+            "checked": true
+          },
+          {
+            "key": "theEffectivenessOfTheProposedArchitectureIsValidatedAt1b3bAnd8bModelScales",
+            "label": "The effectiveness of the proposed architecture is validated at 1B, 3B, and 8B model scales.",
+            "checked": true
+          },
+          {
+            "key": "theArchiveInformationIsCompleteIncludingWandbReportsAndHuggingfaceCollectionsOfModelCheckpoints",
+            "label": "The archive information is complete, including WandB reports and HuggingFace collections of model checkpoints.",
+            "checked": true
+          }
+        ]
+      },
+      "fieldGroups": [
         {
-          "key": "basicInformation",
-          "label": "Basic information",
+          "key": "metadata",
+          "label": "Metadata",
           "fields": [
+            {
+              "key": "title",
+              "label": "Title",
+              "type": "text",
+              "value": "Depth-Attention & SiameseNorm implementation",
+              "status": "filled"
+            },
             {
               "key": "architectureName",
               "label": "Architecture Name",
               "type": "text",
-              "value": "Depth attention & siamese norm-1b",
+              "value": "Architecture Implementation",
               "status": "filled"
             },
             {
-              "key": "proposalIssue",
-              "label": "Proposal Issue",
+              "key": "about",
+              "label": "About",
+              "type": "text",
+              "value": "Implement an approved LLM architecture modification",
+              "status": "filled"
+            }
+          ]
+        },
+        {
+          "key": "architectureProposal",
+          "label": "Architecture Proposal",
+          "fields": [
+            {
+              "key": "architectureProposalIssue",
+              "path": "architectureProposalIssue",
+              "label": "Architecture Proposal (issue #)",
               "type": "link",
               "value": {
-                "label": "#15",
-                "number": 15,
-                "url": "https://github.com/JT-Ushio/template-test/issues/15",
-                "raw": "#15"
+                "label": "#2",
+                "number": 2,
+                "url": "https://github.com/scv11/template-test/issues/2",
+                "raw": "#2"
               },
               "status": "filled"
             }
           ]
         },
         {
-          "key": "reportLinks",
-          "label": "Report Links",
+          "key": "implementation",
+          "label": "Implementation",
           "fields": [
             {
-              "key": "reportLink",
-              "label": "Report Link",
-              "type": "link",
+              "key": "implementationDetails",
+              "path": "implementationDetails",
+              "label": "Implementation Details",
+              "type": "markdown",
+              "value": "This is Implementation Details.",
+              "status": "filled"
+            },
+            {
+              "key": "experimentalValidation",
+              "path": "experimentalValidation",
+              "label": "Experimental Validation",
+              "type": "sectionTree",
               "value": {
-                "label": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA?accessToken=wz3wz0xj1yw4jhr6i24pmp1uhvcfo8mssjfuiye8mf9bvvk0qknipoq61xbwp7xd",
-                "url": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA?accessToken=wz3wz0xj1yw4jhr6i24pmp1uhvcfo8mssjfuiye8mf9bvvk0qknipoq61xbwp7xd",
-                "raw": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA?accessToken=wz3wz0xj1yw4jhr6i24pmp1uhvcfo8mssjfuiye8mf9bvvk0qknipoq61xbwp7xd"
+                "intro": null,
+                "sections": [
+                  {
+                    "title": "Research Question 1",
+                    "level": 2,
+                    "content": "*Hypothesis:* This is Hypothesis 1.\n\n\n*Results & Analysis:* This is Results & Analysis 1.\n\n\n*Findings:* This is Findings 1.",
+                    "children": []
+                  },
+                  {
+                    "title": "Research Question 2",
+                    "level": 2,
+                    "content": "*Hypothesis:* This is Hypothesis 2.\n*Results & Analysis:* This is Results & Analysis 2.\n*Findings:* This is Findings 2.",
+                    "children": []
+                  },
+                  {
+                    "title": "Research Question 3",
+                    "level": 2,
+                    "content": "*Hypothesis:* This is Hypothesis 3.\n*Results & Analysis:* This is Results & Analysis 3.\n*Findings:* This is Findings 3.",
+                    "children": []
+                  },
+                  {
+                    "title": "Research Question 4",
+                    "level": 2,
+                    "content": "*Hypothesis:* This is Hypothesis 4.\n*Results & Analysis:* This is Results & Analysis 4.\n*Findings:* This is Findings 4.",
+                    "children": []
+                  }
+                ]
               },
               "status": "filled"
             }
           ]
         },
         {
-          "key": "summaries",
-          "label": "Summaries",
+          "key": "archive",
+          "label": "Archive",
           "fields": [
             {
-              "key": "implementationSummary",
-              "label": "Implementation Summary",
-              "type": "markdown",
-              "value": "This PR adds OLMo2-1B as a reproducible root architecture in this\nrepository.\n\nIt includes the model configuration, decoder blocks, training and evaluation\nconfigurations, checkpoint support, and validation required to use OLMo2-1B as a baseline for future architecture experiments.\n\nReference to [olmo2-0425-1b](https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA?accessToken=wz3wz0xj1yw4jhr6i24pmp1uhvcfo8mssjfuiye8mf9bvvk0qknipoq61xbwp7xd)\nfor detailed configurations\n\nNo intentional architectural modification to the upstream model is introduced.",
+              "key": "wandbReportIncludeTrainingAndEvaluationLogs",
+              "label": "WandB Report (include training and evaluation logs)",
+              "type": "link",
+              "value": {
+                "label": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA",
+                "url": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA",
+                "raw": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA"
+              },
               "status": "filled"
             },
             {
-              "key": "experimentsSummary",
-              "label": "Experiments Summary",
-              "type": "markdown",
-              "value": "The training loss decreased consistently throughout the training run.\n\nNo persistent loss spikes, non-finite gradients, or optimizer instability were observed. \nGradient norm remained stable after the initial warmup period. \n\nThe complete loss, learning-rate, gradient-norm, throughput, and step-time curves are available in the linked W&B report.\n\nThe OLMo2 implementation can be constructed, trained, checkpointed, and evaluated successfully in the current repository. \n\nThe training run showed a stable decrease in training and validation loss. No persistent numerical instability was observed. \n\nAll required benchmarks completed successfully.",
+              "key": "huggingfaceCollectionIncludeModelCheckpoints",
+              "label": "HuggingFace Collection (include model checkpoints)",
+              "type": "link",
+              "value": {
+                "label": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA",
+                "url": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA",
+                "raw": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA"
+              },
               "status": "filled"
             }
           ]
         },
         {
-          "key": "results",
-          "label": "Results",
+          "key": "review",
+          "label": "Review",
           "fields": [
             {
-              "key": "experimentsOutcome",
-              "label": "Experiments Outcome",
-              "type": "checkboxGroup",
-              "value": [
-                {
-                  "key": "positive",
-                  "label": "Positive",
-                  "checked": true
-                },
-                {
-                  "key": "negative",
-                  "label": "Negative",
-                  "checked": false
-                },
-                {
-                  "key": "neutral",
-                  "label": "Neutral",
-                  "checked": false
-                },
-                {
-                  "key": "inconclusive",
-                  "label": "Inconclusive",
-                  "checked": false
-                }
-              ],
-              "status": "filled"
-            },
-            {
-              "key": "reproductionStatus",
-              "label": "Reproduction Status",
-              "type": "checkboxGroup",
-              "value": [
-                {
-                  "key": "basicArchitectureReproductionValidated",
-                  "label": "Basic architecture reproduction validated",
-                  "checked": true
-                },
-                {
-                  "key": "officialCheckpointEquivalenceValidated",
-                  "label": "Official checkpoint equivalence validated",
-                  "checked": false
-                },
-                {
-                  "key": "fullTrainingRecipeReproductionValidated",
-                  "label": "Full training recipe reproduction validated",
-                  "checked": false
-                }
-              ],
-              "status": "filled"
-            },
-            {
-              "key": "conclusion",
-              "label": "Conclusion",
+              "key": "reviewerAssessment",
+              "path": "reviewerAssessment",
+              "label": "Reviewer Assessment",
               "type": "markdown",
-              "value": "This PR successfully adds OLMo2 as a functional root architecture in the repository. \n\nThe implementation passes model-construction, forward, backward, checkpoint, smoke-training, W&B logging, and benchmark-pipeline validation. \n\nThe architecture is suitable for use as a parent node in future architecture proposals. Full-scale training reproduction and upstream-checkpoint equivalence should be tracked as separate validation work.",
+              "value": "This is Reviewer Assessment.",
               "status": "filled"
             },
             {
               "key": "mergeChecklist",
+              "path": "mergeChecklist",
               "label": "Merge Checklist",
               "type": "checkboxGroup",
               "value": [
                 {
-                  "key": "theLinkedProposalIsApproved",
-                  "label": "The linked proposal is approved.",
+                  "key": "theImplementationPrIsLinkedToAnInProgressArchitectureProposalIssue",
+                  "label": "The implementation PR is linked to an `in-progress` Architecture Proposal issue (#).",
                   "checked": true
                 },
                 {
-                  "key": "theImplementationMatchesTheOfficialArchitecture",
-                  "label": "The implementation matches the official architecture.",
+                  "key": "theImplementationCorrectnessOfTheProposedArchitectureIsVerified",
+                  "label": "The implementation correctness of the proposed architecture is verified.",
                   "checked": true
                 },
                 {
-                  "key": "theUpstreamSourceAndImmutableRevisionAreRecorded",
-                  "label": "The upstream source and immutable revision are recorded.",
+                  "key": "theEffectivenessOfTheProposedArchitectureIsValidatedAt1b3bAnd8bModelScales",
+                  "label": "The effectiveness of the proposed architecture is validated at 1B, 3B, and 8B model scales.",
                   "checked": true
                 },
                 {
-                  "key": "forwardBackwardCheckpointAndTrainingValidationPass",
-                  "label": "Forward, backward, checkpoint, and training validation pass.",
-                  "checked": true
-                },
-                {
-                  "key": "trainingAndEvaluationConfigurationsAreCommitted",
-                  "label": "Training and evaluation configurations are committed.",
-                  "checked": true
-                },
-                {
-                  "key": "publicWandbLogsAndBenchmarkResultsAreLinked",
-                  "label": "Public W&B logs and benchmark results are linked.",
-                  "checked": true
-                },
-                {
-                  "key": "testsDocumentationAndCiPass",
-                  "label": "Tests, documentation, and CI pass.",
-                  "checked": true
-                },
-                {
-                  "key": "requiredReviewersApproveThePr",
-                  "label": "Required reviewers approve the PR.",
+                  "key": "theArchiveInformationIsCompleteIncludingWandbReportsAndHuggingfaceCollectionsOfModelCheckpoints",
+                  "label": "The archive information is complete, including WandB reports and HuggingFace collections of model checkpoints.",
                   "checked": true
                 }
               ],
@@ -919,674 +805,281 @@
       ]
     },
     {
-      "number": 18,
-      "title": "OLMo-3 8B Base Architecture",
-      "state": "open",
-      "url": "https://github.com/JT-Ushio/template-test/pull/18",
+      "number": 7,
+      "title": "Create debug1.py",
+      "state": "closed",
+      "url": "https://github.com/scv11/template-test/pull/7",
       "author": "scv11",
-      "createdAt": "2026-07-23T16:17:10Z",
-      "updatedAt": "2026-07-24T05:59:17Z",
-      "closedAt": null,
+      "createdAt": "2026-07-25T11:47:35Z",
+      "updatedAt": "2026-07-26T10:41:02Z",
+      "closedAt": "2026-07-25T12:21:47Z",
       "labels": [
-        "architecture proposal"
+        "architecure implement"
       ],
       "assignees": [],
       "milestone": null,
       "draft": false,
-      "merged": false,
-      "mergedAt": null,
+      "merged": true,
+      "mergedAt": "2026-07-25T12:21:47Z",
       "base": {
-        "repo": "JT-Ushio/template-test",
+        "repo": "scv11/template-test",
         "branch": "main",
-        "sha": "e85f8aeaf1e9c3430eb6488a997b78d1d4c47cde"
+        "sha": "4a690894c3efb4bc176aa1f6815a331adb6b4add"
       },
       "head": {
-        "repo": "scv11/template-test-olmo3",
-        "branch": "olmo3-pr2",
-        "sha": "c8c0f9bab917ea963110fc4cd31cb238eb3bec20"
+        "repo": "scv11/template-test",
+        "branch": "debug1",
+        "sha": "d5455d0206d2ef10108ddffe8ce4ac31e7416c3a"
       },
-      "commitCount": 6,
-      "additions": 1485,
+      "commitCount": 1,
+      "additions": 1,
       "deletions": 0,
-      "changedFiles": 5,
+      "changedFiles": 1,
       "requestedReviewers": [],
       "reviews": [],
       "linkedIssues": [
-        13
+        1,
+        123
       ],
       "taskProgress": {
-        "checked": 10,
-        "total": 15
+        "checked": 4,
+        "total": 4
       },
       "parsed": {
-        "templateTitle": "OLMo-3 8B Base Architecture",
-        "basicInformation": {
-          "architectureName": "olmo3-8b",
-          "proposalIssue": {
-            "label": "#13",
-            "number": 13,
-            "url": "https://github.com/JT-Ushio/template-test/issues/13",
-            "raw": "#13"
-          }
+        "metadata": {
+          "title": "olmo3 implementation",
+          "architectureName": "Architecture Implementation",
+          "about": "Implement an approved LLM architecture modification"
         },
-        "implementationSummary": "This PR adds OLMo2-1B as a reproducible root architecture in this\nrepository.\n\nIt includes the model configuration, decoder blocks, training and evaluation\nconfigurations, checkpoint support, and validation required to use OLMo2-1B as a baseline for future architecture experiments.\n\nReference to [olmo2-0425-1b](https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA?accessToken=wz3wz0xj1yw4jhr6i24pmp1uhvcfo8mssjfuiye8mf9bvvk0qknipoq61xbwp7xd)\nfor detailed configurations\n\nNo intentional architectural modification to the upstream model is introduced.",
-        "experimentsSummary": "The training loss decreased consistently throughout the training run.\n\nNo persistent loss spikes, non-finite gradients, or optimizer instability were observed. \nGradient norm remained stable after the initial warmup period. \n\nThe complete loss, learning-rate, gradient-norm, throughput, and step-time curves are available in the linked W&B report.\n\nThe OLMo2 implementation can be constructed, trained, checkpointed, and evaluated successfully in the current repository. \n\nThe training run showed a stable decrease in training and validation loss. No persistent numerical instability was observed. \n\nAll required benchmarks completed successfully.",
-        "experimentsOutcome": [
-          {
-            "key": "positive",
-            "label": "Positive",
-            "checked": true
-          },
-          {
-            "key": "negative",
-            "label": "Negative",
-            "checked": false
-          },
-          {
-            "key": "neutral",
-            "label": "Neutral",
-            "checked": false
-          },
-          {
-            "key": "inconclusive",
-            "label": "Inconclusive",
-            "checked": false
-          }
-        ],
-        "reproductionStatus": [
-          {
-            "key": "basicArchitectureReproductionValidated",
-            "label": "Basic architecture reproduction validated",
-            "checked": true
-          },
-          {
-            "key": "officialCheckpointEquivalenceValidated",
-            "label": "Official checkpoint equivalence validated",
-            "checked": false
-          },
-          {
-            "key": "fullTrainingRecipeReproductionValidated",
-            "label": "Full training recipe reproduction validated",
-            "checked": false
-          }
-        ],
-        "conclusion": "This PR successfully adds OLMo2 as a functional root architecture in the repository. \n\nThe implementation passes model-construction, forward, backward, checkpoint, smoke-training, W&B logging, and benchmark-pipeline validation. \n\nThe architecture is suitable for use as a parent node in future architecture proposals. Full-scale training reproduction and upstream-checkpoint equivalence should be tracked as separate validation work.",
-        "mergeChecklist": [
-          {
-            "key": "theLinkedProposalIsApproved",
-            "label": "The linked proposal is approved.",
-            "checked": true
-          },
-          {
-            "key": "theImplementationMatchesTheOfficialArchitecture",
-            "label": "The implementation matches the official architecture.",
-            "checked": true
-          },
-          {
-            "key": "theUpstreamSourceAndImmutableRevisionAreRecorded",
-            "label": "The upstream source and immutable revision are recorded.",
-            "checked": true
-          },
-          {
-            "key": "forwardBackwardCheckpointAndTrainingValidationPass",
-            "label": "Forward, backward, checkpoint, and training validation pass.",
-            "checked": true
-          },
-          {
-            "key": "trainingAndEvaluationConfigurationsAreCommitted",
-            "label": "Training and evaluation configurations are committed.",
-            "checked": true
-          },
-          {
-            "key": "publicWandbLogsAndBenchmarkResultsAreLinked",
-            "label": "Public W&B logs and benchmark results are linked.",
-            "checked": true
-          },
-          {
-            "key": "testsDocumentationAndCiPass",
-            "label": "Tests, documentation, and CI pass.",
-            "checked": true
-          },
-          {
-            "key": "requiredReviewersApproveThePr",
-            "label": "Required reviewers approve the PR.",
-            "checked": true
-          }
-        ],
-        "reportLinks": {
-          "reportLink": {
-            "label": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA?accessToken=wz3wz0xj1yw4jhr6i24pmp1uhvcfo8mssjfuiye8mf9bvvk0qknipoq61xbwp7xd",
-            "url": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA?accessToken=wz3wz0xj1yw4jhr6i24pmp1uhvcfo8mssjfuiye8mf9bvvk0qknipoq61xbwp7xd",
-            "raw": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA?accessToken=wz3wz0xj1yw4jhr6i24pmp1uhvcfo8mssjfuiye8mf9bvvk0qknipoq61xbwp7xd"
-          }
+        "architectureProposalIssue": {
+          "label": "#1",
+          "number": 1,
+          "url": "https://github.com/scv11/template-test/issues/1",
+          "raw": "#1"
         },
-        "legacyWandbLinks": {
-          "projects": null,
-          "trainingRun": null,
-          "benchmarkRun": null
-        }
-      },
-      "fieldGroups": [
-        {
-          "key": "identity",
-          "label": "Identity",
-          "fields": [
+        "implementationDetails": "This is Implementation Details.",
+        "experimentalValidation": {
+          "intro": null,
+          "sections": [
             {
-              "key": "templateTitle",
-              "path": "templateTitle",
-              "label": "Title",
-              "type": "text",
-              "value": "OLMo-3 8B Base Architecture",
-              "status": "filled"
+              "title": "Research Question 1",
+              "level": 2,
+              "content": "*Hypothesis:* This is Hypothesis 1.\n\n\n*Results & Analysis:* This is Results & Analysis 1.\n\n\n*Findings:* This is Findings 1.",
+              "children": []
+            },
+            {
+              "title": "Research Question 2",
+              "level": 2,
+              "content": "*Hypothesis:* This is Hypothesis 2.\n*Results & Analysis:* This is Results & Analysis 2.\n*Findings:* This is Findings 2.",
+              "children": []
+            },
+            {
+              "title": "Research Question 3",
+              "level": 2,
+              "content": "*Hypothesis:* This is Hypothesis 3.\n*Results & Analysis:* This is Results & Analysis 3.\n*Findings:* This is Findings 3.",
+              "children": []
             }
           ]
         },
+        "archive": [
+          {
+            "key": "wandbReportIncludeTrainingAndEvaluationLogs",
+            "label": "WandB Report (include training and evaluation logs)",
+            "value": {
+              "label": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA",
+              "url": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA",
+              "raw": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA"
+            }
+          },
+          {
+            "key": "huggingfaceCollectionIncludeModelCheckpoints",
+            "label": "HuggingFace Collection (include model checkpoints)",
+            "value": {
+              "label": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA",
+              "url": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA",
+              "raw": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA"
+            }
+          }
+        ],
+        "reviewerAssessment": "This is Reviewer Assessment.",
+        "mergeChecklist": [
+          {
+            "key": "theImplementationPrIsLinkedToAnInProgressArchitectureProposalIssue",
+            "label": "The implementation PR is linked to an `in-progress` Architecture Proposal issue (#).",
+            "checked": true
+          },
+          {
+            "key": "theImplementationCorrectnessOfTheProposedArchitectureIsVerified",
+            "label": "The implementation correctness of the proposed architecture is verified.",
+            "checked": true
+          },
+          {
+            "key": "theEffectivenessOfTheProposedArchitectureIsValidatedAt1b3bAnd8bModelScales",
+            "label": "The effectiveness of the proposed architecture is validated at 1B, 3B, and 8B model scales.",
+            "checked": true
+          },
+          {
+            "key": "theArchiveInformationIsCompleteIncludingWandbReportsAndHuggingfaceCollectionsOfModelCheckpoints",
+            "label": "The archive information is complete, including WandB reports and HuggingFace collections of model checkpoints.",
+            "checked": true
+          }
+        ]
+      },
+      "fieldGroups": [
         {
-          "key": "basicInformation",
-          "label": "Basic information",
+          "key": "metadata",
+          "label": "Metadata",
           "fields": [
+            {
+              "key": "title",
+              "label": "Title",
+              "type": "text",
+              "value": "olmo3 implementation",
+              "status": "filled"
+            },
             {
               "key": "architectureName",
               "label": "Architecture Name",
               "type": "text",
-              "value": "olmo3-8b",
+              "value": "Architecture Implementation",
               "status": "filled"
             },
             {
-              "key": "proposalIssue",
-              "label": "Proposal Issue",
+              "key": "about",
+              "label": "About",
+              "type": "text",
+              "value": "Implement an approved LLM architecture modification",
+              "status": "filled"
+            }
+          ]
+        },
+        {
+          "key": "architectureProposal",
+          "label": "Architecture Proposal",
+          "fields": [
+            {
+              "key": "architectureProposalIssue",
+              "path": "architectureProposalIssue",
+              "label": "Architecture Proposal (issue #)",
               "type": "link",
               "value": {
-                "label": "#13",
-                "number": 13,
-                "url": "https://github.com/JT-Ushio/template-test/issues/13",
-                "raw": "#13"
+                "label": "#1",
+                "number": 1,
+                "url": "https://github.com/scv11/template-test/issues/1",
+                "raw": "#1"
               },
               "status": "filled"
             }
           ]
         },
         {
-          "key": "reportLinks",
-          "label": "Report Links",
+          "key": "implementation",
+          "label": "Implementation",
           "fields": [
             {
-              "key": "reportLink",
-              "label": "Report Link",
-              "type": "link",
+              "key": "implementationDetails",
+              "path": "implementationDetails",
+              "label": "Implementation Details",
+              "type": "markdown",
+              "value": "This is Implementation Details.",
+              "status": "filled"
+            },
+            {
+              "key": "experimentalValidation",
+              "path": "experimentalValidation",
+              "label": "Experimental Validation",
+              "type": "sectionTree",
               "value": {
-                "label": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA?accessToken=wz3wz0xj1yw4jhr6i24pmp1uhvcfo8mssjfuiye8mf9bvvk0qknipoq61xbwp7xd",
-                "url": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA?accessToken=wz3wz0xj1yw4jhr6i24pmp1uhvcfo8mssjfuiye8mf9bvvk0qknipoq61xbwp7xd",
-                "raw": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA?accessToken=wz3wz0xj1yw4jhr6i24pmp1uhvcfo8mssjfuiye8mf9bvvk0qknipoq61xbwp7xd"
+                "intro": null,
+                "sections": [
+                  {
+                    "title": "Research Question 1",
+                    "level": 2,
+                    "content": "*Hypothesis:* This is Hypothesis 1.\n\n\n*Results & Analysis:* This is Results & Analysis 1.\n\n\n*Findings:* This is Findings 1.",
+                    "children": []
+                  },
+                  {
+                    "title": "Research Question 2",
+                    "level": 2,
+                    "content": "*Hypothesis:* This is Hypothesis 2.\n*Results & Analysis:* This is Results & Analysis 2.\n*Findings:* This is Findings 2.",
+                    "children": []
+                  },
+                  {
+                    "title": "Research Question 3",
+                    "level": 2,
+                    "content": "*Hypothesis:* This is Hypothesis 3.\n*Results & Analysis:* This is Results & Analysis 3.\n*Findings:* This is Findings 3.",
+                    "children": []
+                  }
+                ]
               },
               "status": "filled"
             }
           ]
         },
         {
-          "key": "summaries",
-          "label": "Summaries",
+          "key": "archive",
+          "label": "Archive",
           "fields": [
             {
-              "key": "implementationSummary",
-              "label": "Implementation Summary",
-              "type": "markdown",
-              "value": "This PR adds OLMo2-1B as a reproducible root architecture in this\nrepository.\n\nIt includes the model configuration, decoder blocks, training and evaluation\nconfigurations, checkpoint support, and validation required to use OLMo2-1B as a baseline for future architecture experiments.\n\nReference to [olmo2-0425-1b](https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA?accessToken=wz3wz0xj1yw4jhr6i24pmp1uhvcfo8mssjfuiye8mf9bvvk0qknipoq61xbwp7xd)\nfor detailed configurations\n\nNo intentional architectural modification to the upstream model is introduced.",
+              "key": "wandbReportIncludeTrainingAndEvaluationLogs",
+              "label": "WandB Report (include training and evaluation logs)",
+              "type": "link",
+              "value": {
+                "label": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA",
+                "url": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA",
+                "raw": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA"
+              },
               "status": "filled"
             },
             {
-              "key": "experimentsSummary",
-              "label": "Experiments Summary",
-              "type": "markdown",
-              "value": "The training loss decreased consistently throughout the training run.\n\nNo persistent loss spikes, non-finite gradients, or optimizer instability were observed. \nGradient norm remained stable after the initial warmup period. \n\nThe complete loss, learning-rate, gradient-norm, throughput, and step-time curves are available in the linked W&B report.\n\nThe OLMo2 implementation can be constructed, trained, checkpointed, and evaluated successfully in the current repository. \n\nThe training run showed a stable decrease in training and validation loss. No persistent numerical instability was observed. \n\nAll required benchmarks completed successfully.",
+              "key": "huggingfaceCollectionIncludeModelCheckpoints",
+              "label": "HuggingFace Collection (include model checkpoints)",
+              "type": "link",
+              "value": {
+                "label": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA",
+                "url": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA",
+                "raw": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA"
+              },
               "status": "filled"
             }
           ]
         },
         {
-          "key": "results",
-          "label": "Results",
+          "key": "review",
+          "label": "Review",
           "fields": [
             {
-              "key": "experimentsOutcome",
-              "label": "Experiments Outcome",
-              "type": "checkboxGroup",
-              "value": [
-                {
-                  "key": "positive",
-                  "label": "Positive",
-                  "checked": true
-                },
-                {
-                  "key": "negative",
-                  "label": "Negative",
-                  "checked": false
-                },
-                {
-                  "key": "neutral",
-                  "label": "Neutral",
-                  "checked": false
-                },
-                {
-                  "key": "inconclusive",
-                  "label": "Inconclusive",
-                  "checked": false
-                }
-              ],
-              "status": "filled"
-            },
-            {
-              "key": "reproductionStatus",
-              "label": "Reproduction Status",
-              "type": "checkboxGroup",
-              "value": [
-                {
-                  "key": "basicArchitectureReproductionValidated",
-                  "label": "Basic architecture reproduction validated",
-                  "checked": true
-                },
-                {
-                  "key": "officialCheckpointEquivalenceValidated",
-                  "label": "Official checkpoint equivalence validated",
-                  "checked": false
-                },
-                {
-                  "key": "fullTrainingRecipeReproductionValidated",
-                  "label": "Full training recipe reproduction validated",
-                  "checked": false
-                }
-              ],
-              "status": "filled"
-            },
-            {
-              "key": "conclusion",
-              "label": "Conclusion",
+              "key": "reviewerAssessment",
+              "path": "reviewerAssessment",
+              "label": "Reviewer Assessment",
               "type": "markdown",
-              "value": "This PR successfully adds OLMo2 as a functional root architecture in the repository. \n\nThe implementation passes model-construction, forward, backward, checkpoint, smoke-training, W&B logging, and benchmark-pipeline validation. \n\nThe architecture is suitable for use as a parent node in future architecture proposals. Full-scale training reproduction and upstream-checkpoint equivalence should be tracked as separate validation work.",
+              "value": "This is Reviewer Assessment.",
               "status": "filled"
             },
             {
               "key": "mergeChecklist",
+              "path": "mergeChecklist",
               "label": "Merge Checklist",
               "type": "checkboxGroup",
               "value": [
                 {
-                  "key": "theLinkedProposalIsApproved",
-                  "label": "The linked proposal is approved.",
+                  "key": "theImplementationPrIsLinkedToAnInProgressArchitectureProposalIssue",
+                  "label": "The implementation PR is linked to an `in-progress` Architecture Proposal issue (#).",
                   "checked": true
                 },
                 {
-                  "key": "theImplementationMatchesTheOfficialArchitecture",
-                  "label": "The implementation matches the official architecture.",
+                  "key": "theImplementationCorrectnessOfTheProposedArchitectureIsVerified",
+                  "label": "The implementation correctness of the proposed architecture is verified.",
                   "checked": true
                 },
                 {
-                  "key": "theUpstreamSourceAndImmutableRevisionAreRecorded",
-                  "label": "The upstream source and immutable revision are recorded.",
+                  "key": "theEffectivenessOfTheProposedArchitectureIsValidatedAt1b3bAnd8bModelScales",
+                  "label": "The effectiveness of the proposed architecture is validated at 1B, 3B, and 8B model scales.",
                   "checked": true
                 },
                 {
-                  "key": "forwardBackwardCheckpointAndTrainingValidationPass",
-                  "label": "Forward, backward, checkpoint, and training validation pass.",
-                  "checked": true
-                },
-                {
-                  "key": "trainingAndEvaluationConfigurationsAreCommitted",
-                  "label": "Training and evaluation configurations are committed.",
-                  "checked": true
-                },
-                {
-                  "key": "publicWandbLogsAndBenchmarkResultsAreLinked",
-                  "label": "Public W&B logs and benchmark results are linked.",
-                  "checked": true
-                },
-                {
-                  "key": "testsDocumentationAndCiPass",
-                  "label": "Tests, documentation, and CI pass.",
-                  "checked": true
-                },
-                {
-                  "key": "requiredReviewersApproveThePr",
-                  "label": "Required reviewers approve the PR.",
-                  "checked": true
-                }
-              ],
-              "status": "filled"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "number": 14,
-      "title": "OLMo-3 1B Base Architecture",
-      "state": "open",
-      "url": "https://github.com/JT-Ushio/template-test/pull/14",
-      "author": "scv11",
-      "createdAt": "2026-07-23T15:38:42Z",
-      "updatedAt": "2026-07-24T05:59:33Z",
-      "closedAt": null,
-      "labels": [
-        "architecture proposal"
-      ],
-      "assignees": [],
-      "milestone": null,
-      "draft": false,
-      "merged": false,
-      "mergedAt": null,
-      "base": {
-        "repo": "JT-Ushio/template-test",
-        "branch": "main",
-        "sha": "e85f8aeaf1e9c3430eb6488a997b78d1d4c47cde"
-      },
-      "head": {
-        "repo": "scv11/template-test-olmo3",
-        "branch": "main",
-        "sha": "c8c0f9bab917ea963110fc4cd31cb238eb3bec20"
-      },
-      "commitCount": 6,
-      "additions": 1485,
-      "deletions": 0,
-      "changedFiles": 5,
-      "requestedReviewers": [],
-      "reviews": [],
-      "linkedIssues": [
-        13
-      ],
-      "taskProgress": {
-        "checked": 10,
-        "total": 15
-      },
-      "parsed": {
-        "templateTitle": "OLMo-3 1B Base Architecture",
-        "basicInformation": {
-          "architectureName": "olmo3-0425-1b",
-          "proposalIssue": {
-            "label": "#13",
-            "number": 13,
-            "url": "https://github.com/JT-Ushio/template-test/issues/13",
-            "raw": "#13"
-          }
-        },
-        "implementationSummary": "This PR adds OLMo2-1B as a reproducible root architecture in this\nrepository.\n\nIt includes the model configuration, decoder blocks, training and evaluation\nconfigurations, checkpoint support, and validation required to use OLMo2-1B as a baseline for future architecture experiments.\n\nReference to [olmo2-0425-1b](https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA?accessToken=wz3wz0xj1yw4jhr6i24pmp1uhvcfo8mssjfuiye8mf9bvvk0qknipoq61xbwp7xd)\nfor detailed configurations\n\nNo intentional architectural modification to the upstream model is introduced.",
-        "experimentsSummary": "The training loss decreased consistently throughout the training run.\n\nNo persistent loss spikes, non-finite gradients, or optimizer instability were observed. \nGradient norm remained stable after the initial warmup period. \n\nThe complete loss, learning-rate, gradient-norm, throughput, and step-time curves are available in the linked W&B report.\n\nThe OLMo2 implementation can be constructed, trained, checkpointed, and evaluated successfully in the current repository. \n\nThe training run showed a stable decrease in training and validation loss. No persistent numerical instability was observed. \n\nAll required benchmarks completed successfully.",
-        "experimentsOutcome": [
-          {
-            "key": "positive",
-            "label": "Positive",
-            "checked": true
-          },
-          {
-            "key": "negative",
-            "label": "Negative",
-            "checked": false
-          },
-          {
-            "key": "neutral",
-            "label": "Neutral",
-            "checked": false
-          },
-          {
-            "key": "inconclusive",
-            "label": "Inconclusive",
-            "checked": false
-          }
-        ],
-        "reproductionStatus": [
-          {
-            "key": "basicArchitectureReproductionValidated",
-            "label": "Basic architecture reproduction validated",
-            "checked": true
-          },
-          {
-            "key": "officialCheckpointEquivalenceValidated",
-            "label": "Official checkpoint equivalence validated",
-            "checked": false
-          },
-          {
-            "key": "fullTrainingRecipeReproductionValidated",
-            "label": "Full training recipe reproduction validated",
-            "checked": false
-          }
-        ],
-        "conclusion": "This PR successfully adds OLMo2 as a functional root architecture in the repository. \n\nThe implementation passes model-construction, forward, backward, checkpoint, smoke-training, W&B logging, and benchmark-pipeline validation. \n\nThe architecture is suitable for use as a parent node in future architecture proposals. Full-scale training reproduction and upstream-checkpoint equivalence should be tracked as separate validation work.",
-        "mergeChecklist": [
-          {
-            "key": "theLinkedProposalIsApproved",
-            "label": "The linked proposal is approved.",
-            "checked": true
-          },
-          {
-            "key": "theImplementationMatchesTheOfficialArchitecture",
-            "label": "The implementation matches the official architecture.",
-            "checked": true
-          },
-          {
-            "key": "theUpstreamSourceAndImmutableRevisionAreRecorded",
-            "label": "The upstream source and immutable revision are recorded.",
-            "checked": true
-          },
-          {
-            "key": "forwardBackwardCheckpointAndTrainingValidationPass",
-            "label": "Forward, backward, checkpoint, and training validation pass.",
-            "checked": true
-          },
-          {
-            "key": "trainingAndEvaluationConfigurationsAreCommitted",
-            "label": "Training and evaluation configurations are committed.",
-            "checked": true
-          },
-          {
-            "key": "publicWandbLogsAndBenchmarkResultsAreLinked",
-            "label": "Public W&B logs and benchmark results are linked.",
-            "checked": true
-          },
-          {
-            "key": "testsDocumentationAndCiPass",
-            "label": "Tests, documentation, and CI pass.",
-            "checked": true
-          },
-          {
-            "key": "requiredReviewersApproveThePr",
-            "label": "Required reviewers approve the PR.",
-            "checked": true
-          }
-        ],
-        "reportLinks": {
-          "reportLink": {
-            "label": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA?accessToken=wz3wz0xj1yw4jhr6i24pmp1uhvcfo8mssjfuiye8mf9bvvk0qknipoq61xbwp7xd",
-            "url": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA?accessToken=wz3wz0xj1yw4jhr6i24pmp1uhvcfo8mssjfuiye8mf9bvvk0qknipoq61xbwp7xd",
-            "raw": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA?accessToken=wz3wz0xj1yw4jhr6i24pmp1uhvcfo8mssjfuiye8mf9bvvk0qknipoq61xbwp7xd"
-          }
-        },
-        "legacyWandbLinks": {
-          "projects": null,
-          "trainingRun": null,
-          "benchmarkRun": null
-        }
-      },
-      "fieldGroups": [
-        {
-          "key": "identity",
-          "label": "Identity",
-          "fields": [
-            {
-              "key": "templateTitle",
-              "path": "templateTitle",
-              "label": "Title",
-              "type": "text",
-              "value": "OLMo-3 1B Base Architecture",
-              "status": "filled"
-            }
-          ]
-        },
-        {
-          "key": "basicInformation",
-          "label": "Basic information",
-          "fields": [
-            {
-              "key": "architectureName",
-              "label": "Architecture Name",
-              "type": "text",
-              "value": "olmo3-0425-1b",
-              "status": "filled"
-            },
-            {
-              "key": "proposalIssue",
-              "label": "Proposal Issue",
-              "type": "link",
-              "value": {
-                "label": "#13",
-                "number": 13,
-                "url": "https://github.com/JT-Ushio/template-test/issues/13",
-                "raw": "#13"
-              },
-              "status": "filled"
-            }
-          ]
-        },
-        {
-          "key": "reportLinks",
-          "label": "Report Links",
-          "fields": [
-            {
-              "key": "reportLink",
-              "label": "Report Link",
-              "type": "link",
-              "value": {
-                "label": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA?accessToken=wz3wz0xj1yw4jhr6i24pmp1uhvcfo8mssjfuiye8mf9bvvk0qknipoq61xbwp7xd",
-                "url": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA?accessToken=wz3wz0xj1yw4jhr6i24pmp1uhvcfo8mssjfuiye8mf9bvvk0qknipoq61xbwp7xd",
-                "raw": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA?accessToken=wz3wz0xj1yw4jhr6i24pmp1uhvcfo8mssjfuiye8mf9bvvk0qknipoq61xbwp7xd"
-              },
-              "status": "filled"
-            }
-          ]
-        },
-        {
-          "key": "summaries",
-          "label": "Summaries",
-          "fields": [
-            {
-              "key": "implementationSummary",
-              "label": "Implementation Summary",
-              "type": "markdown",
-              "value": "This PR adds OLMo2-1B as a reproducible root architecture in this\nrepository.\n\nIt includes the model configuration, decoder blocks, training and evaluation\nconfigurations, checkpoint support, and validation required to use OLMo2-1B as a baseline for future architecture experiments.\n\nReference to [olmo2-0425-1b](https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA?accessToken=wz3wz0xj1yw4jhr6i24pmp1uhvcfo8mssjfuiye8mf9bvvk0qknipoq61xbwp7xd)\nfor detailed configurations\n\nNo intentional architectural modification to the upstream model is introduced.",
-              "status": "filled"
-            },
-            {
-              "key": "experimentsSummary",
-              "label": "Experiments Summary",
-              "type": "markdown",
-              "value": "The training loss decreased consistently throughout the training run.\n\nNo persistent loss spikes, non-finite gradients, or optimizer instability were observed. \nGradient norm remained stable after the initial warmup period. \n\nThe complete loss, learning-rate, gradient-norm, throughput, and step-time curves are available in the linked W&B report.\n\nThe OLMo2 implementation can be constructed, trained, checkpointed, and evaluated successfully in the current repository. \n\nThe training run showed a stable decrease in training and validation loss. No persistent numerical instability was observed. \n\nAll required benchmarks completed successfully.",
-              "status": "filled"
-            }
-          ]
-        },
-        {
-          "key": "results",
-          "label": "Results",
-          "fields": [
-            {
-              "key": "experimentsOutcome",
-              "label": "Experiments Outcome",
-              "type": "checkboxGroup",
-              "value": [
-                {
-                  "key": "positive",
-                  "label": "Positive",
-                  "checked": true
-                },
-                {
-                  "key": "negative",
-                  "label": "Negative",
-                  "checked": false
-                },
-                {
-                  "key": "neutral",
-                  "label": "Neutral",
-                  "checked": false
-                },
-                {
-                  "key": "inconclusive",
-                  "label": "Inconclusive",
-                  "checked": false
-                }
-              ],
-              "status": "filled"
-            },
-            {
-              "key": "reproductionStatus",
-              "label": "Reproduction Status",
-              "type": "checkboxGroup",
-              "value": [
-                {
-                  "key": "basicArchitectureReproductionValidated",
-                  "label": "Basic architecture reproduction validated",
-                  "checked": true
-                },
-                {
-                  "key": "officialCheckpointEquivalenceValidated",
-                  "label": "Official checkpoint equivalence validated",
-                  "checked": false
-                },
-                {
-                  "key": "fullTrainingRecipeReproductionValidated",
-                  "label": "Full training recipe reproduction validated",
-                  "checked": false
-                }
-              ],
-              "status": "filled"
-            },
-            {
-              "key": "conclusion",
-              "label": "Conclusion",
-              "type": "markdown",
-              "value": "This PR successfully adds OLMo2 as a functional root architecture in the repository. \n\nThe implementation passes model-construction, forward, backward, checkpoint, smoke-training, W&B logging, and benchmark-pipeline validation. \n\nThe architecture is suitable for use as a parent node in future architecture proposals. Full-scale training reproduction and upstream-checkpoint equivalence should be tracked as separate validation work.",
-              "status": "filled"
-            },
-            {
-              "key": "mergeChecklist",
-              "label": "Merge Checklist",
-              "type": "checkboxGroup",
-              "value": [
-                {
-                  "key": "theLinkedProposalIsApproved",
-                  "label": "The linked proposal is approved.",
-                  "checked": true
-                },
-                {
-                  "key": "theImplementationMatchesTheOfficialArchitecture",
-                  "label": "The implementation matches the official architecture.",
-                  "checked": true
-                },
-                {
-                  "key": "theUpstreamSourceAndImmutableRevisionAreRecorded",
-                  "label": "The upstream source and immutable revision are recorded.",
-                  "checked": true
-                },
-                {
-                  "key": "forwardBackwardCheckpointAndTrainingValidationPass",
-                  "label": "Forward, backward, checkpoint, and training validation pass.",
-                  "checked": true
-                },
-                {
-                  "key": "trainingAndEvaluationConfigurationsAreCommitted",
-                  "label": "Training and evaluation configurations are committed.",
-                  "checked": true
-                },
-                {
-                  "key": "publicWandbLogsAndBenchmarkResultsAreLinked",
-                  "label": "Public W&B logs and benchmark results are linked.",
-                  "checked": true
-                },
-                {
-                  "key": "testsDocumentationAndCiPass",
-                  "label": "Tests, documentation, and CI pass.",
-                  "checked": true
-                },
-                {
-                  "key": "requiredReviewersApproveThePr",
-                  "label": "Required reviewers approve the PR.",
+                  "key": "theArchiveInformationIsCompleteIncludingWandbReportsAndHuggingfaceCollectionsOfModelCheckpoints",
+                  "label": "The archive information is complete, including WandB reports and HuggingFace collections of model checkpoints.",
                   "checked": true
                 }
               ],

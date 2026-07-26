@@ -4,26 +4,25 @@ import { fileURLToPath } from "node:url";
 
 import {
   ISSUE_FIELDS,
-  PR_FIELD_GROUPS as V3_PR_FIELD_GROUPS,
   fetchArchitectureProposalData as fetchV3ArchitectureProposalData,
   parseArchitectureProposalIssue,
-  parsePullRequest as parseV3PullRequest,
 } from "./github-template-test-fetcher-v3.mjs";
 
-const DEFAULT_OWNER = "JT-Ushio";
+const DEFAULT_OWNER = "scv11";
 const DEFAULT_REPO = "template-test";
 
-const REPORT_LINKS_GROUP = {
-  key: "reportLinks",
-  label: "Report Links",
-  fields: [
-    {
-      key: "reportLink",
-      label: "Report Link",
-      type: "link",
-    },
-  ],
-};
+const DEFAULT_ARCHIVE_FIELDS = [
+  {
+    key: "wandbReportIncludeTrainingAndEvaluationLogs",
+    label: "WandB Report (include training and evaluation logs)",
+    type: "link",
+  },
+  {
+    key: "huggingfaceCollectionIncludeModelCheckpoints",
+    label: "HuggingFace Collection (include model checkpoints)",
+    type: "link",
+  },
+];
 
 export { ISSUE_FIELDS, parseArchitectureProposalIssue };
 
@@ -43,44 +42,70 @@ export function omitOfficialModel(value) {
   return value;
 }
 
-export const PR_FIELD_GROUPS = omitOfficialModel(V3_PR_FIELD_GROUPS).map((group) =>
-  group.key === "wandbLinks" ? REPORT_LINKS_GROUP : group,
-);
+export const PR_FIELD_GROUPS = [
+  {
+    key: "metadata",
+    label: "Metadata",
+    fields: [
+      { key: "title", label: "Title", type: "text" },
+      { key: "architectureName", label: "Architecture Name", type: "text" },
+      { key: "about", label: "About", type: "text" },
+    ],
+  },
+  {
+    key: "architectureProposal",
+    label: "Architecture Proposal",
+    fields: [
+      {
+        key: "architectureProposalIssue",
+        path: "architectureProposalIssue",
+        label: "Architecture Proposal (issue #)",
+        type: "link",
+      },
+    ],
+  },
+  {
+    key: "implementation",
+    label: "Implementation",
+    fields: [
+      { key: "implementationDetails", path: "implementationDetails", label: "Implementation Details", type: "markdown" },
+      { key: "experimentalValidation", path: "experimentalValidation", label: "Experimental Validation", type: "sectionTree" },
+    ],
+  },
+  createArchiveGroup(DEFAULT_ARCHIVE_FIELDS),
+  {
+    key: "review",
+    label: "Review",
+    fields: [
+      { key: "reviewerAssessment", path: "reviewerAssessment", label: "Reviewer Assessment", type: "markdown" },
+      { key: "mergeChecklist", path: "mergeChecklist", label: "Merge Checklist", type: "checkboxGroup" },
+    ],
+  },
+];
 
-/**
- * Parses the current `Report Links / Report Link` field while retaining
- * historical W&B fields under `legacyWandbLinks`.
- */
 export function parsePullRequest(body, context = {}) {
-  const v3Parsed = omitOfficialModel(parseV3PullRequest(body, context));
-  const { wandbLinks = {}, ...otherFields } = v3Parsed;
-  const reportLinkText = parseBoldDefinitionList(
-    findHeadingContent(body, "Report Links"),
-  )["Report Link"];
+  const metadata = parseMetadata(body);
+  const proposalMatch = String(body || "").match(
+    /^\s*>?\s*\*\*Architecture Proposal \(issue #\)\*\*\s*:\s*(.+?)\s*$/mi,
+  );
+  const reviewerContent = findHeadingContent(body, "Reviewer Assessment (for repo reviewers)")
+    .split(/^\s*\*\*Merge Checklist\*\*\s*:\s*$/mi)[0];
 
   return {
-    ...otherFields,
-    reportLinks: {
-      reportLink:
-        firstLinkOrText(reportLinkText, context) ||
-        wandbLinks.projects ||
-        wandbLinks.trainingRun ||
-        wandbLinks.benchmarkRun ||
-        null,
+    metadata: {
+      title: emptyToNull(metadata.Title),
+      architectureName: emptyToNull(metadata["Architecture Name"]),
+      about: emptyToNull(metadata.About),
     },
-    legacyWandbLinks: {
-      projects: wandbLinks.projects || null,
-      trainingRun: wandbLinks.trainingRun || null,
-      benchmarkRun: wandbLinks.benchmarkRun || null,
-    },
+    architectureProposalIssue: firstLinkOrText(proposalMatch?.[1] || "", context),
+    implementationDetails: emptyToNull(findHeadingDirectContent(body, "Implementation Details")),
+    experimentalValidation: parseHierarchicalSection(body, "Experimental Validation"),
+    archive: parseArchiveLinks(body, context),
+    reviewerAssessment: emptyToNull(cleanMarkdown(reviewerContent)),
+    mergeChecklist: parseMergeChecklist(body),
   };
 }
 
-/**
- * Keeps all v3 behavior, including omission of `proposalType`, then migrates
- * the changed PR field. A PR body is fetched only when no legacy W&B link is
- * available in the v3 result.
- */
 export async function fetchArchitectureProposalData(options = {}) {
   const owner = options.owner || DEFAULT_OWNER;
   const repo = options.repo || DEFAULT_REPO;
@@ -89,54 +114,39 @@ export async function fetchArchitectureProposalData(options = {}) {
 
   const pullRequests = await Promise.all(
     document.pullRequests.map(async (pullRequest) => {
-      const legacyParsed = pullRequest.parsed || {};
-      const legacyWandbLinks = legacyParsed.wandbLinks || {};
-      const legacyReportLink =
-        legacyWandbLinks.projects ||
-        legacyWandbLinks.trainingRun ||
-        legacyWandbLinks.benchmarkRun ||
-        null;
-
-      let parsed;
-      if (legacyReportLink) {
-        const { wandbLinks: omitted, ...otherFields } = legacyParsed;
-        void omitted;
-        parsed = {
-          ...otherFields,
-          reportLinks: {
-            reportLink: legacyReportLink,
-          },
-          legacyWandbLinks: {
-            projects: legacyWandbLinks.projects || null,
-            trainingRun: legacyWandbLinks.trainingRun || null,
-            benchmarkRun: legacyWandbLinks.benchmarkRun || null,
-          },
-        };
-      } else {
-        const body = await fetchPullRequestBody({
-          owner,
-          repo,
-          number: pullRequest.number,
-          token,
-        });
-        parsed = parsePullRequest(body, { owner, repo });
-      }
+      const body = await fetchPullRequestBody({
+        owner,
+        repo,
+        number: pullRequest.number,
+        token,
+      });
+      const parsed = parsePullRequest(body, { owner, repo });
 
       return {
         ...pullRequest,
         parsed,
-        fieldGroups: replaceReportLinksGroup(pullRequest.fieldGroups, parsed),
       };
     }),
   );
+  const archiveDefinitions = collectArchiveDefinitions(
+    document.templates?.pullRequest?.content,
+    pullRequests,
+  );
+  const pullRequestFieldGroups = PR_FIELD_GROUPS.map((group) =>
+    group.key === "archive" ? createArchiveGroup(archiveDefinitions) : group,
+  );
+  const projectedPullRequests = pullRequests.map((pullRequest) => ({
+    ...pullRequest,
+    fieldGroups: fillFieldGroups(pullRequestFieldGroups, pullRequest.parsed),
+  }));
 
   return {
     ...document,
     fieldDefinitions: {
       ...document.fieldDefinitions,
-      pullRequests: PR_FIELD_GROUPS,
+      pullRequests: pullRequestFieldGroups,
     },
-    pullRequests,
+    pullRequests: projectedPullRequests,
   };
 }
 
@@ -166,65 +176,178 @@ async function fetchPullRequestBody({ owner, repo, number, token }) {
   return pullRequest.body || "";
 }
 
-function replaceReportLinksGroup(fieldGroups, parsed) {
-  const reportLink = parsed.reportLinks?.reportLink || null;
-  const group = {
-    ...REPORT_LINKS_GROUP,
-    fields: REPORT_LINKS_GROUP.fields.map((field) => ({
-      ...field,
-      value: reportLink,
-      status: classifyValue(reportLink),
-    })),
+function createArchiveGroup(definitions) {
+  return {
+    key: "archive",
+    label: "Archive",
+    fields: definitions.map((definition) => ({ ...definition, type: "link" })),
   };
-
-  const groups = Array.isArray(fieldGroups) ? fieldGroups : [];
-  const legacyIndex = groups.findIndex((item) => item.key === "wandbLinks");
-  if (legacyIndex < 0) {
-    const summaryIndex = groups.findIndex((item) => item.key === "summaries");
-    const insertAt = summaryIndex < 0 ? groups.length : summaryIndex;
-    return [...groups.slice(0, insertAt), group, ...groups.slice(insertAt)];
-  }
-
-  return groups.map((item, index) => (index === legacyIndex ? group : item));
 }
 
-function findHeadingContent(markdown, wantedLabel) {
-  const source = String(markdown || "").replace(/\r\n/g, "\n");
-  const regex = /^(#{1,6})\s+(.+?)\s*$/gm;
-  const headings = [];
-  let match;
+function fillFieldGroups(groups, parsed) {
+  const archiveValues = new Map(
+    (Array.isArray(parsed.archive) ? parsed.archive : []).map((field) => [field.key, field.value]),
+  );
+  return groups.map((group) => ({
+    ...group,
+    fields: group.fields.map((field) => {
+      const path = field.path || (group.key === "metadata" ? `metadata.${field.key}` : field.key);
+      const value = group.key === "archive" ? archiveValues.get(field.key) || null : getByPath(parsed, path);
+      return { ...field, value, status: classifyValue(value) };
+    }),
+  }));
+}
 
+export function parseArchiveLinks(body, context = {}) {
+  const entries = parseDefinitionList(findHeadingContent(body, "Archive"));
+  const fields = [];
+  for (const [label, rawValue] of entries) {
+    const baseKey = toCamelKey(label) || `link${fields.length + 1}`;
+    fields.push({
+      key: uniqueFieldKey(fields, baseKey),
+      label,
+      value: firstLinkOrText(rawValue, context),
+    });
+  }
+  return fields;
+}
+
+function collectArchiveDefinitions(template, pullRequests) {
+  const definitions = [];
+  const add = (field) => {
+    if (!field?.key || definitions.some((candidate) => candidate.key === field.key)) return;
+    definitions.push({ key: field.key, label: field.label, type: "link" });
+  };
+
+  for (const field of parseArchiveLinks(template)) add(field);
+  for (const pullRequest of pullRequests) {
+    for (const field of pullRequest.parsed?.archive || []) add(field);
+  }
+  if (!definitions.length) {
+    for (const field of DEFAULT_ARCHIVE_FIELDS) add(field);
+  }
+  return definitions;
+}
+
+function uniqueFieldKey(fields, baseKey) {
+  let key = baseKey;
+  let suffix = 2;
+  while (fields.some((field) => field.key === key)) {
+    key = `${baseKey}${suffix}`;
+    suffix += 1;
+  }
+  return key;
+}
+
+function parseMetadata(markdown) {
+  const source = String(markdown || "").replace(/\r\n/g, "\n");
+  const block = source.match(/^\s*---\s*\n([\s\S]*?)\n---\s*(?:\n|$)/)?.[1] || "";
+  const metadata = {};
+  for (const line of block.split("\n")) {
+    const match = line.match(/^\s*([^:]+):\s*(.*?)\s*$/);
+    if (match) metadata[match[1].trim()] = cleanMarkdown(match[2]);
+  }
+  return metadata;
+}
+
+function parseHeadingBlocks(markdown) {
+  const source = String(markdown || "")
+    .replace(/<!--[\s\S]*?-->/g, "")
+    .replace(/\r\n/g, "\n");
+  const regex = /^(#{1,6})\s+(.+?)\s*$/gm;
+  const matches = [];
+  let match;
   while ((match = regex.exec(source)) !== null) {
-    headings.push({
+    matches.push({
       level: match[1].length,
       title: match[2].trim(),
       start: match.index,
       bodyStart: regex.lastIndex,
     });
   }
-
-  const wanted = normalizeHeading(wantedLabel);
-  const index = headings.findIndex((heading) => normalizeHeading(heading.title) === wanted);
-  if (index < 0) return "";
-
-  const current = headings[index];
-  let end = source.length;
-  for (let nextIndex = index + 1; nextIndex < headings.length; nextIndex += 1) {
-    if (headings[nextIndex].level <= current.level) {
-      end = headings[nextIndex].start;
-      break;
+  return matches.map((current, index) => {
+    const nextHeadingStart = matches[index + 1]?.start ?? source.length;
+    let sectionEnd = source.length;
+    for (let nextIndex = index + 1; nextIndex < matches.length; nextIndex += 1) {
+      if (matches[nextIndex].level <= current.level) {
+        sectionEnd = matches[nextIndex].start;
+        break;
+      }
     }
-  }
-  return source.slice(current.bodyStart, end).trim();
+    return {
+      ...current,
+      key: normalizeHeading(current.title),
+      directContent: source.slice(current.bodyStart, nextHeadingStart).trim(),
+      content: source.slice(current.bodyStart, sectionEnd).trim(),
+    };
+  });
 }
 
-function parseBoldDefinitionList(markdown) {
-  const result = {};
+function findHeadingBlock(markdown, wantedLabel) {
+  const wanted = normalizeHeading(wantedLabel);
+  return parseHeadingBlocks(markdown).find((heading) => heading.key === wanted);
+}
+
+function findHeadingContent(markdown, wantedLabel) {
+  return findHeadingBlock(markdown, wantedLabel)?.content || "";
+}
+
+function findHeadingDirectContent(markdown, wantedLabel) {
+  return cleanMarkdown(findHeadingBlock(markdown, wantedLabel)?.directContent || "");
+}
+
+function parseHierarchicalSection(markdown, wantedLabel) {
+  const root = findHeadingBlock(markdown, wantedLabel);
+  if (!root) return { intro: null, sections: [] };
+  const children = parseHeadingBlocks(root.content);
+  const introEnd = children[0]?.start ?? root.content.length;
+  const intro = emptyToNull(cleanMarkdown(root.content.slice(0, introEnd)));
+  const sections = [];
+  const stack = [];
+
+  for (const child of children) {
+    const level = Math.max(1, child.level - root.level);
+    const node = {
+      title: cleanMarkdown(child.title),
+      level,
+      content: emptyToNull(cleanMarkdown(child.directContent)),
+      children: [],
+    };
+    while (stack.length && stack.at(-1).level >= level) stack.pop();
+    if (stack.length) stack.at(-1).node.children.push(node);
+    else sections.push(node);
+    stack.push({ level, node });
+  }
+  return { intro, sections };
+}
+
+function parseDefinitionList(markdown) {
+  const result = [];
   for (const line of String(markdown || "").split(/\r?\n/)) {
-    const match = line.match(/^\s*[-*]\s+\*\*(.+?):\*\*\s*(.*)$/);
-    if (match) result[match[1].trim()] = cleanMarkdown(match[2]);
+    const bold = line.match(/^\s*[-*]\s+\*\*(.+?):\*\*\s*(.*)$/);
+    const plain = line.match(/^\s*[-*]\s+(.+?):\s*(.*)$/);
+    const match = bold || plain;
+    if (match) result.push([cleanMarkdown(match[1]), cleanMarkdown(match[2])]);
   }
   return result;
+}
+
+function parseMergeChecklist(markdown) {
+  const source = String(markdown || "").replace(/\r\n/g, "\n");
+  const marker = /^\s*\*\*Merge Checklist\*\*\s*:\s*$/mi;
+  const match = marker.exec(source);
+  return match ? parseCheckboxes(source.slice(match.index + match[0].length)) : [];
+}
+
+function parseCheckboxes(markdown) {
+  const items = [];
+  for (const line of String(markdown || "").split(/\r?\n/)) {
+    const match = line.match(/^\s*[-*]\s+\[(x|X| )\]\s+(.+?)\s*$/);
+    if (!match) continue;
+    const label = cleanMarkdown(match[2]);
+    items.push({ key: toCamelKey(label), label, checked: match[1].toLowerCase() === "x" });
+  }
+  return items;
 }
 
 function firstLinkOrText(markdown, context = {}) {
@@ -278,6 +401,18 @@ function cleanMarkdown(value) {
     .trim();
 }
 
+function emptyToNull(value) {
+  const cleaned = cleanMarkdown(value);
+  return cleaned || null;
+}
+
+function getByPath(source, path) {
+  return String(path || "")
+    .split(".")
+    .filter(Boolean)
+    .reduce((current, part) => current?.[part], source);
+}
+
 function normalizeHeading(value) {
   return String(value || "")
     .replace(/[`*_:[\]()]/g, " ")
@@ -285,6 +420,14 @@ function normalizeHeading(value) {
     .replace(/[^a-zA-Z0-9]+/g, " ")
     .trim()
     .toLowerCase();
+}
+
+function toCamelKey(value) {
+  return normalizeHeading(value)
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((word, index) => (index ? word.charAt(0).toUpperCase() + word.slice(1) : word))
+    .join("");
 }
 
 const isCli = process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1];
