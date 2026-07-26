@@ -20,7 +20,7 @@ Issue 生成模型节点；`parentIssue: null`
 `The model is merged` 区域，其中包含该 PR 的全部 Archive 链接。页面运行时不调用 GitHub API。
 
 抓取器分别使用 `architecture proposal` 过滤 Issue、使用
-`architecure implement` 过滤 Pull Request。PR 的 `Archive` 保存为有序的可扩展
+`architecture implementation` 过滤 Pull Request。PR 的 `Archive` 保存为有序的可扩展
 字段数组，PR body 中新增的归档链接字段也会保留。`Experimental Validation` 会按 Markdown
 子标题解析为可变长度的层级树，前端按标题层级展示，不直接输出 `####` 等 Markdown 标记。
 

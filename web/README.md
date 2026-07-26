@@ -8,7 +8,7 @@
 - `parentIssue: #<issue>` 连接到对应父模型；
 - 快照中缺失的父 Issue 显示为共享的外部父 Issue 占位节点；
 - Pull Request 按 `Architecture Proposal (issue #)` 关联到模型；
-- Issue 使用 `architecture proposal` label 过滤，PR 使用 `architecure implement` label 过滤；
+- Issue 使用 `architecture proposal` label 过滤，PR 使用 `architecture implementation` label 过滤；
 - 点击模型后，使用 Proposal、Implementation 和 The model is merged 区域查看提案与实现信息；
 - `parsed.archive` 是有序的可扩展字段数组，会保留模板与 PR 中新增的所有 Archive 链接；
 - `parsed.experimentalValidation` 按 Markdown 子标题解析为可变长度层级树，前端不会直接显示

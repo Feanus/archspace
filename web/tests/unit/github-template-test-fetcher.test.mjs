@@ -70,9 +70,9 @@ test("exports field definitions matching the current Issue template", () => {
 
 test("uses separate labels for Issue and PR filtering", () => {
   assert.equal(DEFAULT_ISSUE_LABEL, "architecture proposal");
-  assert.equal(DEFAULT_PULL_REQUEST_LABEL, "architecure implement");
+  assert.equal(DEFAULT_PULL_REQUEST_LABEL, "architecture implementation");
   assert.equal(hasLabel({ labels: [{ name: "Architecture Proposal" }] }, DEFAULT_ISSUE_LABEL), true);
-  assert.equal(hasLabel({ labels: [{ name: "architecure implement" }] }, DEFAULT_PULL_REQUEST_LABEL), true);
+  assert.equal(hasLabel({ labels: [{ name: "architecture implementation" }] }, DEFAULT_PULL_REQUEST_LABEL), true);
   assert.equal(hasLabel({ labels: [{ name: "architecture proposal" }] }, DEFAULT_PULL_REQUEST_LABEL), false);
 });
 
