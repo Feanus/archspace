@@ -118,18 +118,27 @@ test("derives root styling from parentIssue without using proposalType", () => {
 
 test("derives lifecycle status from Issue labels without changing Issue state statistics", () => {
   const graph = normalizeModelGraph(payload);
-  const expectedStatuses = new Map([
-    [1, "done"],
-    [2, "in-progress"],
-    [3, "declined"],
-    [4, "under-review"],
+  const lifecycleStatusByLabel = new Map([
+    ["under review", "under-review"],
+    ["under-review", "under-review"],
+    ["in progress", "in-progress"],
+    ["in-progress", "in-progress"],
+    ["in-progess", "in-progress"],
+    ["declined", "declined"],
+    ["done", "done"],
   ]);
 
-  for (const [issueNumber, status] of expectedStatuses) {
-    const model = graph.byId.get(`issue-${issueNumber}`);
-    assert.equal(model.lifecycleStatus, status);
-    assert.equal(model.state, status);
-    assert.equal(model.issueState, payload.issues.find((issue) => issue.number === issueNumber).state);
+  for (const issue of payload.issues) {
+    const model = graph.byId.get(`issue-${issue.number}`);
+    const expectedLifecycleStatus = issue.labels
+      .map((label) => String(label).trim().toLocaleLowerCase("en-US"))
+      .map((label) => lifecycleStatusByLabel.get(label))
+      .find(Boolean) ?? "";
+
+    assert.ok(model, `Issue #${issue.number} should produce a model node`);
+    assert.equal(model.lifecycleStatus, expectedLifecycleStatus);
+    assert.equal(model.state, expectedLifecycleStatus || issue.state);
+    assert.equal(model.issueState, issue.state);
   }
   assert.equal(graph.stats.openIssues, payload.issues.filter((issue) => issue.state === "open").length);
 });
