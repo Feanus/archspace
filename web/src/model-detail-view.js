@@ -133,6 +133,40 @@ function renderMarkdownInline(value) {
   return html;
 }
 
+function markdownTableCells(line) {
+  let source = String(line ?? "").trim();
+  if (!source.includes("|")) return [];
+  if (source.startsWith("|")) source = source.slice(1);
+  if (source.endsWith("|") && !source.endsWith("\\|")) source = source.slice(0, -1);
+
+  const cells = [];
+  let cell = "";
+  for (let index = 0; index < source.length; index += 1) {
+    const character = source[index];
+    if (character === "\\" && source[index + 1] === "|") {
+      cell += "|";
+      index += 1;
+    } else if (character === "|") {
+      cells.push(cell.trim());
+      cell = "";
+    } else {
+      cell += character;
+    }
+  }
+  cells.push(cell.trim());
+  return cells;
+}
+
+function markdownTableAlignments(line) {
+  const cells = markdownTableCells(line);
+  if (!cells.length || cells.some((cell) => !/^:?-{3,}:?$/.test(cell))) return null;
+  return cells.map((cell) => {
+    if (cell.startsWith(":") && cell.endsWith(":")) return "center";
+    if (cell.endsWith(":")) return "right";
+    return "left";
+  });
+}
+
 function renderMarkdownText(value) {
   const lines = String(value ?? "").replace(/\r\n?/g, "\n").trim().split("\n");
   const blocks = [];
@@ -164,6 +198,29 @@ function renderMarkdownText(value) {
       const level = Math.min(6, heading[1].length + 3);
       blocks.push(`<h${level} class="markdown-heading">${renderMarkdownInline(heading[2])}</h${level}>`);
       index += 1;
+      continue;
+    }
+
+    const tableAlignments = index + 1 < lines.length
+      ? markdownTableAlignments(lines[index + 1])
+      : null;
+    const tableHeaders = tableAlignments ? markdownTableCells(line) : [];
+    if (tableAlignments && tableHeaders.length === tableAlignments.length) {
+      const rows = [];
+      index += 2;
+      while (index < lines.length && lines[index].trim() && lines[index].includes("|")) {
+        const cells = markdownTableCells(lines[index]);
+        if (cells.length !== tableHeaders.length) break;
+        rows.push(cells);
+        index += 1;
+      }
+      const alignmentClass = (columnIndex) => ` class="markdown-align-${tableAlignments[columnIndex]}"`;
+      blocks.push(`<div class="markdown-table-wrap"><table class="markdown-table">
+        <thead><tr>${tableHeaders.map((cell, columnIndex) =>
+    `<th${alignmentClass(columnIndex)}>${renderMarkdownInline(cell)}</th>`).join("")}</tr></thead>
+        <tbody>${rows.map((row) => `<tr>${row.map((cell, columnIndex) =>
+    `<td${alignmentClass(columnIndex)}>${renderMarkdownInline(cell)}</td>`).join("")}</tr>`).join("")}</tbody>
+      </table></div>`);
       continue;
     }
 

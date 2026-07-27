@@ -449,6 +449,12 @@ test("renders sanitized Markdown and HTML images from Issue and PR fields", () =
 
 > Reproduced twice.
 
+| Benchmark | Preliminary score |
+|---|---:|
+| AIME 2025 | 83.3% |
+| GPQA Diamond | 72.7% |
+| MATH500 | 97.4% |
+
 <script>alert("unsafe")</script>
 
 <img width="942" height="289" alt="Issue diagram" src="https://images.example.com/issue.png?accessToken=secret">
@@ -470,6 +476,12 @@ After`;
   assert.match(proposalHtml, /<code>bf16<\/code>/);
   assert.match(proposalHtml, /<ul class="markdown-list"><li>Lower variance<\/li><li>Better throughput<\/li><\/ul>/);
   assert.match(proposalHtml, /<blockquote>Reproduced twice\.<\/blockquote>/);
+  assert.match(proposalHtml, /<table class="markdown-table">/);
+  assert.match(proposalHtml, /<th class="markdown-align-left">Benchmark<\/th>/);
+  assert.match(proposalHtml, /<th class="markdown-align-right">Preliminary score<\/th>/);
+  assert.match(proposalHtml, /<td class="markdown-align-left">AIME 2025<\/td><td class="markdown-align-right">83\.3%<\/td>/);
+  assert.match(proposalHtml, /<td class="markdown-align-left">GPQA Diamond<\/td><td class="markdown-align-right">72\.7%<\/td>/);
+  assert.match(proposalHtml, /<td class="markdown-align-left">MATH500<\/td><td class="markdown-align-right">97\.4%<\/td>/);
   assert.match(proposalHtml, /class="markdown-link"[^>]+href="https:\/\/docs\.example\.com\/result"/);
   assert.match(proposalHtml, /&lt;script&gt;alert\(&quot;unsafe&quot;\)&lt;\/script&gt;/);
   assert.doesNotMatch(proposalHtml, /<script>/);
