@@ -136,7 +136,9 @@ test("builds one structural tree with one or more root Issues", () => {
 
 test("places multiple None proposals under the repository structural root", () => {
   const graphPayload = structuredClone(payload);
-  const extraRoot = structuredClone(firstRootModel(normalizeModelGraph(graphPayload)).issue);
+  const initialGraph = normalizeModelGraph(graphPayload);
+  const initialRootCount = rootModels(initialGraph).length;
+  const extraRoot = structuredClone(firstRootModel(initialGraph).issue);
   extraRoot.number = 200;
   extraRoot.title = "[ARCH-PROP] Second root";
   extraRoot.url = "https://github.com/JT-Ushio/template-test/issues/200";
@@ -149,7 +151,7 @@ test("places multiple None proposals under the repository structural root", () =
   const roots = rootModels(graph);
 
   assert.equal(graph.rootId, "offline-repository");
-  assert.equal(roots.length, 2);
+  assert.equal(roots.length, initialRootCount + 1);
   for (const model of roots) {
     assert.equal(model.parent_id, graph.rootId);
     assert.equal(model.category, "root_model");
