@@ -47,7 +47,9 @@ test("GitHub Pages /archspace/ renders the JT-Ushio snapshot and progress detail
   const visibleIssues = snapshotGraph.models
     .map((model) => model.issue)
     .filter((issue) => lifecycleStatus(issue) !== "declined");
-  const rootIssue = snapshotGraph.byId.get(snapshotGraph.rootId).issue;
+  const rootIssue = snapshotGraph.models.find(
+    (model) => model.parentResolution === "root",
+  ).issue;
   const mergedPullRequest = snapshot.pullRequests.find((pullRequest) => pullRequest.merged === true);
   const mergedIssue = snapshot.issues.find(
     (issue) => issue.number === proposalIssueNumber(mergedPullRequest),

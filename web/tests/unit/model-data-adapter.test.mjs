@@ -9,10 +9,30 @@ const payload = JSON.parse(
   await readFile(new URL("../../../data/template-test-data.json", import.meta.url), "utf8"),
 );
 
+function rootModels(graph) {
+  return graph.models.filter((model) => model.parentResolution === "root");
+}
+
+function firstRootModel(graph) {
+  const model = rootModels(graph)[0];
+  assert.ok(model, "The admitted graph should contain at least one root Issue");
+  return model;
+}
+
+function modelWithPullRequest(graph, pullRequestNumber = 10) {
+  const model = graph.models.find(
+    (candidate) => candidate.pullRequests.some(
+      (pullRequest) => pullRequest.number === pullRequestNumber,
+    ),
+  );
+  assert.ok(model, `PR #${pullRequestNumber} should belong to an admitted model`);
+  return model;
+}
+
 function payloadWithPullRequest(reportUrl = "https://reports.example.com/run") {
   const next = structuredClone(payload);
   const admittedGraph = normalizeModelGraph(next);
-  const rootIssue = admittedGraph.byId.get(admittedGraph.rootId).issue;
+  const rootIssue = firstRootModel(admittedGraph).issue;
   next.pullRequests = [{
     number: 10,
     title: "Implement Olmo3",
@@ -84,30 +104,62 @@ function payloadWithPullRequest(reportUrl = "https://reports.example.com/run") {
   return next;
 }
 
-test("builds one rooted Issue model tree through parentIssue", () => {
+test("builds one structural tree with one or more root Issues", () => {
   const graph = normalizeModelGraph(payload);
-  const rootModels = graph.models.filter((model) => model.parent_id == null);
+  const roots = rootModels(graph);
 
-  assert.equal(rootModels.length, 1);
+  assert.ok(roots.length >= 1);
   assert.ok(graph.stats.models <= payload.issues.length);
   assert.equal(
     graph.stats.parentLinks,
     graph.models.filter((model) => model.parentIssueNumber).length,
   );
   assert.equal(graph.stats.externalParentIssues, 0);
-  assert.equal(graph.rootId, rootModels[0].id);
+  assert.equal(
+    graph.rootId,
+    roots.length === 1 ? roots[0].id : "offline-repository",
+  );
   for (const model of graph.models) {
     const parentIssueNumber = model.parentIssueNumber;
-    assert.equal(model.parent_id, parentIssueNumber ? `issue-${parentIssueNumber}` : null);
+    assert.equal(
+      model.parent_id,
+      parentIssueNumber
+        ? `issue-${parentIssueNumber}`
+        : roots.length === 1
+          ? null
+          : graph.rootId,
+    );
     assert.equal(model.parentResolution, parentIssueNumber ? "issue" : "root");
   }
-  assert.equal(graph.byId.has("offline-repository"), false);
+  assert.equal(graph.byId.has("offline-repository"), roots.length > 1);
+});
+
+test("places multiple None proposals under the repository structural root", () => {
+  const graphPayload = structuredClone(payload);
+  const extraRoot = structuredClone(firstRootModel(normalizeModelGraph(graphPayload)).issue);
+  extraRoot.number = 200;
+  extraRoot.title = "[ARCH-PROP] Second root";
+  extraRoot.url = "https://github.com/JT-Ushio/template-test/issues/200";
+  extraRoot.parsed.architectureName = "Second root";
+  extraRoot.parsed.parentIssueInput = "None";
+  extraRoot.parsed.parentIssue = null;
+  graphPayload.issues.unshift(extraRoot);
+
+  const graph = normalizeModelGraph(graphPayload);
+  const roots = rootModels(graph);
+
+  assert.equal(graph.rootId, "offline-repository");
+  assert.equal(roots.length, 2);
+  for (const model of roots) {
+    assert.equal(model.parent_id, graph.rootId);
+    assert.equal(model.category, "root_model");
+  }
 });
 
 test("admits only None or #<number> parents that resolve to architecture proposal Issues", () => {
   const graphPayload = structuredClone(payload);
   const admittedGraph = normalizeModelGraph(graphPayload);
-  const rootIssue = admittedGraph.byId.get(admittedGraph.rootId).issue;
+  const rootIssue = firstRootModel(admittedGraph).issue;
   for (const issue of graphPayload.issues) {
     issue.parsed.parentIssueInput = issue.parsed.parentIssue?.number
       ? `#${issue.parsed.parentIssue.number}`
@@ -173,8 +225,10 @@ test("derives root styling from parentIssue without using proposalType", () => {
   }
   const graph = normalizeModelGraph(changedProposalTypes);
 
-  assert.equal(graph.byId.get(graph.rootId).category, "root_model");
-  for (const model of graph.models.filter((candidate) => candidate.id !== graph.rootId)) {
+  for (const model of rootModels(graph)) {
+    assert.equal(model.category, "root_model");
+  }
+  for (const model of graph.models.filter((candidate) => candidate.parentResolution !== "root")) {
     assert.equal(model.category, "model");
   }
 });
@@ -237,7 +291,7 @@ test("associates each PR through its Architecture Proposal issue", () => {
 
 test("renders model Issue and its unique PR as collapsible detail sections", () => {
   const graph = normalizeModelGraph(payloadWithPullRequest());
-  const model = graph.byId.get(graph.rootId);
+  const model = modelWithPullRequest(graph);
   const pullRequest = model.pullRequests[0];
   const proposalHtml = renderModelDetail(model, graph);
   const expandedProposalHtml = renderModelDetail(model, graph, "", true);
@@ -299,11 +353,11 @@ test("renders model Issue and its unique PR as collapsible detail sections", () 
 test("omits the optional Preliminary results section when an Issue leaves it empty", () => {
   const graphPayload = payloadWithPullRequest();
   const admittedGraph = normalizeModelGraph(graphPayload);
-  const rootIssue = admittedGraph.byId.get(admittedGraph.rootId).issue;
+  const rootIssue = firstRootModel(admittedGraph).issue;
   rootIssue.parsed.preliminaryResults = "";
   delete rootIssue.parsed.existingResults;
   const graph = normalizeModelGraph(graphPayload);
-  const html = renderModelDetail(graph.byId.get(graph.rootId), graph, "", true);
+  const html = renderModelDetail(modelWithPullRequest(graph), graph, "", true);
 
   assert.doesNotMatch(html, /Preliminary results \(if any\)/);
 });
@@ -312,7 +366,7 @@ test("omits PR accordion status when no lifecycle label is present", () => {
   const graphPayload = payloadWithPullRequest();
   graphPayload.pullRequests[0].labels = ["architecture proposal"];
   const graph = normalizeModelGraph(graphPayload);
-  const html = renderModelDetail(graph.byId.get(graph.rootId), graph);
+  const html = renderModelDetail(modelWithPullRequest(graph), graph);
 
   assert.doesNotMatch(html, /pr-lifecycle-/);
   assert.doesNotMatch(html, /<em[^>]*>.*(?:Open|Closed).*<\/em>/i);
@@ -324,7 +378,8 @@ test("renders every Archive link in an open merged-model section only for a merg
   graphPayload.pullRequests[0].merged = true;
   graphPayload.pullRequests[0].mergedAt = "2026-07-25T12:21:47Z";
   const graph = normalizeModelGraph(graphPayload);
-  const html = renderModelDetail(graph.byId.get(graph.rootId), graph);
+  const model = modelWithPullRequest(graph);
+  const html = renderModelDetail(model, graph);
 
   assert.match(html, /<details class="done-pr-panel" open>/);
   assert.match(html, />This idea is verified<\/strong>/);
@@ -341,7 +396,7 @@ test("renders every Archive link in an open merged-model section only for a merg
   assert.ok(html.indexOf('class="pull-request-panel"') < html.indexOf('class="done-pr-panel"'));
 
   const expandedHtml = renderModelDetail(
-    graph.byId.get(graph.rootId),
+    model,
     graph,
     "pr-10",
   );
@@ -349,7 +404,7 @@ test("renders every Archive link in an open merged-model section only for a merg
 
   graphPayload.pullRequests[0].merged = false;
   const unmergedGraph = normalizeModelGraph(graphPayload);
-  const unmergedHtml = renderModelDetail(unmergedGraph.byId.get(unmergedGraph.rootId), unmergedGraph);
+  const unmergedHtml = renderModelDetail(modelWithPullRequest(unmergedGraph), unmergedGraph);
   assert.doesNotMatch(unmergedHtml, /class="done-pr-panel"/);
 });
 
@@ -368,7 +423,7 @@ test("offline data and rendered links contain no credential query parameters", (
   const graph = normalizeModelGraph(
     payloadWithPullRequest("https://reports.example.com/run?accessToken=secret"),
   );
-  const model = graph.byId.get(graph.rootId);
+  const model = modelWithPullRequest(graph);
   const pullRequestHtml = renderModelDetail(model, graph, `pr-${model.pullRequests[0].number}`);
 
   assert.doesNotMatch(JSON.stringify(payload), /access.?token|github_pat_|Bearer /i);
@@ -378,7 +433,7 @@ test("offline data and rendered links contain no credential query parameters", (
 test("renders sanitized Markdown and HTML images from Issue and PR fields", () => {
   const graphPayload = payloadWithPullRequest();
   const admittedGraph = normalizeModelGraph(graphPayload);
-  const rootIssue = admittedGraph.byId.get(admittedGraph.rootId).issue;
+  const rootIssue = firstRootModel(admittedGraph).issue;
   rootIssue.parsed.preliminaryResults = `Before
 
 <img width="942" height="289" alt="Issue diagram" src="https://images.example.com/issue.png?accessToken=secret">
@@ -389,7 +444,7 @@ After`;
   graphPayload.pullRequests[0].parsed.experimentalValidation.sections[0].content =
     "*Hypothesis:* Visual result.\n\n![Validation plot](https://images.example.com/validation.png)";
   const graph = normalizeModelGraph(graphPayload);
-  const model = graph.byId.get(graph.rootId);
+  const model = modelWithPullRequest(graph);
   const proposalHtml = renderModelDetail(model, graph, "", true);
   const progressHtml = renderModelDetail(model, graph, "pr-10");
 
