@@ -125,7 +125,7 @@ test("derives lifecycle status from Issue labels without changing Issue state st
     ["in-progress", "in-progress"],
     ["in-progess", "in-progress"],
     ["declined", "declined"],
-    ["done", "done"],
+    ["verified", "verified"],
   ]);
 
   for (const issue of payload.issues) {
@@ -252,6 +252,7 @@ test("renders every Archive link in an open merged-model section only for a merg
 
   assert.match(html, /<details class="done-pr-panel" open>/);
   assert.match(html, />This idea is verified<\/strong>/);
+  assert.match(html, /<em class="pr-lifecycle-verified">Verified<\/em>/);
   assert.match(html, /merge from contributor-implementation into <a class="done-target-branch-link"/);
   assert.match(html, /href="https:\/\/github\.com\/JT-Ushio\/template-test\/tree\/main"/);
   assert.match(html, /aria-label="Open target branch JT-Ushio-main">JT-Ushio-main/);

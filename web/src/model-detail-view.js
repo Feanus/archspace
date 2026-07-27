@@ -8,7 +8,7 @@ const LIFECYCLE_STATUS_LABELS = Object.freeze({
   "under-review": "Under Review",
   "in-progress": "In Progress",
   declined: "Declined",
-  done: "Done",
+  verified: "Verified",
 });
 
 function escapeHtml(value) {
@@ -281,7 +281,9 @@ function renderPullRequest(pullRequest) {
 function pullRequestSummary(model) {
   const pullRequest = model.pullRequests[0];
   if (!pullRequest) return null;
-  const lifecycleStatus = lifecycleStatusFromLabels(pullRequest.labels);
+  const lifecycleStatus = pullRequest.merged
+    ? "verified"
+    : lifecycleStatusFromLabels(pullRequest.labels);
   return {
     id: `pr-${pullRequest.number}`,
     number: pullRequest.number,
@@ -290,7 +292,7 @@ function pullRequestSummary(model) {
   };
 }
 
-function renderDonePullRequest(model) {
+function renderVerifiedPullRequest(model) {
   const mergedPullRequest = model.pullRequests.find((pullRequest) => pullRequest.merged === true);
   if (!mergedPullRequest) return "";
 
@@ -429,6 +431,6 @@ export function renderModelDetail(model, tree, requestedTab = "", overviewExpand
         ` : ""}
       </section>
     ` : ""}
-    ${model.nodeType === "model" ? renderDonePullRequest(model) : ""}
+    ${model.nodeType === "model" ? renderVerifiedPullRequest(model) : ""}
   `;
 }

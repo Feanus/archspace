@@ -21,7 +21,7 @@ const STATUS_META = Object.freeze({
   "under-review": { label: "Under review", key: "under-review" },
   "in-progress": { label: "In progress", key: "in-progress" },
   declined: { label: "Declined", key: "declined" },
-  done: { label: "Done", key: "done" },
+  verified: { label: "Verified", key: "verified" },
   open: { label: "Open", key: "open" },
   closed: { label: "Closed", key: "closed" },
   reference: { label: "Reference", key: "reference" },
@@ -114,7 +114,7 @@ function modelFooter(model) {
   if (model.lifecycleStatus === "under-review") return "";
   if (model.lifecycleStatus === "in-progress") return "Awaiting PR";
   if (model.lifecycleStatus === "declined") return "Not planned";
-  if (model.lifecycleStatus === "done") return "Implementation complete";
+  if (model.lifecycleStatus === "verified") return "Implementation verified";
   return "Proposal only";
 }
 

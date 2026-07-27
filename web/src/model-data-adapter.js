@@ -25,7 +25,7 @@ const LIFECYCLE_STATUS_ALIASES = Object.freeze({
   "in-progress": "in-progress",
   "in-progess": "in-progress",
   declined: "declined",
-  done: "done",
+  verified: "verified",
 });
 
 export function lifecycleStatusFromLabels(labels) {

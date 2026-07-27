@@ -13,7 +13,7 @@ const lifecycleStatusByLabel = new Map([
   ["in-progress", "in-progress"],
   ["in-progess", "in-progress"],
   ["declined", "declined"],
-  ["done", "done"],
+  ["verified", "verified"],
 ]);
 
 function lifecycleStatus(issue) {
@@ -123,6 +123,7 @@ test("GitHub Pages /archspace/ renders the JT-Ushio snapshot and progress detail
   await page.locator(`[data-model-id="issue-${mergedIssue.number}"]`).click();
   const progressToggle = page.locator(`[data-detail-tab="pr-${mergedPullRequest.number}"]`);
   await expect(progressToggle).toContainText("Progress");
+  await expect(progressToggle).toContainText("Verified");
   await expect(progressToggle).toHaveAttribute("aria-expanded", "false");
   await expect(page.locator(".done-pr-panel")).toHaveAttribute("open", "");
   await expect(page.locator(".done-pr-header")).toContainText("This idea is verified");

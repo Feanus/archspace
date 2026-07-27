@@ -112,7 +112,7 @@ button { color: inherit; }
 .feature-node.status-under-review { --lifecycle-color: #fbbf24; }
 .feature-node.status-in-progress { --lifecycle-color: var(--blue); }
 .feature-node.status-declined { --lifecycle-color: var(--red); }
-.feature-node.status-done { --lifecycle-color: #c084fc; }
+.feature-node.status-verified { --lifecycle-color: #c084fc; }
 .feature-node .lifecycle-accent { fill: var(--lifecycle-color, #94a3b8); }
 .node-title { fill: var(--text); font-size: 12.5px; font-weight: 720; }
 .node-subtitle { fill: var(--text-dim); font-size: 8.5px; }
@@ -137,8 +137,8 @@ button { color: inherit; }
 .status-in-progress .validation-badge text { fill: #bfdbfe; }
 .status-declined .validation-badge circle { fill: var(--red); }
 .status-declined .validation-badge text { fill: #fecaca; }
-.status-done .validation-badge circle { fill: #c084fc; }
-.status-done .validation-badge text { fill: #e9d5ff; }
+.status-verified .validation-badge circle { fill: #c084fc; }
+.status-verified .validation-badge text { fill: #e9d5ff; }
 .node-toggle circle { fill: rgba(12, 20, 35, .94); stroke: rgba(128, 161, 190, .36); stroke-width: 1; vector-effect: non-scaling-stroke; }
 .node-toggle text { fill: #b1c1d4; text-anchor: middle; font-size: 12px; font-weight: 650; }
 .node-exp-label { fill: #8fe6bf; font: 700 7px var(--mono); }
@@ -176,7 +176,7 @@ button { color: inherit; }
 .under-review-dot { background: #fbbf24; }
 .in-progress-dot { background: var(--blue); }
 .declined-dot { background: var(--red); }
-.done-dot { background: #c084fc; }
+.verified-dot { background: #c084fc; }
 .legend-line { width: 16px; height: 0; border-top: 1px solid rgba(70, 145, 178, .72); }
 .auxiliary-line { border-top-style: dashed; border-color: rgba(168, 123, 208, .72); }
 
@@ -379,7 +379,7 @@ button { color: inherit; }
 .pull-request-actions .pr-lifecycle-under-review { color: #fcd34d; }
 .pull-request-actions .pr-lifecycle-in-progress { color: #93c5fd; }
 .pull-request-actions .pr-lifecycle-declined { color: #fca5a5; }
-.pull-request-actions .pr-lifecycle-done { color: #d8b4fe; }
+.pull-request-actions .pr-lifecycle-verified { color: #d8b4fe; }
 .pull-request-chevron {
   display: grid;
   width: 24px;
