@@ -44,12 +44,14 @@ Run the full comparison.`, {
 
   assert.deepEqual(Object.keys(parsed), [
     "architectureName",
+    "parentIssueInput",
     "parentIssue",
     "motivations",
     "proposedArchitecture",
     "preliminaryResults",
     "experimentsPlan",
   ]);
+  assert.equal(parsed.parentIssueInput, "None");
   assert.equal(parsed.parentIssue, null);
   assert.equal(parsed.preliminaryResults, "The prototype reduced validation loss.");
   assert.equal("relatedWork" in parsed, false);

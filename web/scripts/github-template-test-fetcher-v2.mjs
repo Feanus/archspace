@@ -225,6 +225,7 @@ export function parseArchitectureProposalIssue(body, context = {}) {
 
   return {
     architectureName: emptyToNull(get("Architecture Name")),
+    parentIssueInput: parentIssueRaw || null,
     parentIssue: firstLinkOrRef(parentIssueRaw, context),
     motivations: get("Motivations"),
     proposedArchitecture: get("Proposed Architecture"),

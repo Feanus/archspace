@@ -101,6 +101,65 @@ test("builds one rooted Issue model tree through parentIssue", () => {
   assert.equal(graph.byId.has("offline-repository"), false);
 });
 
+test("admits only None or #<number> parents that resolve to architecture proposal Issues", () => {
+  const graphPayload = structuredClone(payload);
+  const rootIssue = graphPayload.issues.find((issue) => !issue.parsed?.parentIssue?.number);
+  for (const issue of graphPayload.issues) {
+    issue.parsed.parentIssueInput = issue.parsed.parentIssue?.number
+      ? `#${issue.parsed.parentIssue.number}`
+      : "None";
+  }
+
+  const proposalIssue = (number, parentIssueInput, parentNumber, labels = [
+    "architecture proposal",
+    "under review",
+  ]) => ({
+    number,
+    title: `[ARCH-PROP] Contract ${number}`,
+    state: "open",
+    url: `https://github.com/JT-Ushio/template-test/issues/${number}`,
+    labels,
+    parsed: {
+      architectureName: `Contract ${number}`,
+      parentIssueInput,
+      parentIssue: parentNumber
+        ? { label: `#${parentNumber}`, number: parentNumber, raw: `#${parentNumber}` }
+        : null,
+      motivations: "Validate the parent contract.",
+      proposedArchitecture: "Test fixture.",
+      preliminaryResults: "",
+      experimentsPlan: "Test fixture.",
+    },
+  });
+
+  graphPayload.issues.push(
+    proposalIssue(100, String(rootIssue.number), rootIssue.number),
+    proposalIssue(101, "#999", 999),
+    proposalIssue(102, "None", null, ["bug"]),
+    proposalIssue(103, "#102", 102),
+    proposalIssue(104, null, null),
+    proposalIssue(105, `#${rootIssue.number}`, rootIssue.number),
+    proposalIssue(
+      106,
+      `https://github.com/JT-Ushio/template-test/issues/${rootIssue.number}`,
+      rootIssue.number,
+    ),
+  );
+
+  const graph = normalizeModelGraph(graphPayload);
+
+  assert.equal(graph.stats.models, payload.issues.length + 1);
+  assert.equal(graph.byId.get("issue-105")?.parent_id, `issue-${rootIssue.number}`);
+  for (const issueNumber of [100, 101, 102, 103, 104, 106]) {
+    assert.equal(graph.byId.has(`issue-${issueNumber}`), false);
+  }
+  assert.match(graph.warnings.join("\n"), /Issue #100 Parent issue must be exactly None or #<number>/);
+  assert.match(graph.warnings.join("\n"), /Issue #101 Parent issue #999 is not an architecture proposal Issue/);
+  assert.match(graph.warnings.join("\n"), /Issue #103 Parent issue #102 is not an architecture proposal Issue/);
+  assert.match(graph.warnings.join("\n"), /Issue #104 Parent issue must be exactly None or #<number>/);
+  assert.match(graph.warnings.join("\n"), /Issue #106 Parent issue must be exactly None or #<number>/);
+});
+
 test("derives root styling from parentIssue without using proposalType", () => {
   const changedProposalTypes = structuredClone(payload);
   for (const issue of changedProposalTypes.issues) {

@@ -27,6 +27,92 @@ const LIFECYCLE_STATUS_ALIASES = Object.freeze({
   declined: "declined",
   verified: "verified",
 });
+const ARCHITECTURE_PROPOSAL_LABEL = "architecture proposal";
+
+function hasArchitectureProposalLabel(issue) {
+  return asArray(issue?.labels).some(
+    (label) => cleanText(label?.name ?? label).toLocaleLowerCase("en-US")
+      === ARCHITECTURE_PROPOSAL_LABEL,
+  );
+}
+
+function parentIssueContract(issue) {
+  const parsed = issue?.parsed ?? {};
+  const hasExplicitInput = Object.prototype.hasOwnProperty.call(parsed, "parentIssueInput");
+  if (!hasExplicitInput && parsed.parentIssue == null) {
+    return { valid: true, parentNumber: null };
+  }
+
+  const raw = hasExplicitInput
+    ? cleanText(parsed.parentIssueInput)
+    : cleanText(
+      parsed.parentIssue?.raw
+      || parsed.parentIssue?.label
+      || parsed.parentIssue,
+    );
+  if (raw === "None") return { valid: true, parentNumber: null };
+
+  const match = raw.match(/^#([1-9]\d*)$/);
+  if (!match) {
+    return {
+      valid: false,
+      reason: `Issue #${issue?.number ?? "?"} Parent issue must be exactly None or #<number>`,
+    };
+  }
+  return { valid: true, parentNumber: Number(match[1]) };
+}
+
+function admitArchitectureProposalIssues(sourceIssues) {
+  const proposalIssues = sourceIssues.filter(hasArchitectureProposalLabel);
+  const proposalByNumber = new Map(
+    proposalIssues.map((issue) => [Number(issue.number), issue]),
+  );
+  const admittedByNumber = new Map();
+  const parentNumbers = new Map();
+  const warnings = [];
+
+  for (const issue of proposalIssues) {
+    const issueNumber = Number(issue.number);
+    const contract = parentIssueContract(issue);
+    if (!contract.valid) {
+      warnings.push(contract.reason);
+      continue;
+    }
+    if (contract.parentNumber === issueNumber) {
+      warnings.push(`Issue #${issueNumber} cannot use itself as Parent issue`);
+      continue;
+    }
+    if (contract.parentNumber && !proposalByNumber.has(contract.parentNumber)) {
+      warnings.push(
+        `Issue #${issueNumber} Parent issue #${contract.parentNumber} is not an architecture proposal Issue in this snapshot`,
+      );
+      continue;
+    }
+    admittedByNumber.set(issueNumber, issue);
+    parentNumbers.set(issueNumber, contract.parentNumber);
+  }
+
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (const [issueNumber] of admittedByNumber) {
+      const parentNumber = parentNumbers.get(issueNumber);
+      if (parentNumber && !admittedByNumber.has(parentNumber)) {
+        admittedByNumber.delete(issueNumber);
+        warnings.push(
+          `Issue #${issueNumber} Parent issue #${parentNumber} was not admitted`,
+        );
+        changed = true;
+      }
+    }
+  }
+
+  return {
+    issues: proposalIssues.filter((issue) => admittedByNumber.has(Number(issue.number))),
+    parentNumbers,
+    warnings,
+  };
+}
 
 export function lifecycleStatusFromLabels(labels) {
   for (const label of asArray(labels)) {
@@ -125,9 +211,15 @@ export function normalizeModelGraph(payload) {
   if (!payload || typeof payload !== "object") {
     throw new ModelDataError("Offline GitHub data must be a JSON object");
   }
-  const issues = asArray(payload.issues);
+  const admission = admitArchitectureProposalIssues(asArray(payload.issues));
+  const issues = admission.issues;
   const pullRequests = asArray(payload.pullRequests);
-  if (!issues.length) throw new ModelDataError("The offline snapshot contains no Issues");
+  if (!issues.length) {
+    throw new ModelDataError(
+      "The offline snapshot contains no admissible Architecture Proposal Issues",
+      admission.warnings,
+    );
+  }
 
   const issueByNumber = new Map(issues.map((issue) => [Number(issue.number), issue]));
   const pullRequestsByIssue = new Map(issues.map((issue) => [Number(issue.number), []]));
@@ -142,10 +234,12 @@ export function normalizeModelGraph(payload) {
     }
   }
 
-  const rootIssues = issues.filter((issue) => !issueReference(issue?.parsed?.parentIssue));
+  const rootIssues = issues.filter(
+    (issue) => !admission.parentNumbers.get(Number(issue.number)),
+  );
   const externalParentNumbers = new Set(
     issues
-      .map((issue) => issueReference(issue?.parsed?.parentIssue))
+      .map((issue) => admission.parentNumbers.get(Number(issue.number)))
       .filter((number) => number && !issueByNumber.has(number)),
   );
   const hasSingleModelRoot = rootIssues.length === 1 && externalParentNumbers.size === 0;
@@ -199,7 +293,7 @@ export function normalizeModelGraph(payload) {
   for (const issue of issues) {
     const issueNumber = Number(issue.number);
     const parentIssue = issue?.parsed?.parentIssue ?? null;
-    const parentIssueNumber = issueReference(parentIssue);
+    const parentIssueNumber = admission.parentNumbers.get(issueNumber) ?? null;
     const parentIssueRaw = cleanText(parentIssue?.raw || parentIssue?.label || parentIssue?.url);
     const pullRequestsForIssue = pullRequestsByIssue.get(issueNumber) ?? [];
     const issueState = cleanText(issue.state) || "unknown";
@@ -245,7 +339,7 @@ export function normalizeModelGraph(payload) {
   }
 
   const byId = new Map(nodes.map((node) => [node.id, node]));
-  const warnings = [];
+  const warnings = [...admission.warnings];
   repairCycles(nodes, byId, rootId, warnings);
   const childrenById = buildChildren(nodes);
   const modelNodes = nodes.filter((node) => node.nodeType === "model");
