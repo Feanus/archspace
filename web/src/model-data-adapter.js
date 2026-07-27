@@ -1,5 +1,3 @@
-export const MODEL_ROOT_ID = "offline-repository";
-
 export class ModelDataError extends Error {
   constructor(message, details = []) {
     super(message);
@@ -186,21 +184,24 @@ function buildChildren(nodes) {
   return childrenById;
 }
 
-function repairCycles(nodes, byId, rootId, warnings) {
+function repairCycles(nodes, byId, warnings) {
   for (const node of nodes) {
-    if (node.id === rootId) continue;
     const visited = new Set([node.id]);
     let cursor = node;
     while (cursor.parent_id) {
       if (visited.has(cursor.parent_id)) {
-        warnings.push(`${node.id} has a parentIssue cycle and was attached to the offline repository root`);
-        node.parent_id = rootId;
+        warnings.push(`${node.id} has a parentIssue cycle and was detached as a root model`);
+        node.parent_id = null;
+        node.parentResolution = "root";
+        node.category = "root_model";
         break;
       }
       visited.add(cursor.parent_id);
       cursor = byId.get(cursor.parent_id);
       if (!cursor) {
-        node.parent_id = rootId;
+        node.parent_id = null;
+        node.parentResolution = "root";
+        node.category = "root_model";
         break;
       }
     }
@@ -234,36 +235,12 @@ export function normalizeModelGraph(payload) {
     }
   }
 
-  const rootIssues = issues.filter(
-    (issue) => !admission.parentNumbers.get(Number(issue.number)),
-  );
   const externalParentNumbers = new Set(
     issues
       .map((issue) => admission.parentNumbers.get(Number(issue.number)))
       .filter((number) => number && !issueByNumber.has(number)),
   );
-  const hasSingleModelRoot = rootIssues.length === 1 && externalParentNumbers.size === 0;
-  const rootId = hasSingleModelRoot ? `issue-${Number(rootIssues[0].number)}` : MODEL_ROOT_ID;
   const nodes = [];
-  const sourceRepo = cleanText(payload.source?.repo) || "Offline GitHub snapshot";
-  if (!hasSingleModelRoot) {
-    nodes.push({
-      id: MODEL_ROOT_ID,
-      nodeType: "repository",
-      title: sourceRepo,
-      title_zh: sourceRepo,
-      summary: "Offline Issue and Pull Request snapshot",
-      parent_id: null,
-      category: "repository",
-      state: "offline",
-      issue: null,
-      parentIssue: null,
-      parentIssueNumber: null,
-      pullRequests: unmatchedPullRequests,
-      depends_on: [],
-      related_to: [],
-    });
-  }
 
   const anchors = new Map();
   for (const parentIssueNumber of externalParentNumbers) {
@@ -277,7 +254,7 @@ export function normalizeModelGraph(payload) {
       title: `Issue #${parentIssueNumber}`,
       title_zh: `External Parent Issue #${parentIssueNumber}`,
       summary: "This parent Issue is outside the current offline snapshot; its child models remain grouped by parentIssue.",
-      parent_id: rootId,
+      parent_id: null,
       category: "parent_issue",
       state: "reference",
       issue: null,
@@ -298,12 +275,10 @@ export function normalizeModelGraph(payload) {
     const pullRequestsForIssue = pullRequestsByIssue.get(issueNumber) ?? [];
     const issueState = cleanText(issue.state) || "unknown";
     const lifecycleStatus = lifecycleStatusFromLabels(issue?.labels);
-    let parentId = rootId;
+    let parentId = null;
     let parentResolution = "root";
 
-    if (!parentIssueNumber && issueNumber === Number(rootIssues[0]?.number) && hasSingleModelRoot) {
-      parentId = null;
-    } else if (parentIssueNumber && issueByNumber.has(parentIssueNumber) && parentIssueNumber !== issueNumber) {
+    if (parentIssueNumber && issueByNumber.has(parentIssueNumber) && parentIssueNumber !== issueNumber) {
       parentId = `issue-${parentIssueNumber}`;
       parentResolution = "issue";
     } else if (parentIssueNumber) {
@@ -340,12 +315,15 @@ export function normalizeModelGraph(payload) {
 
   const byId = new Map(nodes.map((node) => [node.id, node]));
   const warnings = [...admission.warnings];
-  repairCycles(nodes, byId, rootId, warnings);
+  repairCycles(nodes, byId, warnings);
   const childrenById = buildChildren(nodes);
   const modelNodes = nodes.filter((node) => node.nodeType === "model");
+  const rootIds = nodes.filter((node) => node.parent_id == null).map((node) => node.id);
+  const rootId = rootIds[0];
 
   return Object.freeze({
     rootId,
+    rootIds: Object.freeze(rootIds),
     features: Object.freeze(nodes),
     models: Object.freeze(modelNodes),
     byId,

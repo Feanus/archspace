@@ -4,6 +4,7 @@ import test from "node:test";
 
 import { normalizeModelGraph } from "../../src/model-data-adapter.js";
 import { renderModelDetail } from "../../src/model-detail-view.js";
+import { layoutTree, visibleFeatureIds } from "../../src/tree-layout.js";
 
 const payload = JSON.parse(
   await readFile(new URL("../../../data/template-test-data.json", import.meta.url), "utf8"),
@@ -117,24 +118,21 @@ test("builds one structural tree with one or more root Issues", () => {
   assert.equal(graph.stats.externalParentIssues, 0);
   assert.equal(
     graph.rootId,
-    roots.length === 1 ? roots[0].id : "offline-repository",
+    roots[0].id,
   );
+  assert.deepEqual(graph.rootIds, roots.map((model) => model.id));
   for (const model of graph.models) {
     const parentIssueNumber = model.parentIssueNumber;
     assert.equal(
       model.parent_id,
-      parentIssueNumber
-        ? `issue-${parentIssueNumber}`
-        : roots.length === 1
-          ? null
-          : graph.rootId,
+      parentIssueNumber ? `issue-${parentIssueNumber}` : null,
     );
     assert.equal(model.parentResolution, parentIssueNumber ? "issue" : "root");
   }
-  assert.equal(graph.byId.has("offline-repository"), roots.length > 1);
+  assert.equal(graph.byId.has("offline-repository"), false);
 });
 
-test("places multiple None proposals under the repository structural root", () => {
+test("lays out multiple None proposals as parallel parentless roots", () => {
   const graphPayload = structuredClone(payload);
   const initialGraph = normalizeModelGraph(graphPayload);
   const initialRootCount = rootModels(initialGraph).length;
@@ -149,12 +147,18 @@ test("places multiple None proposals under the repository structural root", () =
 
   const graph = normalizeModelGraph(graphPayload);
   const roots = rootModels(graph);
+  const layout = layoutTree(graph);
+  const visible = visibleFeatureIds(graph, new Set());
 
-  assert.equal(graph.rootId, "offline-repository");
   assert.equal(roots.length, initialRootCount + 1);
+  assert.deepEqual(graph.rootIds, roots.map((model) => model.id));
+  assert.equal(new Set(roots.map((model) => layout.positions.get(model.id).x)).size, 1);
+  assert.equal(new Set(roots.map((model) => layout.positions.get(model.id).y)).size, roots.length);
   for (const model of roots) {
-    assert.equal(model.parent_id, graph.rootId);
+    assert.equal(model.parent_id, null);
     assert.equal(model.category, "root_model");
+    assert.equal(layout.positions.get(model.id).depth, 0);
+    assert.equal(visible.has(model.id), true);
   }
 });
 

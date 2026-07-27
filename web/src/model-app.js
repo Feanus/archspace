@@ -12,7 +12,6 @@ import { exceedsPanThreshold, translatedViewport } from "./viewport-state.js";
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 const CATEGORY_META = Object.freeze({
-  repository: { label: "Repository", color: "#7dd3fc" },
   parent_issue: { label: "Parent Issue", color: "#94a3b8" },
   root_model: { label: "Root model", color: "#34d399" },
   model: { label: "Model proposal", color: "#fb923c" },
@@ -89,9 +88,6 @@ function modelRelationLabel(model) {
 }
 
 function modelFooter(model) {
-  if (model.nodeType === "repository") {
-    return `${state.tree.stats.models} models · ${state.tree.stats.pullRequests} PRs`;
-  }
   if (model.nodeType === "parent_issue") {
     const count = (state.tree.childrenById.get(model.id) ?? []).filter((node) => node.nodeType === "model").length;
     return `${count} direct model${count === 1 ? "" : "s"}`;

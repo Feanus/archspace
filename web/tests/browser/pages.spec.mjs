@@ -76,6 +76,13 @@ test("GitHub Pages /archspace/ renders the JT-Ushio snapshot and progress detail
       0,
     ),
   ));
+  await expect(page.locator('[data-model-id="offline-repository"]')).toHaveCount(0);
+  for (const rootModel of snapshotGraph.models.filter(
+    (model) => model.parentResolution === "root",
+  )) {
+    await expect(page.locator(`[data-model-id="${rootModel.id}"]`)).toBeVisible();
+    await expect(page.locator(`[data-edge$=":${rootModel.id}"]`)).toHaveCount(0);
+  }
 
   for (const issue of visibleIssues) {
     const node = page.locator(`[data-model-id="issue-${issue.number}"]`);
@@ -124,7 +131,7 @@ test("GitHub Pages /archspace/ renders the JT-Ushio snapshot and progress detail
   if (rootIssue.parsed?.preliminaryResults || rootIssue.parsed?.existingResults) {
     await expect(page.locator("#overview-content")).toContainText("Preliminary results (if any)");
   }
-  await expect(page.locator("#overview-content")).not.toContainText("Existing Results");
+  await expect(page.locator("#overview-content dt", { hasText: /^Existing Results$/ })).toHaveCount(0);
   await overviewToggle.click();
   await expect(page.locator("#overview-content")).toBeHidden();
 

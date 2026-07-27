@@ -32,7 +32,10 @@ export function layoutTree(tree, options = {}) {
     return y;
   }
 
-  place(tree.rootId, 0);
+  const rootIds = tree.rootIds?.length ? tree.rootIds : [tree.rootId];
+  for (const rootId of rootIds) {
+    if (includeNode(tree.byId.get(rootId))) place(rootId, 0);
+  }
   const values = [...positions.values()];
   return Object.freeze({
     positions,
@@ -43,7 +46,8 @@ export function layoutTree(tree, options = {}) {
 }
 
 export function visibleFeatureIds(tree, expandedIds, includeNode = () => true) {
-  const visible = new Set(includeNode(tree.byId.get(tree.rootId)) ? [tree.rootId] : []);
+  const rootIds = tree.rootIds?.length ? tree.rootIds : [tree.rootId];
+  const visible = new Set(rootIds.filter((id) => includeNode(tree.byId.get(id))));
   const walk = (id) => {
     if (!expandedIds.has(id)) return;
     for (const child of (tree.childrenById.get(id) ?? []).filter(includeNode)) {
@@ -51,7 +55,7 @@ export function visibleFeatureIds(tree, expandedIds, includeNode = () => true) {
       walk(child.id);
     }
   };
-  if (visible.size) walk(tree.rootId);
+  for (const rootId of visible) walk(rootId);
   return visible;
 }
 
