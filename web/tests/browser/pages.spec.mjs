@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 
 import { expect, test } from "@playwright/test";
 import { normalizeModelGraph } from "../../src/model-data-adapter.js";
+import { ancestorIds } from "../../src/tree-layout.js";
 
 const snapshot = JSON.parse(
   await readFile(new URL("../../../data/template-test-data.json", import.meta.url), "utf8"),
@@ -114,6 +115,23 @@ test("GitHub Pages /archspace/ renders the JT-Ushio snapshot and progress detail
     .filter((item) => lifecycleStatus(item) === "declined")) {
     await expect(page.locator(`[data-model-id="issue-${issue.number}"]`)).toHaveCount(0);
   }
+
+  const descendantModel = snapshotGraph.models.find(
+    (model) => model.parentResolution === "issue",
+  );
+  await page.locator(`[data-model-id="${descendantModel.id}"]`).click();
+  await expect(page.locator(`[data-model-id="${descendantModel.id}"]`)).toHaveClass(/is-selected/);
+  const descendantAncestors = ancestorIds(snapshotGraph, descendantModel.id);
+  for (const ancestorId of descendantAncestors) {
+    await expect(page.locator(`[data-model-id="${ancestorId}"]`)).toHaveClass(/is-ancestor/);
+  }
+  await expect(page.locator(".structure-edge.is-lineage-edge")).toHaveCount(
+    descendantAncestors.length,
+  );
+  const unrelatedModel = snapshotGraph.models.find(
+    (model) => model.id !== descendantModel.id && !descendantAncestors.includes(model.id),
+  );
+  await expect(page.locator(`[data-model-id="${unrelatedModel.id}"]`)).toHaveClass(/is-dimmed/);
 
   await expect(page.locator("#category-filters")).toBeHidden();
   await expect(page.locator(".semantic-legend")).toContainText("Parent");

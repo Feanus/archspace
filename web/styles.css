@@ -88,14 +88,21 @@ button { color: inherit; }
 #tree-canvas { display: block; width: 100%; height: 100%; min-width: 760px; min-height: 560px; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
 #tree-canvas.is-panning, #tree-canvas.is-panning * { cursor: grabbing !important; }
 #tree-canvas.is-unavailable { opacity: .18; }
-.structure-edge { fill: none; stroke: rgba(70, 145, 178, .54); stroke-width: 1.7; vector-effect: non-scaling-stroke; }
+.structure-edge { fill: none; stroke: rgba(70, 145, 178, .54); stroke-width: 1.7; vector-effect: non-scaling-stroke; transition: opacity .18s ease, stroke .18s ease, stroke-width .18s ease; }
+.structure-edge.is-lineage-edge { stroke: rgba(103, 220, 239, .9); stroke-width: 2.5; filter: drop-shadow(0 0 3px rgba(34, 211, 238, .42)); }
+.structure-edge.is-dimmed-edge { opacity: .2; }
 .auxiliary-edge { fill: none; stroke: rgba(124, 174, 204, .62); stroke-width: 1.35; stroke-dasharray: 5 6; vector-effect: non-scaling-stroke; }
 .auxiliary-related { stroke: rgba(168, 123, 208, .58); stroke-dasharray: 2 6; }
 .feature-node { cursor: pointer; outline: none; transition: opacity .18s ease; }
 .node-card { transition: transform .16s ease, filter .18s ease; transform-box: fill-box; transform-origin: center; }
 .feature-node:hover .node-card { transform: translateY(-2px); filter: drop-shadow(0 0 12px rgba(34, 211, 238, .12)); }
 .feature-node:focus-visible .node-card > .node-panel { stroke: #9beafe; stroke-width: 2; }
-.feature-node.is-selected .node-card > .node-panel { stroke: #74e3f3; stroke-width: 2; filter: url(#node-shadow); }
+.feature-node.is-selected .node-card { filter: drop-shadow(0 0 13px rgba(34, 211, 238, .48)); }
+.feature-node.is-selected .node-card > .node-panel { stroke: #a5f3fc; stroke-width: 3; filter: url(#node-shadow); }
+.feature-node.is-selected .node-title { fill: #f2fdff; font-weight: 800; }
+.feature-node.is-ancestor .node-card { filter: drop-shadow(0 0 7px rgba(96, 165, 250, .24)); }
+.feature-node.is-ancestor .node-card > .node-panel { stroke: #60a5fa; stroke-width: 1.8; }
+.feature-node.is-ancestor .node-title { fill: #dbeafe; }
 .feature-node.is-dimmed, .feature-node.is-category-dimmed { opacity: .32; }
 .node-panel { fill: url(#node-panel-gradient); stroke: rgba(82, 139, 166, .48); stroke-width: 1; vector-effect: non-scaling-stroke; }
 .category-accent { fill: var(--category-color, var(--cyan)); }

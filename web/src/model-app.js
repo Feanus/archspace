@@ -129,21 +129,27 @@ function renderTree() {
   elements.nodes.replaceChildren();
   elements.edges.replaceChildren();
 
+  const selectionActive = Boolean(
+    state.drawerOpen
+    && state.selectedId
+    && visible.has(state.selectedId),
+  );
+  const ancestorSet = new Set(
+    selectionActive ? ancestorIds(state.tree, state.selectedId) : [],
+  );
+  const lineageSet = new Set(
+    selectionActive ? [...ancestorSet, state.selectedId] : [],
+  );
+
   for (const id of visible) {
     const model = state.tree.byId.get(id);
     if (!model.parent_id || !visible.has(model.parent_id)) continue;
+    const lineageEdge = lineageSet.has(id) && lineageSet.has(model.parent_id);
     elements.edges.append(svgElement("path", {
       d: curveBetween(state.layout.positions.get(model.parent_id), state.layout.positions.get(id)),
-      class: "structure-edge",
+      class: `structure-edge${lineageEdge ? " is-lineage-edge" : ""}${selectionActive && !lineageEdge ? " is-dimmed-edge" : ""}`,
       "data-edge": `${model.parent_id}:${id}`,
     }));
-  }
-
-  const emphasized = new Set();
-  if (state.drawerOpen && state.selectedId && state.selectedId !== state.tree.rootId) {
-    emphasized.add(state.selectedId);
-    for (const id of ancestorIds(state.tree, state.selectedId)) emphasized.add(id);
-    for (const child of state.tree.childrenById.get(state.selectedId) ?? []) emphasized.add(child.id);
   }
 
   for (const id of visible) {
@@ -154,10 +160,12 @@ function renderTree() {
     const issueStatus = STATUS_META[model.issueState] ?? { label: model.issueState || "Unknown", key: "unknown" };
     const point = state.layout.positions.get(id);
     const children = (state.tree.childrenById.get(id) ?? []).filter(isDisplayableModel);
-    const dimmed = emphasized.size && !emphasized.has(id);
+    const selected = selectionActive && state.selectedId === id;
+    const ancestor = ancestorSet.has(id);
+    const dimmed = selectionActive && !selected && !ancestor;
     const categoryDimmed = !state.enabledCategories.has(category);
     const group = svgElement("g", {
-      class: `feature-node category-${category} status-${status.key}${state.selectedId === id ? " is-selected" : ""}${dimmed ? " is-dimmed" : ""}${categoryDimmed ? " is-category-dimmed" : ""}`,
+      class: `feature-node category-${category} status-${status.key}${selected ? " is-selected" : ""}${ancestor ? " is-ancestor" : ""}${dimmed ? " is-dimmed" : ""}${categoryDimmed ? " is-category-dimmed" : ""}`,
       transform: `translate(${point.x} ${point.y})`,
       tabindex: "0",
       role: "treeitem",
