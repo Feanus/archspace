@@ -11,7 +11,8 @@ const payload = JSON.parse(
 
 function payloadWithPullRequest(reportUrl = "https://reports.example.com/run") {
   const next = structuredClone(payload);
-  const rootIssue = next.issues.find((issue) => !issue.parsed?.parentIssue?.number);
+  const admittedGraph = normalizeModelGraph(next);
+  const rootIssue = admittedGraph.byId.get(admittedGraph.rootId).issue;
   next.pullRequests = [{
     number: 10,
     title: "Implement Olmo3",
@@ -105,7 +106,8 @@ test("builds one rooted Issue model tree through parentIssue", () => {
 
 test("admits only None or #<number> parents that resolve to architecture proposal Issues", () => {
   const graphPayload = structuredClone(payload);
-  const rootIssue = graphPayload.issues.find((issue) => !issue.parsed?.parentIssue?.number);
+  const admittedGraph = normalizeModelGraph(graphPayload);
+  const rootIssue = admittedGraph.byId.get(admittedGraph.rootId).issue;
   for (const issue of graphPayload.issues) {
     issue.parsed.parentIssueInput = issue.parsed.parentIssue?.number
       ? `#${issue.parsed.parentIssue.number}`
@@ -296,7 +298,8 @@ test("renders model Issue and its unique PR as collapsible detail sections", () 
 
 test("omits the optional Preliminary results section when an Issue leaves it empty", () => {
   const graphPayload = payloadWithPullRequest();
-  const rootIssue = graphPayload.issues.find((issue) => !issue.parsed?.parentIssue?.number);
+  const admittedGraph = normalizeModelGraph(graphPayload);
+  const rootIssue = admittedGraph.byId.get(admittedGraph.rootId).issue;
   rootIssue.parsed.preliminaryResults = "";
   delete rootIssue.parsed.existingResults;
   const graph = normalizeModelGraph(graphPayload);
@@ -374,7 +377,8 @@ test("offline data and rendered links contain no credential query parameters", (
 
 test("renders sanitized Markdown and HTML images from Issue and PR fields", () => {
   const graphPayload = payloadWithPullRequest();
-  const rootIssue = graphPayload.issues.find((issue) => !issue.parsed?.parentIssue?.number);
+  const admittedGraph = normalizeModelGraph(graphPayload);
+  const rootIssue = admittedGraph.byId.get(admittedGraph.rootId).issue;
   rootIssue.parsed.preliminaryResults = `Before
 
 <img width="942" height="289" alt="Issue diagram" src="https://images.example.com/issue.png?accessToken=secret">
