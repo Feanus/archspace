@@ -450,10 +450,16 @@ test("renders sanitized Markdown and HTML images from Issue and PR fields", () =
 > Reproduced twice.
 
 Benchmark | Preliminary score
---- | ---:
+-- | --:
 AIME 2025 | 83.3%
 GPQA Diamond | 72.7%
 MATH500 | 97.4%
+
+Model size | Baseline | Proposed model
+-- | -- | --
+1B | OLMo 3 | OLMo 3 + SiameseNorm + Depth-Attention
+3B | OLMo 3 | OLMo 3 + SiameseNorm + Depth-Attention
+7B | OLMo 3 | OLMo 3 + SiameseNorm + Depth-Attention
 
 <script>alert("unsafe")</script>
 
@@ -482,6 +488,8 @@ After`;
   assert.match(proposalHtml, /<td class="markdown-align-left">AIME 2025<\/td><td class="markdown-align-right">83\.3%<\/td>/);
   assert.match(proposalHtml, /<td class="markdown-align-left">GPQA Diamond<\/td><td class="markdown-align-right">72\.7%<\/td>/);
   assert.match(proposalHtml, /<td class="markdown-align-left">MATH500<\/td><td class="markdown-align-right">97\.4%<\/td>/);
+  assert.match(proposalHtml, /<th class="markdown-align-left">Model size<\/th><th class="markdown-align-left">Baseline<\/th><th class="markdown-align-left">Proposed model<\/th>/);
+  assert.match(proposalHtml, /<td class="markdown-align-left">1B<\/td><td class="markdown-align-left">OLMo 3<\/td><td class="markdown-align-left">OLMo 3 \+ SiameseNorm \+ Depth-Attention<\/td>/);
   assert.match(proposalHtml, /class="markdown-link"[^>]+href="https:\/\/docs\.example\.com\/result"/);
   assert.match(proposalHtml, /&lt;script&gt;alert\(&quot;unsafe&quot;\)&lt;\/script&gt;/);
   assert.doesNotMatch(proposalHtml, /<script>/);

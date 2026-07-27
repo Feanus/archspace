@@ -159,7 +159,7 @@ function markdownTableCells(line) {
 
 function markdownTableAlignments(line) {
   const cells = markdownTableCells(line);
-  if (!cells.length || cells.some((cell) => !/^:?-{3,}:?$/.test(cell))) return null;
+  if (!cells.length || cells.some((cell) => !/^:?-{2,}:?$/.test(cell))) return null;
   return cells.map((cell) => {
     if (cell.startsWith(":") && cell.endsWith(":")) return "center";
     if (cell.endsWith(":")) return "right";
