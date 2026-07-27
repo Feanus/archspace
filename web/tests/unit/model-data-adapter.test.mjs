@@ -449,11 +449,11 @@ test("renders sanitized Markdown and HTML images from Issue and PR fields", () =
 
 > Reproduced twice.
 
-| Benchmark | Preliminary score |
-|---|---:|
-| AIME 2025 | 83.3% |
-| GPQA Diamond | 72.7% |
-| MATH500 | 97.4% |
+Benchmark | Preliminary score
+--- | ---:
+AIME 2025 | 83.3%
+GPQA Diamond | 72.7%
+MATH500 | 97.4%
 
 <script>alert("unsafe")</script>
 
