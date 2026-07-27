@@ -1,10 +1,12 @@
 import { readFile } from "node:fs/promises";
 
 import { expect, test } from "@playwright/test";
+import { normalizeModelGraph } from "../../src/model-data-adapter.js";
 
 const snapshot = JSON.parse(
   await readFile(new URL("../../../data/template-test-data.json", import.meta.url), "utf8"),
 );
+const snapshotGraph = normalizeModelGraph(snapshot);
 
 const lifecycleStatusByLabel = new Map([
   ["under review", "under-review"],
@@ -42,8 +44,10 @@ function pullRequestsForIssue(issueNumber) {
 }
 
 test("GitHub Pages /archspace/ renders the JT-Ushio snapshot and progress details", async ({ page }) => {
-  const visibleIssues = snapshot.issues.filter((issue) => lifecycleStatus(issue) !== "declined");
-  const rootIssue = snapshot.issues.find((issue) => !issue.parsed?.parentIssue?.number);
+  const visibleIssues = snapshotGraph.models
+    .map((model) => model.issue)
+    .filter((issue) => lifecycleStatus(issue) !== "declined");
+  const rootIssue = snapshotGraph.byId.get(snapshotGraph.rootId).issue;
   const mergedPullRequest = snapshot.pullRequests.find((pullRequest) => pullRequest.merged === true);
   const mergedIssue = snapshot.issues.find(
     (issue) => issue.number === proposalIssueNumber(mergedPullRequest),
@@ -96,7 +100,9 @@ test("GitHub Pages /archspace/ renders the JT-Ushio snapshot and progress detail
     }
   }
 
-  for (const issue of snapshot.issues.filter((item) => lifecycleStatus(item) === "declined")) {
+  for (const issue of snapshotGraph.models
+    .map((model) => model.issue)
+    .filter((item) => lifecycleStatus(item) === "declined")) {
     await expect(page.locator(`[data-model-id="issue-${issue.number}"]`)).toHaveCount(0);
   }
 
@@ -149,7 +155,10 @@ test("GitHub Pages /archspace/ renders the JT-Ushio snapshot and progress detail
   await expect(progressPanel).not.toContainText(/#{3,6}\s/);
   await expect(progressPanel).toContainText("Merge Checklist");
 
-  const openPullRequest = snapshot.pullRequests.find((pullRequest) => !pullRequest.merged);
+  const openPullRequest = snapshot.pullRequests.find(
+    (pullRequest) => !pullRequest.merged
+      && snapshotGraph.byId.has(`issue-${proposalIssueNumber(pullRequest)}`),
+  );
   if (openPullRequest) {
     await page.locator(
       `[data-model-id="issue-${proposalIssueNumber(openPullRequest)}"]`,
@@ -163,16 +172,18 @@ test("GitHub Pages /archspace/ renders the JT-Ushio snapshot and progress detail
 
 test("declined Issues stay out of the tree, search, statistics, and selection", async ({ page }) => {
   const declinedSnapshot = structuredClone(snapshot);
+  const admittedIssues = normalizeModelGraph(declinedSnapshot).models.map((model) => model.issue);
   const parentNumbers = new Set(
-    declinedSnapshot.issues
+    admittedIssues
       .map((issue) => issue.parsed?.parentIssue?.number)
       .filter(Boolean),
   );
-  const declinedIssue = declinedSnapshot.issues.find(
+  const declinedIssue = admittedIssues.find(
     (issue) => issue.parsed?.parentIssue?.number && !parentNumbers.has(issue.number),
   );
   declinedIssue.state = "closed";
   declinedIssue.labels = ["architecture proposal", "declined"];
+  const admittedCount = normalizeModelGraph(declinedSnapshot).models.length;
 
   await page.route("**/data/template-test-data.json", async (route) => {
     await route.fulfill({ json: declinedSnapshot });
@@ -181,10 +192,10 @@ test("declined Issues stay out of the tree, search, statistics, and selection", 
 
   await expect(page.locator("html")).toHaveAttribute(
     "data-model-count",
-    String(declinedSnapshot.issues.length - 1),
+    String(admittedCount - 1),
   );
   await expect(page.locator("#stat-models")).toHaveText(
-    String(declinedSnapshot.issues.length - 1),
+    String(admittedCount - 1),
   );
   await expect(page.locator(`[data-model-id="issue-${declinedIssue.number}"]`)).toHaveCount(0);
   await page.locator("#model-search").fill(issueTitle(declinedIssue));

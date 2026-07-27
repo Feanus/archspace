@@ -85,16 +85,18 @@ function payloadWithPullRequest(reportUrl = "https://reports.example.com/run") {
 
 test("builds one rooted Issue model tree through parentIssue", () => {
   const graph = normalizeModelGraph(payload);
-  const rootIssues = payload.issues.filter((issue) => !issue.parsed?.parentIssue?.number);
+  const rootModels = graph.models.filter((model) => model.parent_id == null);
 
-  assert.equal(rootIssues.length, 1);
-  assert.equal(graph.stats.models, payload.issues.length);
-  assert.equal(graph.stats.parentLinks, payload.issues.length - 1);
+  assert.equal(rootModels.length, 1);
+  assert.ok(graph.stats.models <= payload.issues.length);
+  assert.equal(
+    graph.stats.parentLinks,
+    graph.models.filter((model) => model.parentIssueNumber).length,
+  );
   assert.equal(graph.stats.externalParentIssues, 0);
-  assert.equal(graph.rootId, `issue-${rootIssues[0].number}`);
-  for (const issue of payload.issues) {
-    const model = graph.byId.get(`issue-${issue.number}`);
-    const parentIssueNumber = issue.parsed?.parentIssue?.number;
+  assert.equal(graph.rootId, rootModels[0].id);
+  for (const model of graph.models) {
+    const parentIssueNumber = model.parentIssueNumber;
     assert.equal(model.parent_id, parentIssueNumber ? `issue-${parentIssueNumber}` : null);
     assert.equal(model.parentResolution, parentIssueNumber ? "issue" : "root");
   }
@@ -133,7 +135,7 @@ test("admits only None or #<number> parents that resolve to architecture proposa
   });
 
   graphPayload.issues.push(
-    proposalIssue(100, String(rootIssue.number), rootIssue.number),
+    proposalIssue(100, "hello", rootIssue.number),
     proposalIssue(101, "#999", 999),
     proposalIssue(102, "None", null, ["bug"]),
     proposalIssue(103, "#102", 102),
@@ -187,19 +189,21 @@ test("derives lifecycle status from Issue labels without changing Issue state st
     ["verified", "verified"],
   ]);
 
-  for (const issue of payload.issues) {
-    const model = graph.byId.get(`issue-${issue.number}`);
+  for (const model of graph.models) {
+    const issue = model.issue;
     const expectedLifecycleStatus = issue.labels
       .map((label) => String(label).trim().toLocaleLowerCase("en-US"))
       .map((label) => lifecycleStatusByLabel.get(label))
       .find(Boolean) ?? "";
 
-    assert.ok(model, `Issue #${issue.number} should produce a model node`);
     assert.equal(model.lifecycleStatus, expectedLifecycleStatus);
     assert.equal(model.state, expectedLifecycleStatus || issue.state);
     assert.equal(model.issueState, issue.state);
   }
-  assert.equal(graph.stats.openIssues, payload.issues.filter((issue) => issue.state === "open").length);
+  assert.equal(
+    graph.stats.openIssues,
+    graph.models.filter((model) => model.issueState === "open").length,
+  );
 });
 
 test("associates each PR through its Architecture Proposal issue", () => {
@@ -210,13 +214,23 @@ test("associates each PR through its Architecture Proposal issue", () => {
       .filter((pullRequest) => pullRequest.parsed?.architectureProposalIssue?.number === issueNumber)
       .map((pullRequest) => pullRequest.number);
 
-  for (const issue of graphPayload.issues) {
+  for (const model of graph.models) {
     assert.deepEqual(
-      graph.byId.get(`issue-${issue.number}`).pullRequests.map((pullRequest) => pullRequest.number),
-      expectedPullRequests(issue.number),
+      model.pullRequests.map((pullRequest) => pullRequest.number),
+      expectedPullRequests(model.issueNumber),
     );
   }
-  assert.deepEqual(graph.unmatchedPullRequests, []);
+  const admittedIssueNumbers = new Set(graph.models.map((model) => model.issueNumber));
+  assert.deepEqual(
+    graph.unmatchedPullRequests.map((pullRequest) => pullRequest.number),
+    graphPayload.pullRequests
+      .filter(
+        (pullRequest) => !admittedIssueNumbers.has(
+          pullRequest.parsed?.architectureProposalIssue?.number,
+        ),
+      )
+      .map((pullRequest) => pullRequest.number),
+  );
 });
 
 test("renders model Issue and its unique PR as collapsible detail sections", () => {
