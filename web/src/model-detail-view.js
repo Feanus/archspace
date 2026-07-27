@@ -99,13 +99,126 @@ function renderEmbeddedContent(value, renderText) {
   return chunks.filter(Boolean).join("");
 }
 
-function textBlock(value, empty = "Not provided") {
+function renderMarkdownInline(value) {
+  let source = String(value ?? "").replace(/\0/g, "");
+  const tokens = [];
+  const store = (html) => {
+    const index = tokens.push(html) - 1;
+    return `\0${index}\0`;
+  };
+
+  source = source.replace(/`([^`\n]+)`/g, (_, code) =>
+    store(`<code>${escapeHtml(code)}</code>`));
+  source = source.replace(/\[([^\]\n]+)\]\(\s*<?(https?:\/\/[^)\s>]+)>?(?:\s+(?:"[^"]*"|'[^']*'))?\s*\)/gi,
+    (_, label, url) => {
+      const safe = safeExternalUrl(url);
+      return safe
+        ? store(`<a class="markdown-link" href="${escapeHtml(safe)}" target="_blank" rel="noreferrer">${escapeHtml(label)}</a>`)
+        : escapeHtml(label);
+    });
+  source = source.replace(/<((?:https?):\/\/[^>\s]+)>/gi, (_, url) => {
+    const safe = safeExternalUrl(url);
+    return safe
+      ? store(`<a class="markdown-link" href="${escapeHtml(safe)}" target="_blank" rel="noreferrer">${escapeHtml(url)}</a>`)
+      : escapeHtml(url);
+  });
+
+  let html = escapeHtml(source)
+    .replace(/\*\*([^*\n]+)\*\*/g, "<strong>$1</strong>")
+    .replace(/__([^_\n]+)__/g, "<strong>$1</strong>")
+    .replace(/(^|[\s(])\*([^*\n]+)\*(?=$|[\s).,!?:;])/g, "$1<em>$2</em>")
+    .replace(/(^|[\s(])_([^_\n]+)_(?=$|[\s).,!?:;])/g, "$1<em>$2</em>")
+    .replace(/~~([^~\n]+)~~/g, "<del>$1</del>");
+  html = html.replace(/\0(\d+)\0/g, (_, index) => tokens[Number(index)] ?? "");
+  return html;
+}
+
+function renderMarkdownText(value) {
+  const lines = String(value ?? "").replace(/\r\n?/g, "\n").trim().split("\n");
+  const blocks = [];
+  let index = 0;
+
+  while (index < lines.length) {
+    const line = lines[index];
+    if (!line.trim()) {
+      index += 1;
+      continue;
+    }
+
+    const fence = line.match(/^\s*```([\w+-]*)\s*$/);
+    if (fence) {
+      const code = [];
+      index += 1;
+      while (index < lines.length && !/^\s*```\s*$/.test(lines[index])) {
+        code.push(lines[index]);
+        index += 1;
+      }
+      if (index < lines.length) index += 1;
+      const language = fence[1] ? ` data-language="${escapeHtml(fence[1])}"` : "";
+      blocks.push(`<pre class="markdown-code"><code${language}>${escapeHtml(code.join("\n"))}</code></pre>`);
+      continue;
+    }
+
+    const heading = line.match(/^\s*(#{1,6})\s+(.+?)\s*#*\s*$/);
+    if (heading) {
+      const level = Math.min(6, heading[1].length + 3);
+      blocks.push(`<h${level} class="markdown-heading">${renderMarkdownInline(heading[2])}</h${level}>`);
+      index += 1;
+      continue;
+    }
+
+    if (/^\s*(?:---+|\*\*\*+|___+)\s*$/.test(line)) {
+      blocks.push('<hr class="markdown-rule">');
+      index += 1;
+      continue;
+    }
+
+    const unordered = line.match(/^\s*[-+*]\s+(.+)$/);
+    const ordered = line.match(/^\s*\d+[.)]\s+(.+)$/);
+    if (unordered || ordered) {
+      const tag = ordered ? "ol" : "ul";
+      const items = [];
+      const pattern = ordered ? /^\s*\d+[.)]\s+(.+)$/ : /^\s*[-+*]\s+(.+)$/;
+      while (index < lines.length) {
+        const item = lines[index].match(pattern);
+        if (!item) break;
+        items.push(`<li>${renderMarkdownInline(item[1])}</li>`);
+        index += 1;
+      }
+      blocks.push(`<${tag} class="markdown-list">${items.join("")}</${tag}>`);
+      continue;
+    }
+
+    if (/^\s*>\s?/.test(line)) {
+      const quote = [];
+      while (index < lines.length && /^\s*>\s?/.test(lines[index])) {
+        quote.push(lines[index].replace(/^\s*>\s?/, ""));
+        index += 1;
+      }
+      blocks.push(`<blockquote>${quote.map(renderMarkdownInline).join("<br>")}</blockquote>`);
+      continue;
+    }
+
+    const paragraph = [line.trim()];
+    index += 1;
+    while (
+      index < lines.length
+      && lines[index].trim()
+      && !/^\s*(?:```|#{1,6}\s|[-+*]\s+|\d+[.)]\s+|>\s?|---+\s*$|\*\*\*+\s*$|___+\s*$)/.test(lines[index])
+    ) {
+      paragraph.push(lines[index].trim());
+      index += 1;
+    }
+    blocks.push(`<p>${paragraph.map(renderMarkdownInline).join("<br>")}</p>`);
+  }
+
+  return blocks.join("");
+}
+
+function markdownBlock(value, empty = "Not provided") {
   const text = cleanDisplay(value);
   if (!text) return `<span class="empty-value">${escapeHtml(empty)}</span>`;
-  return renderEmbeddedContent(text, (chunk) => {
-    const copy = cleanDisplay(chunk);
-    return copy ? `<p class="copy-block">${escapeHtml(copy).replace(/\n/g, "<br>")}</p>` : "";
-  });
+  return `<div class="markdown-block">${renderEmbeddedContent(text, renderMarkdownText)}</div>`;
 }
 
 function externalLink(url, label = "Open source") {
@@ -141,10 +254,10 @@ function renderProposal(model, tree) {
       ["Parent Architecture", model.parentResolution === "root" ? "Root node" : parent ? modelTitle(parent) : "Unresolved"],
       ["Parent issue", model.parentIssueRaw || "None"],
     ]), "model-relation")}
-    ${section("Motivations", textBlock(parsed.motivations))}
-    ${section("Proposed Architecture", textBlock(parsed.proposedArchitecture))}
-    ${cleanDisplay(preliminaryResults) ? section("Preliminary results (if any)", textBlock(preliminaryResults)) : ""}
-    ${section("Experiments Plan", textBlock(parsed.experimentsPlan))}
+    ${section("Motivations", markdownBlock(parsed.motivations))}
+    ${section("Proposed Architecture", markdownBlock(parsed.proposedArchitecture))}
+    ${cleanDisplay(preliminaryResults) ? section("Preliminary results (if any)", markdownBlock(preliminaryResults)) : ""}
+    ${section("Experiments Plan", markdownBlock(parsed.experimentsPlan))}
   `;
 }
 
@@ -172,15 +285,7 @@ function renderCheckboxes(items) {
 }
 
 function renderSectionTreeContent(value) {
-  return renderEmbeddedContent(value, (chunk) => {
-    const lines = cleanDisplay(chunk).split(/\n+/).map((line) => line.trim()).filter(Boolean);
-    if (!lines.length) return "";
-    return `<div class="section-tree-copy">${lines.map((line) => {
-      const labeled = line.match(/^\*{1,2}([^*]+?):\*{1,2}\s*(.*)$/);
-      if (!labeled) return `<p>${escapeHtml(line)}</p>`;
-      return `<p><strong>${escapeHtml(labeled[1])}:</strong>${labeled[2] ? ` ${escapeHtml(labeled[2])}` : ""}</p>`;
-    }).join("")}</div>`;
-  });
+  return markdownBlock(value);
 }
 
 function renderSectionTreeNodes(nodes, depth = 0) {
@@ -202,13 +307,13 @@ function renderSectionTreeNodes(nodes, depth = 0) {
 }
 
 function renderSectionTree(summary) {
-  if (typeof summary === "string") return textBlock(summary);
+  if (typeof summary === "string") return markdownBlock(summary);
   if (!summary || typeof summary !== "object") return "";
   const intro = cleanDisplay(summary.intro);
   const sections = renderSectionTreeNodes(summary.sections);
   if (!intro && !sections) return "";
   return `<div class="section-tree">
-    ${intro ? `<div class="section-tree-intro">${textBlock(intro)}</div>` : ""}
+    ${intro ? `<div class="section-tree-intro">${markdownBlock(intro)}</div>` : ""}
     ${sections}
   </div>`;
 }
@@ -270,10 +375,10 @@ function renderPullRequest(pullRequest) {
       ["Base", base],
       ["Head", head],
     ]), "pr-association")}
-    ${section("Implementation Details", textBlock(implementationDetails))}
+    ${section("Implementation Details", markdownBlock(implementationDetails))}
     ${section("Experimental Validation", renderSectionTree(experimentalValidation))}
     ${section("Archive", renderArchiveLinks(archive))}
-    ${section("Reviewer Assessment", textBlock(parsed.reviewerAssessment))}
+    ${section("Reviewer Assessment", markdownBlock(parsed.reviewerAssessment))}
     ${section("Merge Checklist", renderCheckboxes(parsed.mergeChecklist))}
   `;
 }
@@ -378,8 +483,8 @@ function renderOverview(model, tree) {
       ["Linked Pull Requests", tree.stats.linkedPullRequests],
       ["External parent Issues", tree.stats.externalParentIssues],
     ]))}
-    ${section("Relationship rules", textBlock("Each Issue creates a model node. An empty parentIssue marks the lineage root; an Issue in the snapshot connects to its parent model, while an Issue outside the snapshot connects to a shared external-parent placeholder. Pull Requests are associated through Architecture Proposal (issue #)."))}
-    ${tree.unmatchedPullRequests.length ? section("Unmatched Pull Requests", textBlock("These Pull Requests reference Proposal Issues that are not present in the current offline snapshot.")) : ""}
+    ${section("Relationship rules", markdownBlock("Each Issue creates a model node. An empty parentIssue marks the lineage root; an Issue in the snapshot connects to its parent model, while an Issue outside the snapshot connects to a shared external-parent placeholder. Pull Requests are associated through Architecture Proposal (issue #)."))}
+    ${tree.unmatchedPullRequests.length ? section("Unmatched Pull Requests", markdownBlock("These Pull Requests reference Proposal Issues that are not present in the current offline snapshot.")) : ""}
   `;
 }
 

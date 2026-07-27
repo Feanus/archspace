@@ -440,7 +440,16 @@ test("renders sanitized Markdown and HTML images from Issue and PR fields", () =
   const graphPayload = payloadWithPullRequest();
   const admittedGraph = normalizeModelGraph(graphPayload);
   const rootIssue = firstRootModel(admittedGraph).issue;
-  rootIssue.parsed.preliminaryResults = `Before
+  rootIssue.parsed.preliminaryResults = `## Result
+
+**Improved** with *stable loss*, \`bf16\`, and [public notes](https://docs.example.com/result?accessToken=secret).
+
+- Lower variance
+- Better throughput
+
+> Reproduced twice.
+
+<script>alert("unsafe")</script>
 
 <img width="942" height="289" alt="Issue diagram" src="https://images.example.com/issue.png?accessToken=secret">
 
@@ -455,6 +464,15 @@ After`;
   const progressHtml = renderModelDetail(model, graph, "pr-10");
 
   assert.match(proposalHtml, /Preliminary results \(if any\)/);
+  assert.match(proposalHtml, /<h5 class="markdown-heading">Result<\/h5>/);
+  assert.match(proposalHtml, /<strong>Improved<\/strong>/);
+  assert.match(proposalHtml, /<em>stable loss<\/em>/);
+  assert.match(proposalHtml, /<code>bf16<\/code>/);
+  assert.match(proposalHtml, /<ul class="markdown-list"><li>Lower variance<\/li><li>Better throughput<\/li><\/ul>/);
+  assert.match(proposalHtml, /<blockquote>Reproduced twice\.<\/blockquote>/);
+  assert.match(proposalHtml, /class="markdown-link"[^>]+href="https:\/\/docs\.example\.com\/result"/);
+  assert.match(proposalHtml, /&lt;script&gt;alert\(&quot;unsafe&quot;\)&lt;\/script&gt;/);
+  assert.doesNotMatch(proposalHtml, /<script>/);
   assert.match(proposalHtml, /<img[^>]+src="https:\/\/images\.example\.com\/issue\.png"[^>]+alt="Issue diagram"[^>]+width="942"[^>]+height="289"/);
   assert.match(progressHtml, /<img[^>]+src="https:\/\/images\.example\.com\/pr\.png"[^>]+alt="PR diagram"/);
   assert.match(progressHtml, /<img[^>]+src="https:\/\/images\.example\.com\/validation\.png"[^>]+alt="Validation plot"/);
