@@ -591,7 +591,7 @@ export function renderModelDetail(model, tree, requestedTab = "", overviewExpand
 
   return `
     <div class="detail-header model-detail-header">
-      <div class="detail-eyebrow"><span class="status-dot"></span>${escapeHtml(model.state)}<span class="detail-category">${escapeHtml(model.category)}</span></div>
+      <div class="detail-eyebrow status-${escapeHtml(model.state)}"><span class="status-dot"></span>${escapeHtml(model.state)}<span class="detail-category">${escapeHtml(model.category)}</span></div>
       <h1>${escapeHtml(modelTitle(model))}</h1>
       <div class="detail-header-meta">
         <code>${escapeHtml(modelSubtitle(model))}</code>

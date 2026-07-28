@@ -429,6 +429,17 @@ test("renders every Archive link in an open merged-model section only for a merg
   assert.doesNotMatch(unmergedHtml, /class="done-pr-panel"/);
 });
 
+test("marks a verified model header with the shared purple status class", () => {
+  const graphPayload = payloadWithPullRequest();
+  const linkedIssueNumber = graphPayload.pullRequests[0].parsed.architectureProposalIssue.number;
+  const linkedIssue = graphPayload.issues.find((issue) => issue.number === linkedIssueNumber);
+  linkedIssue.labels = ["architecture proposal", "verified"];
+  const graph = normalizeModelGraph(graphPayload);
+  const html = renderModelDetail(modelWithPullRequest(graph), graph);
+
+  assert.match(html, /class="detail-eyebrow status-verified"/);
+});
+
 test("omits Progress and the verified-idea section for models without PRs", () => {
   const graph = normalizeModelGraph(payloadWithPullRequest());
   const modelWithoutPullRequests = graph.models.find((model) => model.pullRequests.length === 0);

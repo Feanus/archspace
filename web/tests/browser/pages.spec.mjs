@@ -157,6 +157,13 @@ test("GitHub Pages /archspace/ renders an architecture snapshot and progress det
   await expect(page.locator("#overview-content")).toBeHidden();
 
   await page.locator(`[data-model-id="issue-${mergedIssue.number}"]`).click();
+  if (lifecycleStatus(mergedIssue) === "verified") {
+    await expect(
+      page.locator(`[data-model-id="issue-${mergedIssue.number}"] .validation-badge circle`),
+    ).toHaveCSS("fill", "rgb(192, 132, 252)");
+    await expect(page.locator(".detail-eyebrow.status-verified .status-dot"))
+      .toHaveCSS("background-color", "rgb(192, 132, 252)");
+  }
   const progressToggle = page.locator(`[data-detail-tab="pr-${mergedPullRequest.number}"]`);
   await expect(progressToggle).toContainText("Progress");
   await expect(progressToggle).toContainText("Verified");
