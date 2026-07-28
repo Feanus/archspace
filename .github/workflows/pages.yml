@@ -66,6 +66,12 @@ jobs:
             "$RUNNER_TEMP/template-test-raw.json" \
             data/template-test-data.json
 
+      - name: Verify refreshed snapshot freshness
+        run: |
+          node web/scripts/verify-refreshed-snapshot.mjs \
+            data/template-test-data.json \
+            RmZeta2718/arch-test
+
       - name: Verify canonical projection and schema
         if: github.event_name != 'repository_dispatch'
         run: |
@@ -87,7 +93,14 @@ jobs:
         run: node --test web/tests/unit/model-data-adapter.test.mjs
 
       - name: Build and inspect Pages artifact
-        run: python3 scripts/build_pages_artifact.py --output "$RUNNER_TEMP/internspace-pages"
+        run: |
+          python3 scripts/build_pages_artifact.py --output "$RUNNER_TEMP/internspace-pages"
+          cmp \
+            data/template-test-data.json \
+            "$RUNNER_TEMP/internspace-pages/data/template-test-data.json"
+          node web/scripts/verify-refreshed-snapshot.mjs \
+            "$RUNNER_TEMP/internspace-pages/data/template-test-data.json" \
+            RmZeta2718/arch-test
 
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v3

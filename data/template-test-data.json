@@ -7,7 +7,7 @@
       "issues": "architecture proposal",
       "pullRequests": "architecture implementation"
     },
-    "fetchedAt": "2026-07-28T08:30:36.732Z"
+    "fetchedAt": "2026-07-28T09:49:42.409Z"
   },
   "templates": {
     "issue": {
@@ -154,6 +154,1597 @@
       }
     ]
   },
-  "issues": [],
-  "pullRequests": []
+  "issues": [
+    {
+      "number": 15,
+      "title": "[ARCH-PROP] Memory Decoder",
+      "state": "open",
+      "url": "https://github.com/RmZeta2718/arch-test/issues/15",
+      "author": "RmZeta2718",
+      "createdAt": "2026-07-28T09:01:05Z",
+      "updatedAt": "2026-07-28T09:27:13Z",
+      "closedAt": null,
+      "labels": [
+        "architecture proposal",
+        "under review"
+      ],
+      "assignees": [],
+      "milestone": null,
+      "parsed": {
+        "architectureName": "Memory Decoder",
+        "parentIssueInput": "#14",
+        "parentIssue": {
+          "label": "#14",
+          "number": 14,
+          "url": "https://github.com/RmZeta2718/arch-test/issues/14",
+          "raw": "#14"
+        },
+        "motivations": "xxx",
+        "proposedArchitecture": "xxxx",
+        "preliminaryResults": "xxx",
+        "experimentsPlan": "xxxx"
+      },
+      "fields": [
+        {
+          "key": "architectureName",
+          "templateId": "proposal_name",
+          "label": "Architecture Name",
+          "type": "text",
+          "required": true,
+          "value": "Memory Decoder",
+          "status": "filled"
+        },
+        {
+          "key": "parentIssue",
+          "templateId": "base_architecture_issue",
+          "label": "Parent issue",
+          "type": "link",
+          "required": false,
+          "value": {
+            "label": "#14",
+            "number": 14,
+            "url": "https://github.com/RmZeta2718/arch-test/issues/14",
+            "raw": "#14"
+          },
+          "status": "filled"
+        },
+        {
+          "key": "motivations",
+          "templateId": "problem_and_hypothesis",
+          "label": "Motivations",
+          "type": "markdown",
+          "required": true,
+          "value": "xxx",
+          "status": "filled"
+        },
+        {
+          "key": "proposedArchitecture",
+          "templateId": "proposed_change",
+          "label": "Proposed Architecture",
+          "type": "markdown",
+          "required": true,
+          "value": "xxxx",
+          "status": "filled"
+        },
+        {
+          "key": "preliminaryResults",
+          "templateId": "existing_results",
+          "label": "Preliminary results (if any)",
+          "type": "markdown",
+          "required": false,
+          "value": "xxx",
+          "status": "filled"
+        },
+        {
+          "key": "experimentsPlan",
+          "templateId": "validation_plan",
+          "label": "Experiments Plan",
+          "type": "markdown",
+          "required": true,
+          "value": "xxxx",
+          "status": "filled"
+        }
+      ]
+    },
+    {
+      "number": 14,
+      "title": "[ARCH-PROP] MLP Memory",
+      "state": "open",
+      "url": "https://github.com/RmZeta2718/arch-test/issues/14",
+      "author": "RmZeta2718",
+      "createdAt": "2026-07-28T09:00:25Z",
+      "updatedAt": "2026-07-28T09:28:39Z",
+      "closedAt": null,
+      "labels": [
+        "architecture proposal",
+        "under review"
+      ],
+      "assignees": [],
+      "milestone": null,
+      "parsed": {
+        "architectureName": "MLP Memory",
+        "parentIssueInput": "#1",
+        "parentIssue": {
+          "label": "#1",
+          "number": 1,
+          "url": "https://github.com/RmZeta2718/arch-test/issues/1",
+          "raw": "#1"
+        },
+        "motivations": "xxxxx",
+        "proposedArchitecture": "xxx",
+        "preliminaryResults": "xxx",
+        "experimentsPlan": "xxxx"
+      },
+      "fields": [
+        {
+          "key": "architectureName",
+          "templateId": "proposal_name",
+          "label": "Architecture Name",
+          "type": "text",
+          "required": true,
+          "value": "MLP Memory",
+          "status": "filled"
+        },
+        {
+          "key": "parentIssue",
+          "templateId": "base_architecture_issue",
+          "label": "Parent issue",
+          "type": "link",
+          "required": false,
+          "value": {
+            "label": "#1",
+            "number": 1,
+            "url": "https://github.com/RmZeta2718/arch-test/issues/1",
+            "raw": "#1"
+          },
+          "status": "filled"
+        },
+        {
+          "key": "motivations",
+          "templateId": "problem_and_hypothesis",
+          "label": "Motivations",
+          "type": "markdown",
+          "required": true,
+          "value": "xxxxx",
+          "status": "filled"
+        },
+        {
+          "key": "proposedArchitecture",
+          "templateId": "proposed_change",
+          "label": "Proposed Architecture",
+          "type": "markdown",
+          "required": true,
+          "value": "xxx",
+          "status": "filled"
+        },
+        {
+          "key": "preliminaryResults",
+          "templateId": "existing_results",
+          "label": "Preliminary results (if any)",
+          "type": "markdown",
+          "required": false,
+          "value": "xxx",
+          "status": "filled"
+        },
+        {
+          "key": "experimentsPlan",
+          "templateId": "validation_plan",
+          "label": "Experiments Plan",
+          "type": "markdown",
+          "required": true,
+          "value": "xxxx",
+          "status": "filled"
+        }
+      ]
+    },
+    {
+      "number": 13,
+      "title": "[ARCH-PROP] Dynamic Memory Table",
+      "state": "open",
+      "url": "https://github.com/RmZeta2718/arch-test/issues/13",
+      "author": "RmZeta2718",
+      "createdAt": "2026-07-28T09:00:08Z",
+      "updatedAt": "2026-07-28T09:27:29Z",
+      "closedAt": null,
+      "labels": [
+        "architecture proposal",
+        "under review"
+      ],
+      "assignees": [],
+      "milestone": null,
+      "parsed": {
+        "architectureName": "Dynamic Memory Table",
+        "parentIssueInput": "#12",
+        "parentIssue": {
+          "label": "#12",
+          "number": 12,
+          "url": "https://github.com/RmZeta2718/arch-test/issues/12",
+          "raw": "#12"
+        },
+        "motivations": "xxx",
+        "proposedArchitecture": "xxx",
+        "preliminaryResults": "xxx",
+        "experimentsPlan": "xxxxx"
+      },
+      "fields": [
+        {
+          "key": "architectureName",
+          "templateId": "proposal_name",
+          "label": "Architecture Name",
+          "type": "text",
+          "required": true,
+          "value": "Dynamic Memory Table",
+          "status": "filled"
+        },
+        {
+          "key": "parentIssue",
+          "templateId": "base_architecture_issue",
+          "label": "Parent issue",
+          "type": "link",
+          "required": false,
+          "value": {
+            "label": "#12",
+            "number": 12,
+            "url": "https://github.com/RmZeta2718/arch-test/issues/12",
+            "raw": "#12"
+          },
+          "status": "filled"
+        },
+        {
+          "key": "motivations",
+          "templateId": "problem_and_hypothesis",
+          "label": "Motivations",
+          "type": "markdown",
+          "required": true,
+          "value": "xxx",
+          "status": "filled"
+        },
+        {
+          "key": "proposedArchitecture",
+          "templateId": "proposed_change",
+          "label": "Proposed Architecture",
+          "type": "markdown",
+          "required": true,
+          "value": "xxx",
+          "status": "filled"
+        },
+        {
+          "key": "preliminaryResults",
+          "templateId": "existing_results",
+          "label": "Preliminary results (if any)",
+          "type": "markdown",
+          "required": false,
+          "value": "xxx",
+          "status": "filled"
+        },
+        {
+          "key": "experimentsPlan",
+          "templateId": "validation_plan",
+          "label": "Experiments Plan",
+          "type": "markdown",
+          "required": true,
+          "value": "xxxxx",
+          "status": "filled"
+        }
+      ]
+    },
+    {
+      "number": 12,
+      "title": "[ARCH-PROP] Elastic Memory",
+      "state": "open",
+      "url": "https://github.com/RmZeta2718/arch-test/issues/12",
+      "author": "RmZeta2718",
+      "createdAt": "2026-07-28T08:59:48Z",
+      "updatedAt": "2026-07-28T09:27:36Z",
+      "closedAt": null,
+      "labels": [
+        "architecture proposal",
+        "under review"
+      ],
+      "assignees": [],
+      "milestone": null,
+      "parsed": {
+        "architectureName": "Elastic Memory",
+        "parentIssueInput": "#1",
+        "parentIssue": {
+          "label": "#1",
+          "number": 1,
+          "url": "https://github.com/RmZeta2718/arch-test/issues/1",
+          "raw": "#1"
+        },
+        "motivations": "xxxx",
+        "proposedArchitecture": "xxx",
+        "preliminaryResults": "xxx",
+        "experimentsPlan": "xxxx"
+      },
+      "fields": [
+        {
+          "key": "architectureName",
+          "templateId": "proposal_name",
+          "label": "Architecture Name",
+          "type": "text",
+          "required": true,
+          "value": "Elastic Memory",
+          "status": "filled"
+        },
+        {
+          "key": "parentIssue",
+          "templateId": "base_architecture_issue",
+          "label": "Parent issue",
+          "type": "link",
+          "required": false,
+          "value": {
+            "label": "#1",
+            "number": 1,
+            "url": "https://github.com/RmZeta2718/arch-test/issues/1",
+            "raw": "#1"
+          },
+          "status": "filled"
+        },
+        {
+          "key": "motivations",
+          "templateId": "problem_and_hypothesis",
+          "label": "Motivations",
+          "type": "markdown",
+          "required": true,
+          "value": "xxxx",
+          "status": "filled"
+        },
+        {
+          "key": "proposedArchitecture",
+          "templateId": "proposed_change",
+          "label": "Proposed Architecture",
+          "type": "markdown",
+          "required": true,
+          "value": "xxx",
+          "status": "filled"
+        },
+        {
+          "key": "preliminaryResults",
+          "templateId": "existing_results",
+          "label": "Preliminary results (if any)",
+          "type": "markdown",
+          "required": false,
+          "value": "xxx",
+          "status": "filled"
+        },
+        {
+          "key": "experimentsPlan",
+          "templateId": "validation_plan",
+          "label": "Experiments Plan",
+          "type": "markdown",
+          "required": true,
+          "value": "xxxx",
+          "status": "filled"
+        }
+      ]
+    },
+    {
+      "number": 11,
+      "title": "[ARCH-PROP] Mobius",
+      "state": "open",
+      "url": "https://github.com/RmZeta2718/arch-test/issues/11",
+      "author": "RmZeta2718",
+      "createdAt": "2026-07-28T08:59:18Z",
+      "updatedAt": "2026-07-28T09:27:42Z",
+      "closedAt": null,
+      "labels": [
+        "architecture proposal",
+        "under review"
+      ],
+      "assignees": [],
+      "milestone": null,
+      "parsed": {
+        "architectureName": "Mobius",
+        "parentIssueInput": "#8",
+        "parentIssue": {
+          "label": "#8",
+          "number": 8,
+          "url": "https://github.com/RmZeta2718/arch-test/issues/8",
+          "raw": "#8"
+        },
+        "motivations": "xxx",
+        "proposedArchitecture": "xxxx",
+        "preliminaryResults": "xxx",
+        "experimentsPlan": "xxxx"
+      },
+      "fields": [
+        {
+          "key": "architectureName",
+          "templateId": "proposal_name",
+          "label": "Architecture Name",
+          "type": "text",
+          "required": true,
+          "value": "Mobius",
+          "status": "filled"
+        },
+        {
+          "key": "parentIssue",
+          "templateId": "base_architecture_issue",
+          "label": "Parent issue",
+          "type": "link",
+          "required": false,
+          "value": {
+            "label": "#8",
+            "number": 8,
+            "url": "https://github.com/RmZeta2718/arch-test/issues/8",
+            "raw": "#8"
+          },
+          "status": "filled"
+        },
+        {
+          "key": "motivations",
+          "templateId": "problem_and_hypothesis",
+          "label": "Motivations",
+          "type": "markdown",
+          "required": true,
+          "value": "xxx",
+          "status": "filled"
+        },
+        {
+          "key": "proposedArchitecture",
+          "templateId": "proposed_change",
+          "label": "Proposed Architecture",
+          "type": "markdown",
+          "required": true,
+          "value": "xxxx",
+          "status": "filled"
+        },
+        {
+          "key": "preliminaryResults",
+          "templateId": "existing_results",
+          "label": "Preliminary results (if any)",
+          "type": "markdown",
+          "required": false,
+          "value": "xxx",
+          "status": "filled"
+        },
+        {
+          "key": "experimentsPlan",
+          "templateId": "validation_plan",
+          "label": "Experiments Plan",
+          "type": "markdown",
+          "required": true,
+          "value": "xxxx",
+          "status": "filled"
+        }
+      ]
+    },
+    {
+      "number": 10,
+      "title": "[ARCH-PROP] ContextLM",
+      "state": "open",
+      "url": "https://github.com/RmZeta2718/arch-test/issues/10",
+      "author": "RmZeta2718",
+      "createdAt": "2026-07-28T08:58:48Z",
+      "updatedAt": "2026-07-28T09:27:49Z",
+      "closedAt": null,
+      "labels": [
+        "architecture proposal",
+        "under review"
+      ],
+      "assignees": [],
+      "milestone": null,
+      "parsed": {
+        "architectureName": "ContextLM",
+        "parentIssueInput": "#3",
+        "parentIssue": {
+          "label": "#3",
+          "number": 3,
+          "url": "https://github.com/RmZeta2718/arch-test/issues/3",
+          "raw": "#3"
+        },
+        "motivations": "xxx",
+        "proposedArchitecture": "xxx",
+        "preliminaryResults": "xx",
+        "experimentsPlan": "xxxx"
+      },
+      "fields": [
+        {
+          "key": "architectureName",
+          "templateId": "proposal_name",
+          "label": "Architecture Name",
+          "type": "text",
+          "required": true,
+          "value": "ContextLM",
+          "status": "filled"
+        },
+        {
+          "key": "parentIssue",
+          "templateId": "base_architecture_issue",
+          "label": "Parent issue",
+          "type": "link",
+          "required": false,
+          "value": {
+            "label": "#3",
+            "number": 3,
+            "url": "https://github.com/RmZeta2718/arch-test/issues/3",
+            "raw": "#3"
+          },
+          "status": "filled"
+        },
+        {
+          "key": "motivations",
+          "templateId": "problem_and_hypothesis",
+          "label": "Motivations",
+          "type": "markdown",
+          "required": true,
+          "value": "xxx",
+          "status": "filled"
+        },
+        {
+          "key": "proposedArchitecture",
+          "templateId": "proposed_change",
+          "label": "Proposed Architecture",
+          "type": "markdown",
+          "required": true,
+          "value": "xxx",
+          "status": "filled"
+        },
+        {
+          "key": "preliminaryResults",
+          "templateId": "existing_results",
+          "label": "Preliminary results (if any)",
+          "type": "markdown",
+          "required": false,
+          "value": "xx",
+          "status": "filled"
+        },
+        {
+          "key": "experimentsPlan",
+          "templateId": "validation_plan",
+          "label": "Experiments Plan",
+          "type": "markdown",
+          "required": true,
+          "value": "xxxx",
+          "status": "filled"
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "title": "[ARCH-PROP]  DSpark-SDAR",
+      "state": "open",
+      "url": "https://github.com/RmZeta2718/arch-test/issues/9",
+      "author": "RmZeta2718",
+      "createdAt": "2026-07-28T08:58:21Z",
+      "updatedAt": "2026-07-28T09:27:56Z",
+      "closedAt": null,
+      "labels": [
+        "architecture proposal",
+        "under review"
+      ],
+      "assignees": [],
+      "milestone": null,
+      "parsed": {
+        "architectureName": "DSpark-SDAR",
+        "parentIssueInput": "#6",
+        "parentIssue": {
+          "label": "#6",
+          "number": 6,
+          "url": "https://github.com/RmZeta2718/arch-test/issues/6",
+          "raw": "#6"
+        },
+        "motivations": "xxxx",
+        "proposedArchitecture": "xxxx",
+        "preliminaryResults": "xxxx",
+        "experimentsPlan": "xxxx"
+      },
+      "fields": [
+        {
+          "key": "architectureName",
+          "templateId": "proposal_name",
+          "label": "Architecture Name",
+          "type": "text",
+          "required": true,
+          "value": "DSpark-SDAR",
+          "status": "filled"
+        },
+        {
+          "key": "parentIssue",
+          "templateId": "base_architecture_issue",
+          "label": "Parent issue",
+          "type": "link",
+          "required": false,
+          "value": {
+            "label": "#6",
+            "number": 6,
+            "url": "https://github.com/RmZeta2718/arch-test/issues/6",
+            "raw": "#6"
+          },
+          "status": "filled"
+        },
+        {
+          "key": "motivations",
+          "templateId": "problem_and_hypothesis",
+          "label": "Motivations",
+          "type": "markdown",
+          "required": true,
+          "value": "xxxx",
+          "status": "filled"
+        },
+        {
+          "key": "proposedArchitecture",
+          "templateId": "proposed_change",
+          "label": "Proposed Architecture",
+          "type": "markdown",
+          "required": true,
+          "value": "xxxx",
+          "status": "filled"
+        },
+        {
+          "key": "preliminaryResults",
+          "templateId": "existing_results",
+          "label": "Preliminary results (if any)",
+          "type": "markdown",
+          "required": false,
+          "value": "xxxx",
+          "status": "filled"
+        },
+        {
+          "key": "experimentsPlan",
+          "templateId": "validation_plan",
+          "label": "Experiments Plan",
+          "type": "markdown",
+          "required": true,
+          "value": "xxxx",
+          "status": "filled"
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "title": "[ARCH-PROP] March",
+      "state": "open",
+      "url": "https://github.com/RmZeta2718/arch-test/issues/8",
+      "author": "RmZeta2718",
+      "createdAt": "2026-07-28T08:57:56Z",
+      "updatedAt": "2026-07-28T09:28:02Z",
+      "closedAt": null,
+      "labels": [
+        "architecture proposal",
+        "under review"
+      ],
+      "assignees": [],
+      "milestone": null,
+      "parsed": {
+        "architectureName": "March",
+        "parentIssueInput": "#2",
+        "parentIssue": {
+          "label": "#2",
+          "number": 2,
+          "url": "https://github.com/RmZeta2718/arch-test/issues/2",
+          "raw": "#2"
+        },
+        "motivations": "xxx",
+        "proposedArchitecture": "xxx",
+        "preliminaryResults": "xx",
+        "experimentsPlan": "xxx"
+      },
+      "fields": [
+        {
+          "key": "architectureName",
+          "templateId": "proposal_name",
+          "label": "Architecture Name",
+          "type": "text",
+          "required": true,
+          "value": "March",
+          "status": "filled"
+        },
+        {
+          "key": "parentIssue",
+          "templateId": "base_architecture_issue",
+          "label": "Parent issue",
+          "type": "link",
+          "required": false,
+          "value": {
+            "label": "#2",
+            "number": 2,
+            "url": "https://github.com/RmZeta2718/arch-test/issues/2",
+            "raw": "#2"
+          },
+          "status": "filled"
+        },
+        {
+          "key": "motivations",
+          "templateId": "problem_and_hypothesis",
+          "label": "Motivations",
+          "type": "markdown",
+          "required": true,
+          "value": "xxx",
+          "status": "filled"
+        },
+        {
+          "key": "proposedArchitecture",
+          "templateId": "proposed_change",
+          "label": "Proposed Architecture",
+          "type": "markdown",
+          "required": true,
+          "value": "xxx",
+          "status": "filled"
+        },
+        {
+          "key": "preliminaryResults",
+          "templateId": "existing_results",
+          "label": "Preliminary results (if any)",
+          "type": "markdown",
+          "required": false,
+          "value": "xx",
+          "status": "filled"
+        },
+        {
+          "key": "experimentsPlan",
+          "templateId": "validation_plan",
+          "label": "Experiments Plan",
+          "type": "markdown",
+          "required": true,
+          "value": "xxx",
+          "status": "filled"
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "title": "[ARCH-PROP] Loop Transformers",
+      "state": "open",
+      "url": "https://github.com/RmZeta2718/arch-test/issues/7",
+      "author": "RmZeta2718",
+      "createdAt": "2026-07-28T08:57:27Z",
+      "updatedAt": "2026-07-28T09:28:08Z",
+      "closedAt": null,
+      "labels": [
+        "architecture proposal",
+        "under review"
+      ],
+      "assignees": [],
+      "milestone": null,
+      "parsed": {
+        "architectureName": "Loop Transformers",
+        "parentIssueInput": "#5",
+        "parentIssue": {
+          "label": "#5",
+          "number": 5,
+          "url": "https://github.com/RmZeta2718/arch-test/issues/5",
+          "raw": "#5"
+        },
+        "motivations": "xxx",
+        "proposedArchitecture": "xxx",
+        "preliminaryResults": "xxx",
+        "experimentsPlan": "xxx"
+      },
+      "fields": [
+        {
+          "key": "architectureName",
+          "templateId": "proposal_name",
+          "label": "Architecture Name",
+          "type": "text",
+          "required": true,
+          "value": "Loop Transformers",
+          "status": "filled"
+        },
+        {
+          "key": "parentIssue",
+          "templateId": "base_architecture_issue",
+          "label": "Parent issue",
+          "type": "link",
+          "required": false,
+          "value": {
+            "label": "#5",
+            "number": 5,
+            "url": "https://github.com/RmZeta2718/arch-test/issues/5",
+            "raw": "#5"
+          },
+          "status": "filled"
+        },
+        {
+          "key": "motivations",
+          "templateId": "problem_and_hypothesis",
+          "label": "Motivations",
+          "type": "markdown",
+          "required": true,
+          "value": "xxx",
+          "status": "filled"
+        },
+        {
+          "key": "proposedArchitecture",
+          "templateId": "proposed_change",
+          "label": "Proposed Architecture",
+          "type": "markdown",
+          "required": true,
+          "value": "xxx",
+          "status": "filled"
+        },
+        {
+          "key": "preliminaryResults",
+          "templateId": "existing_results",
+          "label": "Preliminary results (if any)",
+          "type": "markdown",
+          "required": false,
+          "value": "xxx",
+          "status": "filled"
+        },
+        {
+          "key": "experimentsPlan",
+          "templateId": "validation_plan",
+          "label": "Experiments Plan",
+          "type": "markdown",
+          "required": true,
+          "value": "xxx",
+          "status": "filled"
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "title": "[ARCH-PROP] PrefiAll",
+      "state": "open",
+      "url": "https://github.com/RmZeta2718/arch-test/issues/6",
+      "author": "RmZeta2718",
+      "createdAt": "2026-07-28T08:56:54Z",
+      "updatedAt": "2026-07-28T09:15:23Z",
+      "closedAt": null,
+      "labels": [
+        "architecture proposal",
+        "in-progress"
+      ],
+      "assignees": [],
+      "milestone": null,
+      "parsed": {
+        "architectureName": "PrefiAll",
+        "parentIssueInput": "#1",
+        "parentIssue": {
+          "label": "#1",
+          "number": 1,
+          "url": "https://github.com/RmZeta2718/arch-test/issues/1",
+          "raw": "#1"
+        },
+        "motivations": "xxx",
+        "proposedArchitecture": "xxx",
+        "preliminaryResults": "xx",
+        "experimentsPlan": "xxx"
+      },
+      "fields": [
+        {
+          "key": "architectureName",
+          "templateId": "proposal_name",
+          "label": "Architecture Name",
+          "type": "text",
+          "required": true,
+          "value": "PrefiAll",
+          "status": "filled"
+        },
+        {
+          "key": "parentIssue",
+          "templateId": "base_architecture_issue",
+          "label": "Parent issue",
+          "type": "link",
+          "required": false,
+          "value": {
+            "label": "#1",
+            "number": 1,
+            "url": "https://github.com/RmZeta2718/arch-test/issues/1",
+            "raw": "#1"
+          },
+          "status": "filled"
+        },
+        {
+          "key": "motivations",
+          "templateId": "problem_and_hypothesis",
+          "label": "Motivations",
+          "type": "markdown",
+          "required": true,
+          "value": "xxx",
+          "status": "filled"
+        },
+        {
+          "key": "proposedArchitecture",
+          "templateId": "proposed_change",
+          "label": "Proposed Architecture",
+          "type": "markdown",
+          "required": true,
+          "value": "xxx",
+          "status": "filled"
+        },
+        {
+          "key": "preliminaryResults",
+          "templateId": "existing_results",
+          "label": "Preliminary results (if any)",
+          "type": "markdown",
+          "required": false,
+          "value": "xx",
+          "status": "filled"
+        },
+        {
+          "key": "experimentsPlan",
+          "templateId": "validation_plan",
+          "label": "Experiments Plan",
+          "type": "markdown",
+          "required": true,
+          "value": "xxx",
+          "status": "filled"
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "title": "[ARCH-PROP] Artificial Hippocampus Networks",
+      "state": "open",
+      "url": "https://github.com/RmZeta2718/arch-test/issues/5",
+      "author": "RmZeta2718",
+      "createdAt": "2026-07-28T08:56:23Z",
+      "updatedAt": "2026-07-28T09:28:19Z",
+      "closedAt": null,
+      "labels": [
+        "architecture proposal",
+        "under review"
+      ],
+      "assignees": [],
+      "milestone": null,
+      "parsed": {
+        "architectureName": "Artificial Hippocampus Networks",
+        "parentIssueInput": "#4",
+        "parentIssue": {
+          "label": "#4",
+          "number": 4,
+          "url": "https://github.com/RmZeta2718/arch-test/issues/4",
+          "raw": "#4"
+        },
+        "motivations": "xxx",
+        "proposedArchitecture": "xxxx",
+        "preliminaryResults": "xxxx",
+        "experimentsPlan": "xxxxx"
+      },
+      "fields": [
+        {
+          "key": "architectureName",
+          "templateId": "proposal_name",
+          "label": "Architecture Name",
+          "type": "text",
+          "required": true,
+          "value": "Artificial Hippocampus Networks",
+          "status": "filled"
+        },
+        {
+          "key": "parentIssue",
+          "templateId": "base_architecture_issue",
+          "label": "Parent issue",
+          "type": "link",
+          "required": false,
+          "value": {
+            "label": "#4",
+            "number": 4,
+            "url": "https://github.com/RmZeta2718/arch-test/issues/4",
+            "raw": "#4"
+          },
+          "status": "filled"
+        },
+        {
+          "key": "motivations",
+          "templateId": "problem_and_hypothesis",
+          "label": "Motivations",
+          "type": "markdown",
+          "required": true,
+          "value": "xxx",
+          "status": "filled"
+        },
+        {
+          "key": "proposedArchitecture",
+          "templateId": "proposed_change",
+          "label": "Proposed Architecture",
+          "type": "markdown",
+          "required": true,
+          "value": "xxxx",
+          "status": "filled"
+        },
+        {
+          "key": "preliminaryResults",
+          "templateId": "existing_results",
+          "label": "Preliminary results (if any)",
+          "type": "markdown",
+          "required": false,
+          "value": "xxxx",
+          "status": "filled"
+        },
+        {
+          "key": "experimentsPlan",
+          "templateId": "validation_plan",
+          "label": "Experiments Plan",
+          "type": "markdown",
+          "required": true,
+          "value": "xxxxx",
+          "status": "filled"
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "title": "[ARCH-PROP] MLA & MorphNorm",
+      "state": "open",
+      "url": "https://github.com/RmZeta2718/arch-test/issues/4",
+      "author": "RmZeta2718",
+      "createdAt": "2026-07-28T08:55:51Z",
+      "updatedAt": "2026-07-28T09:03:28Z",
+      "closedAt": null,
+      "labels": [
+        "architecture proposal",
+        "in-progress"
+      ],
+      "assignees": [],
+      "milestone": null,
+      "parsed": {
+        "architectureName": "MLA & MorphNorm",
+        "parentIssueInput": "#1",
+        "parentIssue": {
+          "label": "#1",
+          "number": 1,
+          "url": "https://github.com/RmZeta2718/arch-test/issues/1",
+          "raw": "#1"
+        },
+        "motivations": "xxxx",
+        "proposedArchitecture": "xxx",
+        "preliminaryResults": "xxx",
+        "experimentsPlan": "xxx"
+      },
+      "fields": [
+        {
+          "key": "architectureName",
+          "templateId": "proposal_name",
+          "label": "Architecture Name",
+          "type": "text",
+          "required": true,
+          "value": "MLA & MorphNorm",
+          "status": "filled"
+        },
+        {
+          "key": "parentIssue",
+          "templateId": "base_architecture_issue",
+          "label": "Parent issue",
+          "type": "link",
+          "required": false,
+          "value": {
+            "label": "#1",
+            "number": 1,
+            "url": "https://github.com/RmZeta2718/arch-test/issues/1",
+            "raw": "#1"
+          },
+          "status": "filled"
+        },
+        {
+          "key": "motivations",
+          "templateId": "problem_and_hypothesis",
+          "label": "Motivations",
+          "type": "markdown",
+          "required": true,
+          "value": "xxxx",
+          "status": "filled"
+        },
+        {
+          "key": "proposedArchitecture",
+          "templateId": "proposed_change",
+          "label": "Proposed Architecture",
+          "type": "markdown",
+          "required": true,
+          "value": "xxx",
+          "status": "filled"
+        },
+        {
+          "key": "preliminaryResults",
+          "templateId": "existing_results",
+          "label": "Preliminary results (if any)",
+          "type": "markdown",
+          "required": false,
+          "value": "xxx",
+          "status": "filled"
+        },
+        {
+          "key": "experimentsPlan",
+          "templateId": "validation_plan",
+          "label": "Experiments Plan",
+          "type": "markdown",
+          "required": true,
+          "value": "xxx",
+          "status": "filled"
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "title": "[ARCH-PROP] NCP",
+      "state": "open",
+      "url": "https://github.com/RmZeta2718/arch-test/issues/3",
+      "author": "RmZeta2718",
+      "createdAt": "2026-07-28T08:55:33Z",
+      "updatedAt": "2026-07-28T09:01:42Z",
+      "closedAt": null,
+      "labels": [
+        "architecture proposal",
+        "in-progress"
+      ],
+      "assignees": [],
+      "milestone": null,
+      "parsed": {
+        "architectureName": "NCP",
+        "parentIssueInput": "#1",
+        "parentIssue": {
+          "label": "#1",
+          "number": 1,
+          "url": "https://github.com/RmZeta2718/arch-test/issues/1",
+          "raw": "#1"
+        },
+        "motivations": "xx",
+        "proposedArchitecture": "xx",
+        "preliminaryResults": "xx",
+        "experimentsPlan": "xxx"
+      },
+      "fields": [
+        {
+          "key": "architectureName",
+          "templateId": "proposal_name",
+          "label": "Architecture Name",
+          "type": "text",
+          "required": true,
+          "value": "NCP",
+          "status": "filled"
+        },
+        {
+          "key": "parentIssue",
+          "templateId": "base_architecture_issue",
+          "label": "Parent issue",
+          "type": "link",
+          "required": false,
+          "value": {
+            "label": "#1",
+            "number": 1,
+            "url": "https://github.com/RmZeta2718/arch-test/issues/1",
+            "raw": "#1"
+          },
+          "status": "filled"
+        },
+        {
+          "key": "motivations",
+          "templateId": "problem_and_hypothesis",
+          "label": "Motivations",
+          "type": "markdown",
+          "required": true,
+          "value": "xx",
+          "status": "filled"
+        },
+        {
+          "key": "proposedArchitecture",
+          "templateId": "proposed_change",
+          "label": "Proposed Architecture",
+          "type": "markdown",
+          "required": true,
+          "value": "xx",
+          "status": "filled"
+        },
+        {
+          "key": "preliminaryResults",
+          "templateId": "existing_results",
+          "label": "Preliminary results (if any)",
+          "type": "markdown",
+          "required": false,
+          "value": "xx",
+          "status": "filled"
+        },
+        {
+          "key": "experimentsPlan",
+          "templateId": "validation_plan",
+          "label": "Experiments Plan",
+          "type": "markdown",
+          "required": true,
+          "value": "xxx",
+          "status": "filled"
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "title": "[ARCH-PROP] DepthAttn & SiameseNorm",
+      "state": "open",
+      "url": "https://github.com/RmZeta2718/arch-test/issues/2",
+      "author": "RmZeta2718",
+      "createdAt": "2026-07-28T08:50:29Z",
+      "updatedAt": "2026-07-28T09:15:59Z",
+      "closedAt": null,
+      "labels": [
+        "architecture proposal",
+        "verified"
+      ],
+      "assignees": [],
+      "milestone": null,
+      "parsed": {
+        "architectureName": "DepthAttn & SiameseNorm",
+        "parentIssueInput": "#1",
+        "parentIssue": {
+          "label": "#1",
+          "number": 1,
+          "url": "https://github.com/RmZeta2718/arch-test/issues/1",
+          "raw": "#1"
+        },
+        "motivations": "xxx",
+        "proposedArchitecture": "xxx",
+        "preliminaryResults": "xxx",
+        "experimentsPlan": "xxx"
+      },
+      "fields": [
+        {
+          "key": "architectureName",
+          "templateId": "proposal_name",
+          "label": "Architecture Name",
+          "type": "text",
+          "required": true,
+          "value": "DepthAttn & SiameseNorm",
+          "status": "filled"
+        },
+        {
+          "key": "parentIssue",
+          "templateId": "base_architecture_issue",
+          "label": "Parent issue",
+          "type": "link",
+          "required": false,
+          "value": {
+            "label": "#1",
+            "number": 1,
+            "url": "https://github.com/RmZeta2718/arch-test/issues/1",
+            "raw": "#1"
+          },
+          "status": "filled"
+        },
+        {
+          "key": "motivations",
+          "templateId": "problem_and_hypothesis",
+          "label": "Motivations",
+          "type": "markdown",
+          "required": true,
+          "value": "xxx",
+          "status": "filled"
+        },
+        {
+          "key": "proposedArchitecture",
+          "templateId": "proposed_change",
+          "label": "Proposed Architecture",
+          "type": "markdown",
+          "required": true,
+          "value": "xxx",
+          "status": "filled"
+        },
+        {
+          "key": "preliminaryResults",
+          "templateId": "existing_results",
+          "label": "Preliminary results (if any)",
+          "type": "markdown",
+          "required": false,
+          "value": "xxx",
+          "status": "filled"
+        },
+        {
+          "key": "experimentsPlan",
+          "templateId": "validation_plan",
+          "label": "Experiments Plan",
+          "type": "markdown",
+          "required": true,
+          "value": "xxx",
+          "status": "filled"
+        }
+      ]
+    },
+    {
+      "number": 1,
+      "title": "[ARCH-PROP] Base arch",
+      "state": "open",
+      "url": "https://github.com/RmZeta2718/arch-test/issues/1",
+      "author": "RmZeta2718",
+      "createdAt": "2026-07-28T08:18:50Z",
+      "updatedAt": "2026-07-28T08:33:17Z",
+      "closedAt": null,
+      "labels": [
+        "architecture proposal",
+        "verified"
+      ],
+      "assignees": [],
+      "milestone": null,
+      "parsed": {
+        "architectureName": "Root",
+        "parentIssueInput": "None",
+        "parentIssue": null,
+        "motivations": "xxx",
+        "proposedArchitecture": "xxx",
+        "preliminaryResults": "xx",
+        "experimentsPlan": "xxx"
+      },
+      "fields": [
+        {
+          "key": "architectureName",
+          "templateId": "proposal_name",
+          "label": "Architecture Name",
+          "type": "text",
+          "required": true,
+          "value": "Root",
+          "status": "filled"
+        },
+        {
+          "key": "parentIssue",
+          "templateId": "base_architecture_issue",
+          "label": "Parent issue",
+          "type": "link",
+          "required": false,
+          "value": null,
+          "status": "missing"
+        },
+        {
+          "key": "motivations",
+          "templateId": "problem_and_hypothesis",
+          "label": "Motivations",
+          "type": "markdown",
+          "required": true,
+          "value": "xxx",
+          "status": "filled"
+        },
+        {
+          "key": "proposedArchitecture",
+          "templateId": "proposed_change",
+          "label": "Proposed Architecture",
+          "type": "markdown",
+          "required": true,
+          "value": "xxx",
+          "status": "filled"
+        },
+        {
+          "key": "preliminaryResults",
+          "templateId": "existing_results",
+          "label": "Preliminary results (if any)",
+          "type": "markdown",
+          "required": false,
+          "value": "xx",
+          "status": "filled"
+        },
+        {
+          "key": "experimentsPlan",
+          "templateId": "validation_plan",
+          "label": "Experiments Plan",
+          "type": "markdown",
+          "required": true,
+          "value": "xxx",
+          "status": "filled"
+        }
+      ]
+    }
+  ],
+  "pullRequests": [
+    {
+      "number": 16,
+      "title": "Feat: Init Depth Attention.",
+      "state": "closed",
+      "url": "https://github.com/RmZeta2718/arch-test/pull/16",
+      "author": "Knlife",
+      "createdAt": "2026-07-28T09:30:19Z",
+      "updatedAt": "2026-07-28T09:33:25Z",
+      "closedAt": "2026-07-28T09:31:38Z",
+      "labels": [
+        "architecture implementation"
+      ],
+      "assignees": [],
+      "milestone": null,
+      "draft": false,
+      "merged": true,
+      "mergedAt": "2026-07-28T09:31:38Z",
+      "base": {
+        "repo": "RmZeta2718/arch-test",
+        "branch": "arch/depth_attn",
+        "sha": "a883a715a19e3419593f33fae5baac6bb9b20e67"
+      },
+      "head": {
+        "repo": "Knlife/arch-test",
+        "branch": "arch/depth-attn",
+        "sha": "8f1a5d48c3b5d2e55b8fd6ee4b83b01acc22f393"
+      },
+      "commitCount": 1,
+      "additions": 0,
+      "deletions": 0,
+      "changedFiles": 1,
+      "requestedReviewers": [],
+      "reviews": [],
+      "linkedIssues": [
+        2
+      ],
+      "taskProgress": {
+        "checked": 0,
+        "total": 4
+      },
+      "parsed": {
+        "metadata": {
+          "title": null,
+          "architectureName": null,
+          "about": null
+        },
+        "architectureProposalIssue": null,
+        "implementationDetails": null,
+        "experimentalValidation": {
+          "intro": null,
+          "sections": [
+            {
+              "title": "Research Question 1",
+              "level": 2,
+              "content": "*Hypothesis:* \n\n\n*Results & Analysis:* \n\n\n*Findings:*",
+              "children": []
+            }
+          ]
+        },
+        "archive": [
+          {
+            "key": "wandbReportIncludeTrainingAndEvaluationLogs",
+            "label": "WandB Report (include training and evaluation logs)",
+            "value": null
+          },
+          {
+            "key": "huggingfaceCollectionIncludeModelCheckpoints",
+            "label": "HuggingFace Collection (include model checkpoints)",
+            "value": null
+          }
+        ],
+        "reviewerAssessment": null,
+        "mergeChecklist": [
+          {
+            "key": "theImplementationPrIsLinkedToAnInProgressArchitectureProposalIssue",
+            "label": "The implementation PR is linked to an `in-progress` Architecture Proposal issue (#).",
+            "checked": false
+          },
+          {
+            "key": "theImplementationCorrectnessOfTheProposedArchitectureIsVerified",
+            "label": "The implementation correctness of the proposed architecture is verified.",
+            "checked": false
+          },
+          {
+            "key": "theEffectivenessOfTheProposedArchitectureIsValidatedAt1b3bAnd8bModelScales",
+            "label": "The effectiveness of the proposed architecture is validated at 1B, 3B, and 8B model scales.",
+            "checked": false
+          },
+          {
+            "key": "theArchiveInformationIsCompleteIncludingWandbReportsAndHuggingfaceCollectionsOfModelCheckpoints",
+            "label": "The archive information is complete, including WandB reports and HuggingFace collections of model checkpoints.",
+            "checked": false
+          }
+        ]
+      },
+      "fieldGroups": [
+        {
+          "key": "metadata",
+          "label": "Metadata",
+          "fields": [
+            {
+              "key": "title",
+              "label": "Title",
+              "type": "text",
+              "value": null,
+              "status": "missing"
+            },
+            {
+              "key": "architectureName",
+              "label": "Architecture Name",
+              "type": "text",
+              "value": null,
+              "status": "missing"
+            },
+            {
+              "key": "about",
+              "label": "About",
+              "type": "text",
+              "value": null,
+              "status": "missing"
+            }
+          ]
+        },
+        {
+          "key": "architectureProposal",
+          "label": "Architecture Proposal",
+          "fields": [
+            {
+              "key": "architectureProposalIssue",
+              "path": "architectureProposalIssue",
+              "label": "Architecture Proposal (issue #)",
+              "type": "link",
+              "value": null,
+              "status": "missing"
+            }
+          ]
+        },
+        {
+          "key": "implementation",
+          "label": "Implementation",
+          "fields": [
+            {
+              "key": "implementationDetails",
+              "path": "implementationDetails",
+              "label": "Implementation Details",
+              "type": "markdown",
+              "value": null,
+              "status": "missing"
+            },
+            {
+              "key": "experimentalValidation",
+              "path": "experimentalValidation",
+              "label": "Experimental Validation",
+              "type": "sectionTree",
+              "value": {
+                "intro": null,
+                "sections": [
+                  {
+                    "title": "Research Question 1",
+                    "level": 2,
+                    "content": "*Hypothesis:* \n\n\n*Results & Analysis:* \n\n\n*Findings:*",
+                    "children": []
+                  }
+                ]
+              },
+              "status": "filled"
+            }
+          ]
+        },
+        {
+          "key": "archive",
+          "label": "Archive",
+          "fields": [
+            {
+              "key": "wandbReportIncludeTrainingAndEvaluationLogs",
+              "label": "WandB Report (include training and evaluation logs)",
+              "type": "link",
+              "value": null,
+              "status": "missing"
+            },
+            {
+              "key": "huggingfaceCollectionIncludeModelCheckpoints",
+              "label": "HuggingFace Collection (include model checkpoints)",
+              "type": "link",
+              "value": null,
+              "status": "missing"
+            }
+          ]
+        },
+        {
+          "key": "review",
+          "label": "Review",
+          "fields": [
+            {
+              "key": "reviewerAssessment",
+              "path": "reviewerAssessment",
+              "label": "Reviewer Assessment",
+              "type": "markdown",
+              "value": null,
+              "status": "missing"
+            },
+            {
+              "key": "mergeChecklist",
+              "path": "mergeChecklist",
+              "label": "Merge Checklist",
+              "type": "checkboxGroup",
+              "value": [
+                {
+                  "key": "theImplementationPrIsLinkedToAnInProgressArchitectureProposalIssue",
+                  "label": "The implementation PR is linked to an `in-progress` Architecture Proposal issue (#).",
+                  "checked": false
+                },
+                {
+                  "key": "theImplementationCorrectnessOfTheProposedArchitectureIsVerified",
+                  "label": "The implementation correctness of the proposed architecture is verified.",
+                  "checked": false
+                },
+                {
+                  "key": "theEffectivenessOfTheProposedArchitectureIsValidatedAt1b3bAnd8bModelScales",
+                  "label": "The effectiveness of the proposed architecture is validated at 1B, 3B, and 8B model scales.",
+                  "checked": false
+                },
+                {
+                  "key": "theArchiveInformationIsCompleteIncludingWandbReportsAndHuggingfaceCollectionsOfModelCheckpoints",
+                  "label": "The archive information is complete, including WandB reports and HuggingFace collections of model checkpoints.",
+                  "checked": false
+                }
+              ],
+              "status": "filled"
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }
