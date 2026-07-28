@@ -9,6 +9,7 @@ const LIFECYCLE_STATUS_LABELS = Object.freeze({
   "in-progress": "In Progress",
   declined: "Declined",
   verified: "Verified",
+  closed: "Closed",
 });
 
 function escapeHtml(value) {
@@ -445,7 +446,9 @@ function pullRequestSummary(model) {
   if (!pullRequest) return null;
   const lifecycleStatus = pullRequest.merged
     ? "verified"
-    : lifecycleStatusFromLabels(pullRequest.labels);
+    : pullRequest.state === "closed"
+      ? "closed"
+      : lifecycleStatusFromLabels(pullRequest.labels);
   return {
     id: `pr-${pullRequest.number}`,
     number: pullRequest.number,

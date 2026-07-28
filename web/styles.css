@@ -410,6 +410,7 @@ button { color: inherit; }
 .pull-request-actions .pr-lifecycle-in-progress { color: #93c5fd; }
 .pull-request-actions .pr-lifecycle-declined { color: #fca5a5; }
 .pull-request-actions .pr-lifecycle-verified { color: #d8b4fe; }
+.pull-request-actions .pr-lifecycle-closed { color: #cbd5e1; }
 .pull-request-chevron {
   display: grid;
   width: 24px;

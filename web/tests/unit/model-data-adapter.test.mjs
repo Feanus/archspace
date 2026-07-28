@@ -378,6 +378,21 @@ test("omits PR accordion status when no lifecycle label is present", () => {
   assert.doesNotMatch(html, /<em[^>]*>.*(?:Open|Closed).*<\/em>/i);
 });
 
+test("labels a closed unmerged PR as Closed beside Progress", () => {
+  const graphPayload = payloadWithPullRequest();
+  graphPayload.pullRequests[0].state = "closed";
+  graphPayload.pullRequests[0].merged = false;
+  graphPayload.pullRequests[0].mergedAt = null;
+  graphPayload.pullRequests[0].labels = ["architecture proposal"];
+  const graph = normalizeModelGraph(graphPayload);
+  const html = renderModelDetail(modelWithPullRequest(graph), graph);
+
+  assert.match(html, /<strong>Progress<\/strong>/);
+  assert.match(html, /<em class="pr-lifecycle-closed">Closed<\/em>/);
+  assert.doesNotMatch(html, /pr-lifecycle-verified/);
+  assert.doesNotMatch(html, /class="done-pr-panel"/);
+});
+
 test("renders every Archive link in an open merged-model section only for a merged PR", () => {
   const graphPayload = payloadWithPullRequest();
   graphPayload.pullRequests[0].state = "closed";
