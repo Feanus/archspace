@@ -87,6 +87,16 @@ test("GitHub Pages /archspace/ renders an architecture snapshot and progress det
     await expect(page.locator(`[data-model-id="${rootModel.id}"]`)).toBeVisible();
     await expect(page.locator(`[data-edge$=":${rootModel.id}"]`)).toHaveCount(0);
   }
+  const overflowingRelationBadges = await page.locator(".lineage-badge").evaluateAll(
+    (badges) => badges
+      .filter((badge) => {
+        const text = badge.querySelector("text");
+        const rect = badge.querySelector("rect");
+        return text.getComputedTextLength() > Number(rect.getAttribute("width")) - 14;
+      })
+      .map((badge) => badge.textContent),
+  );
+  expect(overflowingRelationBadges).toEqual([]);
 
   for (const issue of visibleIssues) {
     const node = page.locator(`[data-model-id="issue-${issue.number}"]`);
@@ -238,6 +248,68 @@ test("declined Issues stay out of the tree, search, statistics, and selection", 
   await page.locator("#model-search").fill(issueTitle(declinedIssue));
   await expect(page.locator("#search-results button")).toHaveCount(0);
   await expect(page.locator("#detail-panel")).not.toContainText(issueTitle(declinedIssue));
+});
+
+test("long parent labels stay inside their lineage badge", async ({ page }) => {
+  const longParentSnapshot = structuredClone(snapshot);
+  const descendant = normalizeModelGraph(longParentSnapshot).models.find(
+    (model) => model.parentResolution === "issue",
+  );
+  const parentIssue = longParentSnapshot.issues.find(
+    (issue) => issue.number === descendant.parentIssueNumber,
+  );
+  parentIssue.parsed.architectureName =
+    "MLA & MorphNorm with WWW-wide architectural extensions";
+
+  await page.route("**/data/template-test-data.json", async (route) => {
+    await route.fulfill({ json: longParentSnapshot });
+  });
+  await page.goto("/archspace/");
+  await expect(page.locator("html")).toHaveAttribute("data-ready", "true");
+
+  const badge = page.locator(`[data-model-id="${descendant.id}"] .lineage-badge`);
+  const dimensions = await badge.evaluate((element) => {
+    const text = element.querySelector("text");
+    const rect = element.querySelector("rect");
+    return {
+      label: text.textContent,
+      textWidth: text.getComputedTextLength(),
+      badgeWidth: Number(rect.getAttribute("width")),
+    };
+  });
+  expect(dimensions.label.endsWith("…")).toBe(true);
+  expect(dimensions.textWidth).toBeLessThanOrEqual(dimensions.badgeWidth - 14);
+});
+
+test("interface typography scales down on a narrow screen", async ({ page }) => {
+  await page.route("**/data/template-test-data.json", async (route) => {
+    await route.fulfill({ json: snapshot });
+  });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/archspace/");
+  await page.locator(`[data-model-id="${snapshotGraph.models[0].id}"]`).click();
+
+  const desktopSizes = await page.evaluate(() => ({
+    hint: Number.parseFloat(getComputedStyle(document.querySelector(".canvas-hint strong")).fontSize),
+    search: Number.parseFloat(getComputedStyle(document.querySelector(".search-box input")).fontSize),
+    detail: Number.parseFloat(getComputedStyle(document.querySelector(".detail-header h1")).fontSize),
+  }));
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  const mobileSizes = await page.evaluate(() => {
+    const hint = document.querySelector(".canvas-hint");
+    return {
+      hint: Number.parseFloat(getComputedStyle(hint.querySelector("strong")).fontSize),
+      search: Number.parseFloat(getComputedStyle(document.querySelector(".search-box input")).fontSize),
+      detail: Number.parseFloat(getComputedStyle(document.querySelector(".detail-header h1")).fontSize),
+      hintFits: hint.getBoundingClientRect().width <= window.innerWidth - 20,
+    };
+  });
+
+  expect(mobileSizes.hint).toBeLessThan(desktopSizes.hint);
+  expect(mobileSizes.search).toBeLessThan(desktopSizes.search);
+  expect(mobileSizes.detail).toBeLessThan(desktopSizes.detail);
+  expect(mobileSizes.hintFits).toBe(true);
 });
 
 test("an empty source repository renders an empty Overview without failing", async ({ page }) => {

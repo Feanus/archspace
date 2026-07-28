@@ -16,6 +16,13 @@
   --orange: #fb923c;
   --blue: #60a5fa;
   --red: #f87171;
+  --font-2xs: clamp(7.5px, calc(7px + .08vw), 8.5px);
+  --font-xs: clamp(8.5px, calc(7.8px + .15vw), 10px);
+  --font-sm: clamp(9.5px, calc(8.5px + .2vw), 11.5px);
+  --font-base: clamp(10.5px, calc(9px + .3vw), 13px);
+  --font-md: clamp(12px, calc(10px + .4vw), 15px);
+  --font-lg: clamp(17px, calc(14px + .5vw), 21px);
+  --font-hero: clamp(11px, calc(9.5px + .32vw), 14px);
   --mono: "SF Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
   --detail-width: min(520px, 44vw);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
@@ -613,6 +620,38 @@ button { color: inherit; }
 .empty-state strong { display: block; margin-bottom: 8px; color: #fca5a5; }
 .empty-state p { color: var(--text-dim); font-size: 11px; line-height: 1.5; }
 .empty-state button { padding: 6px 10px; border: 1px solid var(--line); border-radius: 7px; background: var(--panel-solid); cursor: pointer; }
+
+/* Keep interface chrome and reading text proportional to the viewport.
+   SVG node labels continue to scale with the canvas transform. */
+.brand-copy strong { font-size: var(--font-md); }
+.brand-copy small { font-size: var(--font-sm); }
+.search-box input { font-size: var(--font-base); }
+.search-box kbd { font-size: var(--font-xs); }
+.stat-source { font-size: var(--font-2xs); }
+.stat small { font-size: var(--font-xs); }
+.stat strong { font-size: var(--font-base); }
+.telemetry-toggle { font-size: var(--font-xs); }
+.canvas-hint {
+  max-width: calc(100vw - clamp(20px, 5vw, 72px));
+  padding: clamp(6px, 1vw, 8px) clamp(12px, 2.4vw, 20px) clamp(7px, 1.1vw, 9px);
+}
+.canvas-hint strong { font-size: var(--font-hero); }
+.canvas-hint span { font-size: var(--font-xs); }
+.search-results strong, .search-results p { font-size: var(--font-sm); }
+.search-results small { font-size: var(--font-2xs); }
+.category-chip, .semantic-legend, .canvas-controls output { font-size: var(--font-xs); }
+.drawer-topline, .detail-eyebrow, .detail-section h3 { font-size: var(--font-xs); }
+.detail-category { font-size: var(--font-2xs); }
+.detail-empty, .detail-title-en { font-size: var(--font-sm); }
+.detail-header h1 { font-size: var(--font-lg); }
+.detail-header code { font-size: var(--font-xs); }
+.detail-section > div { font-size: var(--font-base); }
+.detail-summary > div, .markdown-block h5 { font-size: var(--font-md); }
+.markdown-block h4, .pr-summary strong { font-size: var(--font-md); }
+.markdown-block h6, .markdown-table, .done-pr-copy strong { font-size: var(--font-sm); }
+.markdown-table th, .pull-request-copy strong, .done-report-link > span { font-size: var(--font-xs); }
+.pull-request-actions em, .done-pr-copy small, .pr-summary small, .pr-state { font-size: var(--font-2xs); }
+.empty-state p { font-size: var(--font-sm); }
 
 @media (max-width: 1180px) {
   .canonical-stats .stat:nth-of-type(2), .canonical-stats .stat:nth-of-type(4) { display: none; }

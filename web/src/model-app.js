@@ -81,14 +81,32 @@ function isDisplayableModel(model) {
   return Boolean(model) && model.lifecycleStatus !== "declined" && model.state !== "declined";
 }
 
-function compactBadgeLabel(label, limit = 22) {
-  return label.length > limit ? `${label.slice(0, limit - 1)}…` : label;
-}
-
 function modelRelationLabel(model) {
   if (model.parentResolution === "root") return "Root architecture";
   const parent = state.tree.byId.get(model.parent_id);
   return parent ? `Parent: ${modelTitle(parent)}` : "Parent unresolved";
+}
+
+function fitSvgBadgeText(textElement, rectElement, label, maxWidth) {
+  const horizontalPadding = 14;
+  const maxTextWidth = maxWidth - horizontalPadding;
+  let fittedLabel = label;
+  let truncated = false;
+  textElement.textContent = fittedLabel;
+
+  while (fittedLabel.length > 1 && textElement.getComputedTextLength() > maxTextWidth) {
+    truncated = true;
+    fittedLabel = fittedLabel.slice(0, -1);
+    textElement.textContent = `${fittedLabel.trimEnd()}…`;
+  }
+
+  const measuredWidth = textElement.getComputedTextLength();
+  rectElement.setAttribute(
+    "width",
+    String(truncated
+      ? maxWidth
+      : Math.min(maxWidth, Math.ceil(measuredWidth + horizontalPadding + 2))),
+  );
 }
 
 function modelFooter(model) {
@@ -206,19 +224,21 @@ function renderTree() {
     let statusY = 44;
     let footerX = 16;
     let footerY = 84;
+    let relationBadgeFit = null;
 
     if (model.nodeType === "model") {
-      const relationLabel = compactBadgeLabel(modelRelationLabel(model), 30);
-      const relationWidth = Math.min(164, 16 + relationLabel.length * 4.3);
+      const relationLabel = modelRelationLabel(model);
       const relationBadge = svgElement("g", {
         class: "node-badge category-badge lineage-badge",
         transform: "translate(16 44)",
       });
-      relationBadge.append(svgElement("rect", { width: relationWidth, height: 15, rx: 7.5 }));
+      const relationRect = svgElement("rect", { width: 164, height: 15, rx: 7.5 });
+      relationBadge.append(relationRect);
       const relationText = svgElement("text", { x: 7, y: 10.5 });
       relationText.textContent = relationLabel;
       relationBadge.append(relationText);
       card.append(relationBadge);
+      relationBadgeFit = { relationText, relationRect, relationLabel };
       const labelTitle = svgElement("title");
       labelTitle.textContent = modelRelationLabel(model);
       card.append(labelTitle);
@@ -262,6 +282,14 @@ function renderTree() {
     }
     group.append(card);
     elements.nodes.append(group);
+    if (relationBadgeFit) {
+      fitSvgBadgeText(
+        relationBadgeFit.relationText,
+        relationBadgeFit.relationRect,
+        relationBadgeFit.relationLabel,
+        state.layout.config.nodeWidth - 32,
+      );
+    }
   }
   applyTransform();
 }
