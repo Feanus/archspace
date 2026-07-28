@@ -123,6 +123,12 @@ function renderMarkdownInline(value) {
       ? store(`<a class="markdown-link" href="${escapeHtml(safe)}" target="_blank" rel="noreferrer">${escapeHtml(url)}</a>`)
       : escapeHtml(url);
   });
+  const mathToken = (latex) => store(
+    `<span class="math-inline" data-latex="${escapeHtml(latex)}">${escapeHtml(`\\(${latex}\\)`)}</span>`,
+  );
+  source = source.replace(/\\\((.*?)\\\)/g, (_, latex) => mathToken(latex));
+  source = source.replace(/(^|[^\\])\$([^$\n]+)\$/g, (_, prefix, latex) =>
+    `${prefix}${mathToken(latex)}`);
 
   let html = escapeHtml(source)
     .replace(/\*\*([^*\n]+)\*\*/g, "<strong>$1</strong>")
@@ -168,6 +174,10 @@ function markdownTableAlignments(line) {
   });
 }
 
+function renderDisplayMath(latex) {
+  return `<div class="math-display" data-latex="${escapeHtml(latex)}">${escapeHtml(`$$\n${latex}\n$$`)}</div>`;
+}
+
 function renderMarkdownText(value) {
   const lines = String(value ?? "").replace(/\r\n?/g, "\n").trim().split("\n");
   const blocks = [];
@@ -192,6 +202,25 @@ function renderMarkdownText(value) {
       const language = fence[1] ? ` data-language="${escapeHtml(fence[1])}"` : "";
       blocks.push(`<pre class="markdown-code"><code${language}>${escapeHtml(code.join("\n"))}</code></pre>`);
       continue;
+    }
+
+    const singleLineMath = line.match(/^\s*\$\$(.+?)\$\$\s*$/);
+    if (singleLineMath) {
+      blocks.push(renderDisplayMath(singleLineMath[1].trim()));
+      index += 1;
+      continue;
+    }
+
+    if (/^\s*\$\$\s*$/.test(line)) {
+      const closingIndex = lines.findIndex(
+        (candidate, candidateIndex) =>
+          candidateIndex > index && /^\s*\$\$\s*$/.test(candidate),
+      );
+      if (closingIndex !== -1) {
+        blocks.push(renderDisplayMath(lines.slice(index + 1, closingIndex).join("\n").trim()));
+        index = closingIndex + 1;
+        continue;
+      }
     }
 
     const heading = line.match(/^\s*(#{1,6})\s+(.+?)\s*#*\s*$/);
@@ -262,7 +291,7 @@ function renderMarkdownText(value) {
     while (
       index < lines.length
       && lines[index].trim()
-      && !/^\s*(?:```|#{1,6}\s|[-+*]\s+|\d+[.)]\s+|>\s?|---+\s*$|\*\*\*+\s*$|___+\s*$)/.test(lines[index])
+      && !/^\s*(?:```|\$\$|#{1,6}\s|[-+*]\s+|\d+[.)]\s+|>\s?|---+\s*$|\*\*\*+\s*$|___+\s*$)/.test(lines[index])
     ) {
       paragraph.push(lines[index].trim());
       index += 1;

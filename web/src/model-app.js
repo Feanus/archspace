@@ -11,6 +11,9 @@ import { ancestorIds, boundsForIds, layoutTree, visibleFeatureIds } from "./tree
 import { exceedsPanThreshold, translatedViewport } from "./viewport-state.js";
 
 const SVG_NS = "http://www.w3.org/2000/svg";
+const KATEX_VERSION = "0.17.0";
+const KATEX_BASE_URL = `https://cdn.jsdelivr.net/npm/katex@${KATEX_VERSION}/dist`;
+let katexLoadPromise = null;
 const CATEGORY_META = Object.freeze({
   parent_issue: { label: "Parent Issue", color: "#94a3b8" },
   root_model: { label: "Root model", color: "#34d399" },
@@ -262,6 +265,58 @@ function renderTree() {
   applyTransform();
 }
 
+function loadKatex() {
+  if (window.katex?.render) return Promise.resolve(window.katex);
+  if (katexLoadPromise) return katexLoadPromise;
+
+  if (!document.querySelector('link[data-katex-runtime="true"]')) {
+    const stylesheet = document.createElement("link");
+    stylesheet.rel = "stylesheet";
+    stylesheet.href = `${KATEX_BASE_URL}/katex.min.css`;
+    stylesheet.crossOrigin = "anonymous";
+    stylesheet.dataset.katexRuntime = "true";
+    document.head.append(stylesheet);
+  }
+
+  katexLoadPromise = new Promise((resolve) => {
+    const script = document.createElement("script");
+    script.src = `${KATEX_BASE_URL}/katex.min.js`;
+    script.async = true;
+    script.crossOrigin = "anonymous";
+    script.addEventListener("load", () => resolve(window.katex ?? null), { once: true });
+    script.addEventListener("error", () => resolve(null), { once: true });
+    document.head.append(script);
+  });
+  return katexLoadPromise;
+}
+
+function typesetMath(root) {
+  const formulas = [...root.querySelectorAll(
+    ".math-inline[data-latex]:not([data-math-rendered]), .math-display[data-latex]:not([data-math-rendered])",
+  )];
+  if (!formulas.length) return;
+
+  const render = (katex) => {
+    if (!katex?.render) return;
+    for (const formula of formulas) {
+      if (!formula.isConnected || formula.dataset.mathRendered) continue;
+      katex.render(formula.dataset.latex, formula, {
+        displayMode: formula.classList.contains("math-display"),
+        throwOnError: false,
+        trust: false,
+        strict: "warn",
+        output: "htmlAndMathml",
+        maxSize: 10,
+        maxExpand: 1000,
+      });
+      formula.dataset.mathRendered = "true";
+    }
+  };
+
+  if (window.katex?.render) render(window.katex);
+  else loadKatex().then(render);
+}
+
 function renderDrawer() {
   if (!state.tree || !state.selectedId) return;
   const model = state.tree.byId.get(state.selectedId);
@@ -271,6 +326,7 @@ function renderDrawer() {
     state.activeDetailTab,
     state.overviewExpanded,
   );
+  typesetMath(elements.detailContent);
 }
 
 function setDisclosureState(toggle, panel, expanded) {

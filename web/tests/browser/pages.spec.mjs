@@ -229,3 +229,27 @@ test("declined Issues stay out of the tree, search, statistics, and selection", 
   await expect(page.locator("#search-results button")).toHaveCount(0);
   await expect(page.locator("#detail-panel")).not.toContainText(issueTitle(declinedIssue));
 });
+
+test("inline and display LaTeX formulas are typeset inside Markdown fields", async ({ page }) => {
+  const formulaSnapshot = structuredClone(snapshot);
+  const rootIssue = normalizeModelGraph(formulaSnapshot).models.find(
+    (model) => model.parentResolution === "root",
+  ).issue;
+  rootIssue.parsed.preliminaryResults =
+    "The objective is $L = x^2 + y_1$, with complexity \\(O(n^2)\\).\n\n$$\na = b\n$$";
+
+  await page.route("**/data/template-test-data.json", async (route) => {
+    await route.fulfill({ json: formulaSnapshot });
+  });
+  await page.goto("/archspace/");
+  await expect(page.locator("html")).toHaveAttribute("data-ready", "true");
+  await page.locator(`[data-model-id="issue-${rootIssue.number}"]`).click();
+  await page.locator("[data-overview-toggle]").click();
+
+  await expect(page.locator(".math-inline")).toHaveCount(2);
+  await expect(page.locator(".math-inline .katex")).toHaveCount(2, { timeout: 15_000 });
+  await expect(page.locator(".math-inline annotation")).toHaveCount(2);
+  await expect(page.locator(".math-display")).toHaveCount(1);
+  await expect(page.locator(".math-display .katex-display")).toHaveCount(1, { timeout: 15_000 });
+  await expect(page.locator(".math-display annotation")).toHaveText("a = b");
+});

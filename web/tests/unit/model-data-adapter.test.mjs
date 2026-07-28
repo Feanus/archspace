@@ -459,6 +459,12 @@ test("renders sanitized Markdown and HTML images from Issue and PR fields", () =
 
 **Improved** with *stable loss*, \`bf16\`, and [public notes](https://docs.example.com/result?accessToken=secret).
 
+The objective is $L = x^2 + y_1$, with complexity \\(O(n^2)\\).
+
+$$
+a = b
+$$
+
 - Lower variance
 - Better throughput
 
@@ -495,6 +501,9 @@ After`;
   assert.match(proposalHtml, /<strong>Improved<\/strong>/);
   assert.match(proposalHtml, /<em>stable loss<\/em>/);
   assert.match(proposalHtml, /<code>bf16<\/code>/);
+  assert.match(proposalHtml, /<span class="math-inline" data-latex="L = x\^2 \+ y_1">\\\(L = x\^2 \+ y_1\\\)<\/span>/);
+  assert.match(proposalHtml, /<span class="math-inline" data-latex="O\(n\^2\)">\\\(O\(n\^2\)\\\)<\/span>/);
+  assert.match(proposalHtml, /<div class="math-display" data-latex="a = b">\$\$\na = b\n\$\$<\/div>/);
   assert.match(proposalHtml, /<ul class="markdown-list"><li>Lower variance<\/li><li>Better throughput<\/li><\/ul>/);
   assert.match(proposalHtml, /<blockquote>Reproduced twice\.<\/blockquote>/);
   assert.match(proposalHtml, /<table class="markdown-table">/);
