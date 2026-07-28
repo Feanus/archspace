@@ -5,7 +5,7 @@ import { normalizeModelGraph } from "../../src/model-data-adapter.js";
 import { ancestorIds } from "../../src/tree-layout.js";
 
 const snapshot = JSON.parse(
-  await readFile(new URL("../../../data/template-test-data.json", import.meta.url), "utf8"),
+  await readFile(new URL("../fixtures/template-test-data.json", import.meta.url), "utf8"),
 );
 const snapshotGraph = normalizeModelGraph(snapshot);
 
@@ -44,7 +44,7 @@ function pullRequestsForIssue(issueNumber) {
   );
 }
 
-test("GitHub Pages /archspace/ renders the JT-Ushio snapshot and progress details", async ({ page }) => {
+test("GitHub Pages /archspace/ renders an architecture snapshot and progress details", async ({ page }) => {
   const visibleIssues = snapshotGraph.models
     .map((model) => model.issue)
     .filter((issue) => lifecycleStatus(issue) !== "declined");
@@ -56,6 +56,9 @@ test("GitHub Pages /archspace/ renders the JT-Ushio snapshot and progress detail
     (issue) => issue.number === proposalIssueNumber(mergedPullRequest),
   );
 
+  await page.route("**/data/template-test-data.json", async (route) => {
+    await route.fulfill({ json: snapshot });
+  });
   await page.goto("/archspace/");
   await expect(page.locator("html")).toHaveAttribute("data-ready", "true");
   await expect(page.locator("html")).toHaveAttribute("data-model-count", String(visibleIssues.length));
@@ -228,6 +231,25 @@ test("declined Issues stay out of the tree, search, statistics, and selection", 
   await page.locator("#model-search").fill(issueTitle(declinedIssue));
   await expect(page.locator("#search-results button")).toHaveCount(0);
   await expect(page.locator("#detail-panel")).not.toContainText(issueTitle(declinedIssue));
+});
+
+test("an empty source repository renders an empty Overview without failing", async ({ page }) => {
+  const emptySnapshot = {
+    ...structuredClone(snapshot),
+    source: { ...snapshot.source, repo: "RmZeta2718/arch-test" },
+    issues: [],
+    pullRequests: [],
+  };
+  await page.route("**/data/template-test-data.json", async (route) => {
+    await route.fulfill({ json: emptySnapshot });
+  });
+
+  await page.goto("/archspace/");
+  await expect(page.locator("html")).toHaveAttribute("data-ready", "true");
+  await expect(page.locator("html")).toHaveAttribute("data-model-count", "0");
+  await expect(page.locator("#stat-models")).toHaveText("0");
+  await expect(page.locator("#empty-state strong")).toHaveText("No architecture proposals yet");
+  await expect(page.locator("#empty-message")).toContainText("RmZeta2718/arch-test");
 });
 
 test("inline and display LaTeX formulas are typeset inside Markdown fields", async ({ page }) => {

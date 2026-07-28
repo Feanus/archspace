@@ -8,8 +8,8 @@ import {
   parseArchitectureProposalIssue,
 } from "./github-template-test-fetcher-v3.mjs";
 
-const DEFAULT_OWNER = "JT-Ushio";
-const DEFAULT_REPO = "template-test";
+const DEFAULT_OWNER = "RmZeta2718";
+const DEFAULT_REPO = "arch-test";
 
 const DEFAULT_ARCHIVE_FIELDS = [
   {

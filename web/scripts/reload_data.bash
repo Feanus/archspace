@@ -14,7 +14,7 @@ cleanup() {
 trap cleanup EXIT
 
 node "${script_dir}/github-template-test-fetcher-v4.mjs" \
-  JT-Ushio template-test \
+  RmZeta2718 arch-test \
   > "${raw_data}"
 
 node "${script_dir}/build-template-test-data-v2.mjs" \

@@ -1,0 +1,1272 @@
+{
+  "source": {
+    "repo": "JT-Ushio/template-test",
+    "defaultBranch": "main",
+    "labelFilter": "architecture proposal",
+    "labelFilters": {
+      "issues": "architecture proposal",
+      "pullRequests": "architecture implementation"
+    },
+    "fetchedAt": "2026-07-26T16:26:46.904Z"
+  },
+  "templates": {
+    "issue": {
+      "path": ".github/ISSUE_TEMPLATE/architecture-proposal.yml",
+      "url": "https://github.com/JT-Ushio/template-test/blob/main/.github/ISSUE_TEMPLATE/architecture-proposal.yml",
+      "content": "name: 🏗️ Architecture proposal\ndescription: Propose and validate one change to the LLM architecture.\ntitle: \"[ARCH-PROP] \"\nlabels:\n  - under review\n\nbody:\n  - type: markdown\n    attributes:\n      value: |\n        # Architecture proposal\n\n        Use this form to propose one architecture change. Keep the proposal focused and submit unrelated changes separately.\n        \n  - type: input\n    id: proposal_name\n    attributes:\n      label: Architecture Name\n      description: Give the proposed base architecture or modification a short, descriptive name.\n      placeholder: \"Example: OLMo3\"\n    validations:\n      required: true\n\n  - type: input\n    id: base_architecture_issue\n    attributes:\n      label: Parent issue\n      description: For a modification, link the issue that tracks the base architecture. Leave blank for a root architecture.\n      placeholder: \"Example: #123\"\n    validations:\n      required: false\n\n  - type: textarea\n    id: problem_and_hypothesis\n    attributes:\n      label: Motivations\n      description: Describe the current limitation or opportunity, the measurable outcome you expect, and any supporting rationale, evidence, or related work that motivates this proposal.\n      placeholder: Explain the problem and the expected outcome.\n    validations:\n      required: true\n\n  - type: textarea\n    id: proposed_change\n    attributes:\n      label: Proposed Architecture\n      description: Describe what changes from the base architecture, what remains unchanged, and the expected impact on parameters, compute, memory, or latency if known.\n      placeholder: Explain the proposed architecture change.\n    validations:\n      required: true\n\n  - type: textarea\n    id: existing_results\n    attributes:\n      label: Preliminary results (if any)\n      description: Summarize any existing results, experiments, prototypes, or observations that support this proposal.\n      placeholder: Provide any existing results, preliminary experiments, prototypes, or evidence supporting this proposal.\n    validations:\n      required: false\n\n  - type: textarea\n    id: validation_plan\n    attributes:\n      label: Experiments Plan\n      description: Identify the baseline, evaluation method and metrics, measurable success criteria, and any notable compute or data requirements.\n      placeholder: Explain how the proposal will be evaluated.\n    validations:\n      required: true\n\n  - type: markdown\n    attributes:\n      value: |\n        ---\n\n        Maintainers review the proposal before implementation starts:\n\n        - `under review`: waiting for a maintainer decision\n        - `in-progress`: approved for implementation\n        - `declined`: rejected or deferred; the Issue is closed\n        - `done`: a linked implementation PR was merged; the Issue is closed\n\n        Status labels are mutually exclusive and maintained by repository automation.\n"
+    },
+    "pullRequest": {
+      "path": ".github/pull_request_template.md",
+      "url": "https://github.com/JT-Ushio/template-test/blob/main/.github/pull_request_template.md",
+      "content": "---\nTitle: \nArchitecture Name: \nAbout: \n\n---\n\n<!-- Link to the corresponding Architecture Proposal issue -->\n<!-- Example: #123 -->\n> **Architecture Proposal (issue #)**: \n\n## Implementation Details:\n<!-- Describe the implemented architecture modification.\nInclude:\n- Modified components\n- Key implementation details\n- Compatibility considerations\n- Any deviations from the original proposal\n-->\n\n## Experimental Validation:\n\n#### Research Question 1\n\n<!-- What hypothesis does this experiment aim to validate? -->\n*Hypothesis:* \n\n<!-- Analyze experimental results.\nExplain observations, comparisons, and potential reasons.\n-->\n*Results & Analysis:* \n\n<!-- Summarize the findings for this research question -->\n*Findings:* \n\n<!-- Add more research questions if needed -->\n\n\n## Archive:\n\n<!-- Example: https://wandb.ai/.../reports/... -->\n- WandB Report (include training and evaluation logs): \n\n<!-- Example: https://huggingface.co/collections/... -->\n- HuggingFace Collection (include model checkpoints): \n\n---\n\n## Reviewer Assessment (for repo reviewers):\n<!-- Repository reviewers provide an overall assessment of the implementation and experimental validation.\nExamples:\n- The implementation is correct and the experimental results support the proposed architecture.\n- Additional experiments are recommended.\n-->\n\n**Merge Checklist**:\n\n- [ ] The implementation PR is linked to an `in-progress` Architecture Proposal issue (#).\n- [ ] The implementation correctness of the proposed architecture is verified.\n- [ ] The effectiveness of the proposed architecture is validated at 1B, 3B, and 8B model scales.\n- [ ] The archive information is complete, including WandB reports and HuggingFace collections of model checkpoints.\n"
+    }
+  },
+  "fieldDefinitions": {
+    "issues": [
+      {
+        "key": "architectureName",
+        "templateId": "proposal_name",
+        "label": "Architecture Name",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "parentIssue",
+        "templateId": "base_architecture_issue",
+        "label": "Parent issue",
+        "type": "link",
+        "required": false
+      },
+      {
+        "key": "motivations",
+        "templateId": "problem_and_hypothesis",
+        "label": "Motivations",
+        "type": "markdown",
+        "required": true
+      },
+      {
+        "key": "proposedArchitecture",
+        "templateId": "proposed_change",
+        "label": "Proposed Architecture",
+        "type": "markdown",
+        "required": true
+      },
+      {
+        "key": "preliminaryResults",
+        "templateId": "existing_results",
+        "label": "Preliminary results (if any)",
+        "type": "markdown",
+        "required": false
+      },
+      {
+        "key": "experimentsPlan",
+        "templateId": "validation_plan",
+        "label": "Experiments Plan",
+        "type": "markdown",
+        "required": true
+      }
+    ],
+    "pullRequests": [
+      {
+        "key": "metadata",
+        "label": "Metadata",
+        "fields": [
+          {
+            "key": "title",
+            "label": "Title",
+            "type": "text"
+          },
+          {
+            "key": "architectureName",
+            "label": "Architecture Name",
+            "type": "text"
+          },
+          {
+            "key": "about",
+            "label": "About",
+            "type": "text"
+          }
+        ]
+      },
+      {
+        "key": "architectureProposal",
+        "label": "Architecture Proposal",
+        "fields": [
+          {
+            "key": "architectureProposalIssue",
+            "path": "architectureProposalIssue",
+            "label": "Architecture Proposal (issue #)",
+            "type": "link"
+          }
+        ]
+      },
+      {
+        "key": "implementation",
+        "label": "Implementation",
+        "fields": [
+          {
+            "key": "implementationDetails",
+            "path": "implementationDetails",
+            "label": "Implementation Details",
+            "type": "markdown"
+          },
+          {
+            "key": "experimentalValidation",
+            "path": "experimentalValidation",
+            "label": "Experimental Validation",
+            "type": "sectionTree"
+          }
+        ]
+      },
+      {
+        "key": "archive",
+        "label": "Archive",
+        "fields": [
+          {
+            "key": "wandbReportIncludeTrainingAndEvaluationLogs",
+            "label": "WandB Report (include training and evaluation logs)",
+            "type": "link"
+          },
+          {
+            "key": "huggingfaceCollectionIncludeModelCheckpoints",
+            "label": "HuggingFace Collection (include model checkpoints)",
+            "type": "link"
+          }
+        ]
+      },
+      {
+        "key": "review",
+        "label": "Review",
+        "fields": [
+          {
+            "key": "reviewerAssessment",
+            "path": "reviewerAssessment",
+            "label": "Reviewer Assessment",
+            "type": "markdown"
+          },
+          {
+            "key": "mergeChecklist",
+            "path": "mergeChecklist",
+            "label": "Merge Checklist",
+            "type": "checkboxGroup"
+          }
+        ]
+      }
+    ]
+  },
+  "issues": [
+    {
+      "number": 32,
+      "title": "[ARCH-PROP] Looped Transformers",
+      "state": "open",
+      "url": "https://github.com/JT-Ushio/template-test/issues/32",
+      "author": "JT-Ushio",
+      "createdAt": "2026-07-26T14:35:59Z",
+      "updatedAt": "2026-07-26T16:10:12Z",
+      "closedAt": null,
+      "labels": [
+        "architecture proposal"
+      ],
+      "assignees": [],
+      "milestone": null,
+      "parsed": {
+        "architectureName": "Looped",
+        "parentIssue": {
+          "label": "#16",
+          "number": 16,
+          "url": "https://github.com/JT-Ushio/template-test/issues/16",
+          "raw": "#16"
+        },
+        "motivations": "xxx",
+        "proposedArchitecture": "xxx",
+        "preliminaryResults": "<img width=\"321\" height=\"55\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/c04c2608-bcc5-485a-a598-a178216e0077\" />\n\nxxx",
+        "experimentsPlan": "xxx"
+      },
+      "fields": [
+        {
+          "key": "architectureName",
+          "templateId": "proposal_name",
+          "label": "Architecture Name",
+          "type": "text",
+          "required": true,
+          "value": "Looped",
+          "status": "filled"
+        },
+        {
+          "key": "parentIssue",
+          "templateId": "base_architecture_issue",
+          "label": "Parent issue",
+          "type": "link",
+          "required": false,
+          "value": {
+            "label": "#16",
+            "number": 16,
+            "url": "https://github.com/JT-Ushio/template-test/issues/16",
+            "raw": "#16"
+          },
+          "status": "filled"
+        },
+        {
+          "key": "motivations",
+          "templateId": "problem_and_hypothesis",
+          "label": "Motivations",
+          "type": "markdown",
+          "required": true,
+          "value": "xxx",
+          "status": "filled"
+        },
+        {
+          "key": "proposedArchitecture",
+          "templateId": "proposed_change",
+          "label": "Proposed Architecture",
+          "type": "markdown",
+          "required": true,
+          "value": "xxx",
+          "status": "filled"
+        },
+        {
+          "key": "preliminaryResults",
+          "templateId": "existing_results",
+          "label": "Preliminary results (if any)",
+          "type": "markdown",
+          "required": false,
+          "value": "<img width=\"321\" height=\"55\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/c04c2608-bcc5-485a-a598-a178216e0077\" />\n\nxxx",
+          "status": "filled"
+        },
+        {
+          "key": "experimentsPlan",
+          "templateId": "validation_plan",
+          "label": "Experiments Plan",
+          "type": "markdown",
+          "required": true,
+          "value": "xxx",
+          "status": "filled"
+        }
+      ]
+    },
+    {
+      "number": 31,
+      "title": "[ARCH-PROP] Artificial Hippocampus Networks",
+      "state": "open",
+      "url": "https://github.com/JT-Ushio/template-test/issues/31",
+      "author": "JT-Ushio",
+      "createdAt": "2026-07-26T14:32:50Z",
+      "updatedAt": "2026-07-26T15:52:33Z",
+      "closedAt": null,
+      "labels": [
+        "architecture proposal",
+        "under review"
+      ],
+      "assignees": [],
+      "milestone": null,
+      "parsed": {
+        "architectureName": "AHN",
+        "parentIssue": {
+          "label": "#15",
+          "number": 15,
+          "url": "https://github.com/JT-Ushio/template-test/issues/15",
+          "raw": "#15"
+        },
+        "motivations": "<img width=\"306\" height=\"77\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/936c0666-b213-4de9-8636-54a63ebbfaee\" />\n\nxxx",
+        "proposedArchitecture": "xxx",
+        "preliminaryResults": "xxx",
+        "experimentsPlan": "xxx"
+      },
+      "fields": [
+        {
+          "key": "architectureName",
+          "templateId": "proposal_name",
+          "label": "Architecture Name",
+          "type": "text",
+          "required": true,
+          "value": "AHN",
+          "status": "filled"
+        },
+        {
+          "key": "parentIssue",
+          "templateId": "base_architecture_issue",
+          "label": "Parent issue",
+          "type": "link",
+          "required": false,
+          "value": {
+            "label": "#15",
+            "number": 15,
+            "url": "https://github.com/JT-Ushio/template-test/issues/15",
+            "raw": "#15"
+          },
+          "status": "filled"
+        },
+        {
+          "key": "motivations",
+          "templateId": "problem_and_hypothesis",
+          "label": "Motivations",
+          "type": "markdown",
+          "required": true,
+          "value": "<img width=\"306\" height=\"77\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/936c0666-b213-4de9-8636-54a63ebbfaee\" />\n\nxxx",
+          "status": "filled"
+        },
+        {
+          "key": "proposedArchitecture",
+          "templateId": "proposed_change",
+          "label": "Proposed Architecture",
+          "type": "markdown",
+          "required": true,
+          "value": "xxx",
+          "status": "filled"
+        },
+        {
+          "key": "preliminaryResults",
+          "templateId": "existing_results",
+          "label": "Preliminary results (if any)",
+          "type": "markdown",
+          "required": false,
+          "value": "xxx",
+          "status": "filled"
+        },
+        {
+          "key": "experimentsPlan",
+          "templateId": "validation_plan",
+          "label": "Experiments Plan",
+          "type": "markdown",
+          "required": true,
+          "value": "xxx",
+          "status": "filled"
+        }
+      ]
+    },
+    {
+      "number": 30,
+      "title": "[ARCH-PROP] Next Concept Prediction",
+      "state": "open",
+      "url": "https://github.com/JT-Ushio/template-test/issues/30",
+      "author": "JT-Ushio",
+      "createdAt": "2026-07-26T14:31:46Z",
+      "updatedAt": "2026-07-26T15:50:43Z",
+      "closedAt": null,
+      "labels": [
+        "architecture proposal",
+        "in-progress"
+      ],
+      "assignees": [],
+      "milestone": null,
+      "parsed": {
+        "architectureName": "NCP",
+        "parentIssue": {
+          "label": "#13",
+          "number": 13,
+          "url": "https://github.com/JT-Ushio/template-test/issues/13",
+          "raw": "#13"
+        },
+        "motivations": "xxx",
+        "proposedArchitecture": "xxx",
+        "preliminaryResults": "xxx",
+        "experimentsPlan": "xxx"
+      },
+      "fields": [
+        {
+          "key": "architectureName",
+          "templateId": "proposal_name",
+          "label": "Architecture Name",
+          "type": "text",
+          "required": true,
+          "value": "NCP",
+          "status": "filled"
+        },
+        {
+          "key": "parentIssue",
+          "templateId": "base_architecture_issue",
+          "label": "Parent issue",
+          "type": "link",
+          "required": false,
+          "value": {
+            "label": "#13",
+            "number": 13,
+            "url": "https://github.com/JT-Ushio/template-test/issues/13",
+            "raw": "#13"
+          },
+          "status": "filled"
+        },
+        {
+          "key": "motivations",
+          "templateId": "problem_and_hypothesis",
+          "label": "Motivations",
+          "type": "markdown",
+          "required": true,
+          "value": "xxx",
+          "status": "filled"
+        },
+        {
+          "key": "proposedArchitecture",
+          "templateId": "proposed_change",
+          "label": "Proposed Architecture",
+          "type": "markdown",
+          "required": true,
+          "value": "xxx",
+          "status": "filled"
+        },
+        {
+          "key": "preliminaryResults",
+          "templateId": "existing_results",
+          "label": "Preliminary results (if any)",
+          "type": "markdown",
+          "required": false,
+          "value": "xxx",
+          "status": "filled"
+        },
+        {
+          "key": "experimentsPlan",
+          "templateId": "validation_plan",
+          "label": "Experiments Plan",
+          "type": "markdown",
+          "required": true,
+          "value": "xxx",
+          "status": "filled"
+        }
+      ]
+    },
+    {
+      "number": 16,
+      "title": "[ARCH-PROP] MorphNorm",
+      "state": "open",
+      "url": "https://github.com/JT-Ushio/template-test/issues/16",
+      "author": "Feanus",
+      "createdAt": "2026-07-23T15:46:56Z",
+      "updatedAt": "2026-07-26T15:50:08Z",
+      "closedAt": null,
+      "labels": [
+        "architecture proposal",
+        "in-progress"
+      ],
+      "assignees": [],
+      "milestone": null,
+      "parsed": {
+        "architectureName": "MLA & MorphNorm",
+        "parentIssue": {
+          "label": "#13",
+          "number": 13,
+          "url": "https://github.com/JT-Ushio/template-test/issues/13",
+          "raw": "#13"
+        },
+        "motivations": "Motivations",
+        "proposedArchitecture": "Proposed Architecture",
+        "preliminaryResults": "",
+        "experimentsPlan": "Experiments Plan"
+      },
+      "fields": [
+        {
+          "key": "architectureName",
+          "templateId": "proposal_name",
+          "label": "Architecture Name",
+          "type": "text",
+          "required": true,
+          "value": "MLA & MorphNorm",
+          "status": "filled"
+        },
+        {
+          "key": "parentIssue",
+          "templateId": "base_architecture_issue",
+          "label": "Parent issue",
+          "type": "link",
+          "required": false,
+          "value": {
+            "label": "#13",
+            "number": 13,
+            "url": "https://github.com/JT-Ushio/template-test/issues/13",
+            "raw": "#13"
+          },
+          "status": "filled"
+        },
+        {
+          "key": "motivations",
+          "templateId": "problem_and_hypothesis",
+          "label": "Motivations",
+          "type": "markdown",
+          "required": true,
+          "value": "Motivations",
+          "status": "filled"
+        },
+        {
+          "key": "proposedArchitecture",
+          "templateId": "proposed_change",
+          "label": "Proposed Architecture",
+          "type": "markdown",
+          "required": true,
+          "value": "Proposed Architecture",
+          "status": "filled"
+        },
+        {
+          "key": "preliminaryResults",
+          "templateId": "existing_results",
+          "label": "Preliminary results (if any)",
+          "type": "markdown",
+          "required": false,
+          "value": "",
+          "status": "empty"
+        },
+        {
+          "key": "experimentsPlan",
+          "templateId": "validation_plan",
+          "label": "Experiments Plan",
+          "type": "markdown",
+          "required": true,
+          "value": "Experiments Plan",
+          "status": "filled"
+        }
+      ]
+    },
+    {
+      "number": 15,
+      "title": "[ARCH-PROP] Depth-Attention & SiameseNorm",
+      "state": "open",
+      "url": "https://github.com/JT-Ushio/template-test/issues/15",
+      "author": "Feanus",
+      "createdAt": "2026-07-23T15:41:06Z",
+      "updatedAt": "2026-07-26T15:48:47Z",
+      "closedAt": null,
+      "labels": [
+        "architecture proposal",
+        "in-progress"
+      ],
+      "assignees": [],
+      "milestone": null,
+      "parsed": {
+        "architectureName": "Depth-Attention & SiameseNorm",
+        "parentIssue": {
+          "label": "#13",
+          "number": 13,
+          "url": "https://github.com/JT-Ushio/template-test/issues/13",
+          "raw": "#13"
+        },
+        "motivations": "Motivations",
+        "proposedArchitecture": "Proposed Architecture",
+        "preliminaryResults": "",
+        "experimentsPlan": "Experiments Plan"
+      },
+      "fields": [
+        {
+          "key": "architectureName",
+          "templateId": "proposal_name",
+          "label": "Architecture Name",
+          "type": "text",
+          "required": true,
+          "value": "Depth-Attention & SiameseNorm",
+          "status": "filled"
+        },
+        {
+          "key": "parentIssue",
+          "templateId": "base_architecture_issue",
+          "label": "Parent issue",
+          "type": "link",
+          "required": false,
+          "value": {
+            "label": "#13",
+            "number": 13,
+            "url": "https://github.com/JT-Ushio/template-test/issues/13",
+            "raw": "#13"
+          },
+          "status": "filled"
+        },
+        {
+          "key": "motivations",
+          "templateId": "problem_and_hypothesis",
+          "label": "Motivations",
+          "type": "markdown",
+          "required": true,
+          "value": "Motivations",
+          "status": "filled"
+        },
+        {
+          "key": "proposedArchitecture",
+          "templateId": "proposed_change",
+          "label": "Proposed Architecture",
+          "type": "markdown",
+          "required": true,
+          "value": "Proposed Architecture",
+          "status": "filled"
+        },
+        {
+          "key": "preliminaryResults",
+          "templateId": "existing_results",
+          "label": "Preliminary results (if any)",
+          "type": "markdown",
+          "required": false,
+          "value": "",
+          "status": "empty"
+        },
+        {
+          "key": "experimentsPlan",
+          "templateId": "validation_plan",
+          "label": "Experiments Plan",
+          "type": "markdown",
+          "required": true,
+          "value": "Experiments Plan",
+          "status": "filled"
+        }
+      ]
+    },
+    {
+      "number": 13,
+      "title": "[ARCH-PROP] Olmo3",
+      "state": "closed",
+      "url": "https://github.com/JT-Ushio/template-test/issues/13",
+      "author": "scv11",
+      "createdAt": "2026-07-23T15:35:19Z",
+      "updatedAt": "2026-07-26T15:51:14Z",
+      "closedAt": "2026-07-25T13:38:09Z",
+      "labels": [
+        "architecture proposal",
+        "verified"
+      ],
+      "assignees": [],
+      "milestone": null,
+      "parsed": {
+        "architectureName": "Olmo3",
+        "parentIssue": null,
+        "motivations": "The repository does not currently have an immutable and reproducible OLMo 3 reference architecture.\nA local implementation based on an official OLMo 3 configuration can provide a reliable root node for future architecture experiments.",
+        "proposedArchitecture": "Reproduce the selected official OLMo 3 Base configuration as a root architecture in this repository.\nParameter count, compute, memory usage, and latency should remain consistent with the selected official OLMo 3 model variant.",
+        "preliminaryResults": "This is Existing Results.",
+        "experimentsPlan": "Baseline\nThe selected official OLMo 3 configuration and upstream implementation.\n\nSuccess criteria\nBenchmark degradation <1%\nDecode throughput achieve 1000 tokens/s\n\nCompute or data requirements, if known\n8xH200, 300B tokens"
+      },
+      "fields": [
+        {
+          "key": "architectureName",
+          "templateId": "proposal_name",
+          "label": "Architecture Name",
+          "type": "text",
+          "required": true,
+          "value": "Olmo3",
+          "status": "filled"
+        },
+        {
+          "key": "parentIssue",
+          "templateId": "base_architecture_issue",
+          "label": "Parent issue",
+          "type": "link",
+          "required": false,
+          "value": null,
+          "status": "missing"
+        },
+        {
+          "key": "motivations",
+          "templateId": "problem_and_hypothesis",
+          "label": "Motivations",
+          "type": "markdown",
+          "required": true,
+          "value": "The repository does not currently have an immutable and reproducible OLMo 3 reference architecture.\nA local implementation based on an official OLMo 3 configuration can provide a reliable root node for future architecture experiments.",
+          "status": "filled"
+        },
+        {
+          "key": "proposedArchitecture",
+          "templateId": "proposed_change",
+          "label": "Proposed Architecture",
+          "type": "markdown",
+          "required": true,
+          "value": "Reproduce the selected official OLMo 3 Base configuration as a root architecture in this repository.\nParameter count, compute, memory usage, and latency should remain consistent with the selected official OLMo 3 model variant.",
+          "status": "filled"
+        },
+        {
+          "key": "preliminaryResults",
+          "templateId": "existing_results",
+          "label": "Preliminary results (if any)",
+          "type": "markdown",
+          "required": false,
+          "value": "This is Existing Results.",
+          "status": "filled"
+        },
+        {
+          "key": "experimentsPlan",
+          "templateId": "validation_plan",
+          "label": "Experiments Plan",
+          "type": "markdown",
+          "required": true,
+          "value": "Baseline\nThe selected official OLMo 3 configuration and upstream implementation.\n\nSuccess criteria\nBenchmark degradation <1%\nDecode throughput achieve 1000 tokens/s\n\nCompute or data requirements, if known\n8xH200, 300B tokens",
+          "status": "filled"
+        }
+      ]
+    }
+  ],
+  "pullRequests": [
+    {
+      "number": 29,
+      "title": "Create debug1.py",
+      "state": "closed",
+      "url": "https://github.com/JT-Ushio/template-test/pull/29",
+      "author": "scv11",
+      "createdAt": "2026-07-25T13:36:48Z",
+      "updatedAt": "2026-07-26T11:04:20Z",
+      "closedAt": "2026-07-25T13:37:39Z",
+      "labels": [
+        "architecture implementation"
+      ],
+      "assignees": [],
+      "milestone": null,
+      "draft": false,
+      "merged": true,
+      "mergedAt": "2026-07-25T13:37:39Z",
+      "base": {
+        "repo": "JT-Ushio/template-test",
+        "branch": "main",
+        "sha": "0292d38048cea5882506296ee8c5b686c063e0fc"
+      },
+      "head": {
+        "repo": "JT-Ushio/template-test",
+        "branch": "debug1",
+        "sha": "92ae73a4be59b26b33ca3f2ede4dde8d43ef8b17"
+      },
+      "commitCount": 1,
+      "additions": 1,
+      "deletions": 0,
+      "changedFiles": 1,
+      "requestedReviewers": [],
+      "reviews": [],
+      "linkedIssues": [
+        13,
+        123
+      ],
+      "taskProgress": {
+        "checked": 4,
+        "total": 4
+      },
+      "parsed": {
+        "metadata": {
+          "title": "olmo3 implementation",
+          "architectureName": "Architecture Implementation",
+          "about": "Implement an approved LLM architecture modification"
+        },
+        "architectureProposalIssue": {
+          "label": "#13",
+          "number": 13,
+          "url": "https://github.com/JT-Ushio/template-test/issues/13",
+          "raw": "#13"
+        },
+        "implementationDetails": "This is Implementation Details.",
+        "experimentalValidation": {
+          "intro": null,
+          "sections": [
+            {
+              "title": "Research Question 1",
+              "level": 2,
+              "content": "*Hypothesis:* This is Hypothesis 1.\n\n\n*Results & Analysis:* This is Results & Analysis 1.\n\n\n*Findings:* This is Findings 1.",
+              "children": []
+            },
+            {
+              "title": "Research Question 2",
+              "level": 2,
+              "content": "*Hypothesis:* This is Hypothesis 2.\n*Results & Analysis:* This is Results & Analysis 2.\n*Findings:* This is Findings 2.",
+              "children": []
+            },
+            {
+              "title": "Research Question 3",
+              "level": 2,
+              "content": "*Hypothesis:* This is Hypothesis 3.\n*Results & Analysis:* This is Results & Analysis 3.\n*Findings:* This is Findings 3.",
+              "children": []
+            }
+          ]
+        },
+        "archive": [
+          {
+            "key": "wandbReportIncludeTrainingAndEvaluationLogs",
+            "label": "WandB Report (include training and evaluation logs)",
+            "value": {
+              "label": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA",
+              "url": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA",
+              "raw": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA"
+            }
+          },
+          {
+            "key": "huggingfaceCollectionIncludeModelCheckpoints",
+            "label": "HuggingFace Collection (include model checkpoints)",
+            "value": {
+              "label": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA",
+              "url": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA",
+              "raw": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA"
+            }
+          }
+        ],
+        "reviewerAssessment": "This is Reviewer Assessment.",
+        "mergeChecklist": [
+          {
+            "key": "theImplementationPrIsLinkedToAnInProgressArchitectureProposalIssue",
+            "label": "The implementation PR is linked to an `in-progress` Architecture Proposal issue (#).",
+            "checked": true
+          },
+          {
+            "key": "theImplementationCorrectnessOfTheProposedArchitectureIsVerified",
+            "label": "The implementation correctness of the proposed architecture is verified.",
+            "checked": true
+          },
+          {
+            "key": "theEffectivenessOfTheProposedArchitectureIsValidatedAt1b3bAnd8bModelScales",
+            "label": "The effectiveness of the proposed architecture is validated at 1B, 3B, and 8B model scales.",
+            "checked": true
+          },
+          {
+            "key": "theArchiveInformationIsCompleteIncludingWandbReportsAndHuggingfaceCollectionsOfModelCheckpoints",
+            "label": "The archive information is complete, including WandB reports and HuggingFace collections of model checkpoints.",
+            "checked": true
+          }
+        ]
+      },
+      "fieldGroups": [
+        {
+          "key": "metadata",
+          "label": "Metadata",
+          "fields": [
+            {
+              "key": "title",
+              "label": "Title",
+              "type": "text",
+              "value": "olmo3 implementation",
+              "status": "filled"
+            },
+            {
+              "key": "architectureName",
+              "label": "Architecture Name",
+              "type": "text",
+              "value": "Architecture Implementation",
+              "status": "filled"
+            },
+            {
+              "key": "about",
+              "label": "About",
+              "type": "text",
+              "value": "Implement an approved LLM architecture modification",
+              "status": "filled"
+            }
+          ]
+        },
+        {
+          "key": "architectureProposal",
+          "label": "Architecture Proposal",
+          "fields": [
+            {
+              "key": "architectureProposalIssue",
+              "path": "architectureProposalIssue",
+              "label": "Architecture Proposal (issue #)",
+              "type": "link",
+              "value": {
+                "label": "#13",
+                "number": 13,
+                "url": "https://github.com/JT-Ushio/template-test/issues/13",
+                "raw": "#13"
+              },
+              "status": "filled"
+            }
+          ]
+        },
+        {
+          "key": "implementation",
+          "label": "Implementation",
+          "fields": [
+            {
+              "key": "implementationDetails",
+              "path": "implementationDetails",
+              "label": "Implementation Details",
+              "type": "markdown",
+              "value": "This is Implementation Details.",
+              "status": "filled"
+            },
+            {
+              "key": "experimentalValidation",
+              "path": "experimentalValidation",
+              "label": "Experimental Validation",
+              "type": "sectionTree",
+              "value": {
+                "intro": null,
+                "sections": [
+                  {
+                    "title": "Research Question 1",
+                    "level": 2,
+                    "content": "*Hypothesis:* This is Hypothesis 1.\n\n\n*Results & Analysis:* This is Results & Analysis 1.\n\n\n*Findings:* This is Findings 1.",
+                    "children": []
+                  },
+                  {
+                    "title": "Research Question 2",
+                    "level": 2,
+                    "content": "*Hypothesis:* This is Hypothesis 2.\n*Results & Analysis:* This is Results & Analysis 2.\n*Findings:* This is Findings 2.",
+                    "children": []
+                  },
+                  {
+                    "title": "Research Question 3",
+                    "level": 2,
+                    "content": "*Hypothesis:* This is Hypothesis 3.\n*Results & Analysis:* This is Results & Analysis 3.\n*Findings:* This is Findings 3.",
+                    "children": []
+                  }
+                ]
+              },
+              "status": "filled"
+            }
+          ]
+        },
+        {
+          "key": "archive",
+          "label": "Archive",
+          "fields": [
+            {
+              "key": "wandbReportIncludeTrainingAndEvaluationLogs",
+              "label": "WandB Report (include training and evaluation logs)",
+              "type": "link",
+              "value": {
+                "label": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA",
+                "url": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA",
+                "raw": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA"
+              },
+              "status": "filled"
+            },
+            {
+              "key": "huggingfaceCollectionIncludeModelCheckpoints",
+              "label": "HuggingFace Collection (include model checkpoints)",
+              "type": "link",
+              "value": {
+                "label": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA",
+                "url": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA",
+                "raw": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA"
+              },
+              "status": "filled"
+            }
+          ]
+        },
+        {
+          "key": "review",
+          "label": "Review",
+          "fields": [
+            {
+              "key": "reviewerAssessment",
+              "path": "reviewerAssessment",
+              "label": "Reviewer Assessment",
+              "type": "markdown",
+              "value": "This is Reviewer Assessment.",
+              "status": "filled"
+            },
+            {
+              "key": "mergeChecklist",
+              "path": "mergeChecklist",
+              "label": "Merge Checklist",
+              "type": "checkboxGroup",
+              "value": [
+                {
+                  "key": "theImplementationPrIsLinkedToAnInProgressArchitectureProposalIssue",
+                  "label": "The implementation PR is linked to an `in-progress` Architecture Proposal issue (#).",
+                  "checked": true
+                },
+                {
+                  "key": "theImplementationCorrectnessOfTheProposedArchitectureIsVerified",
+                  "label": "The implementation correctness of the proposed architecture is verified.",
+                  "checked": true
+                },
+                {
+                  "key": "theEffectivenessOfTheProposedArchitectureIsValidatedAt1b3bAnd8bModelScales",
+                  "label": "The effectiveness of the proposed architecture is validated at 1B, 3B, and 8B model scales.",
+                  "checked": true
+                },
+                {
+                  "key": "theArchiveInformationIsCompleteIncludingWandbReportsAndHuggingfaceCollectionsOfModelCheckpoints",
+                  "label": "The archive information is complete, including WandB reports and HuggingFace collections of model checkpoints.",
+                  "checked": true
+                }
+              ],
+              "status": "filled"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 28,
+      "title": "Create debug2",
+      "state": "open",
+      "url": "https://github.com/JT-Ushio/template-test/pull/28",
+      "author": "scv11",
+      "createdAt": "2026-07-25T13:35:50Z",
+      "updatedAt": "2026-07-26T11:03:37Z",
+      "closedAt": null,
+      "labels": [
+        "architecture implementation"
+      ],
+      "assignees": [],
+      "milestone": null,
+      "draft": false,
+      "merged": false,
+      "mergedAt": null,
+      "base": {
+        "repo": "JT-Ushio/template-test",
+        "branch": "main",
+        "sha": "0292d38048cea5882506296ee8c5b686c063e0fc"
+      },
+      "head": {
+        "repo": "JT-Ushio/template-test",
+        "branch": "debug2",
+        "sha": "909bd6024763a029420d78eb33cf0d4564dfdb55"
+      },
+      "commitCount": 1,
+      "additions": 1,
+      "deletions": 0,
+      "changedFiles": 1,
+      "requestedReviewers": [],
+      "reviews": [],
+      "linkedIssues": [
+        15,
+        123
+      ],
+      "taskProgress": {
+        "checked": 4,
+        "total": 4
+      },
+      "parsed": {
+        "metadata": {
+          "title": "Depth-Attention & SiameseNorm implementation",
+          "architectureName": "Architecture Implementation",
+          "about": "Implement an approved LLM architecture modification"
+        },
+        "architectureProposalIssue": {
+          "label": "#15",
+          "number": 15,
+          "url": "https://github.com/JT-Ushio/template-test/issues/15",
+          "raw": "#15"
+        },
+        "implementationDetails": "This is Implementation Details.",
+        "experimentalValidation": {
+          "intro": null,
+          "sections": [
+            {
+              "title": "Research Question 1",
+              "level": 2,
+              "content": "*Hypothesis:* This is Hypothesis 1.\n\n\n*Results & Analysis:* This is Results & Analysis 1.\n\n\n*Findings:* This is Findings 1.",
+              "children": []
+            },
+            {
+              "title": "Research Question 2",
+              "level": 2,
+              "content": "*Hypothesis:* This is Hypothesis 2.\n*Results & Analysis:* This is Results & Analysis 2.\n*Findings:* This is Findings 2.",
+              "children": []
+            },
+            {
+              "title": "Research Question 3",
+              "level": 2,
+              "content": "*Hypothesis:* This is Hypothesis 3.\n*Results & Analysis:* This is Results & Analysis 3.\n*Findings:* This is Findings 3.",
+              "children": []
+            },
+            {
+              "title": "Research Question 4",
+              "level": 2,
+              "content": "*Hypothesis:* This is Hypothesis 4.\n*Results & Analysis:* This is Results & Analysis 4.\n*Findings:* This is Findings 4.",
+              "children": []
+            }
+          ]
+        },
+        "archive": [
+          {
+            "key": "wandbReportIncludeTrainingAndEvaluationLogs",
+            "label": "WandB Report (include training and evaluation logs)",
+            "value": {
+              "label": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA",
+              "url": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA",
+              "raw": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA"
+            }
+          },
+          {
+            "key": "huggingfaceCollectionIncludeModelCheckpoints",
+            "label": "HuggingFace Collection (include model checkpoints)",
+            "value": {
+              "label": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA",
+              "url": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA",
+              "raw": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA"
+            }
+          }
+        ],
+        "reviewerAssessment": "This is Reviewer Assessment.",
+        "mergeChecklist": [
+          {
+            "key": "theImplementationPrIsLinkedToAnInProgressArchitectureProposalIssue",
+            "label": "The implementation PR is linked to an `in-progress` Architecture Proposal issue (#).",
+            "checked": true
+          },
+          {
+            "key": "theImplementationCorrectnessOfTheProposedArchitectureIsVerified",
+            "label": "The implementation correctness of the proposed architecture is verified.",
+            "checked": true
+          },
+          {
+            "key": "theEffectivenessOfTheProposedArchitectureIsValidatedAt1b3bAnd8bModelScales",
+            "label": "The effectiveness of the proposed architecture is validated at 1B, 3B, and 8B model scales.",
+            "checked": true
+          },
+          {
+            "key": "theArchiveInformationIsCompleteIncludingWandbReportsAndHuggingfaceCollectionsOfModelCheckpoints",
+            "label": "The archive information is complete, including WandB reports and HuggingFace collections of model checkpoints.",
+            "checked": true
+          }
+        ]
+      },
+      "fieldGroups": [
+        {
+          "key": "metadata",
+          "label": "Metadata",
+          "fields": [
+            {
+              "key": "title",
+              "label": "Title",
+              "type": "text",
+              "value": "Depth-Attention & SiameseNorm implementation",
+              "status": "filled"
+            },
+            {
+              "key": "architectureName",
+              "label": "Architecture Name",
+              "type": "text",
+              "value": "Architecture Implementation",
+              "status": "filled"
+            },
+            {
+              "key": "about",
+              "label": "About",
+              "type": "text",
+              "value": "Implement an approved LLM architecture modification",
+              "status": "filled"
+            }
+          ]
+        },
+        {
+          "key": "architectureProposal",
+          "label": "Architecture Proposal",
+          "fields": [
+            {
+              "key": "architectureProposalIssue",
+              "path": "architectureProposalIssue",
+              "label": "Architecture Proposal (issue #)",
+              "type": "link",
+              "value": {
+                "label": "#15",
+                "number": 15,
+                "url": "https://github.com/JT-Ushio/template-test/issues/15",
+                "raw": "#15"
+              },
+              "status": "filled"
+            }
+          ]
+        },
+        {
+          "key": "implementation",
+          "label": "Implementation",
+          "fields": [
+            {
+              "key": "implementationDetails",
+              "path": "implementationDetails",
+              "label": "Implementation Details",
+              "type": "markdown",
+              "value": "This is Implementation Details.",
+              "status": "filled"
+            },
+            {
+              "key": "experimentalValidation",
+              "path": "experimentalValidation",
+              "label": "Experimental Validation",
+              "type": "sectionTree",
+              "value": {
+                "intro": null,
+                "sections": [
+                  {
+                    "title": "Research Question 1",
+                    "level": 2,
+                    "content": "*Hypothesis:* This is Hypothesis 1.\n\n\n*Results & Analysis:* This is Results & Analysis 1.\n\n\n*Findings:* This is Findings 1.",
+                    "children": []
+                  },
+                  {
+                    "title": "Research Question 2",
+                    "level": 2,
+                    "content": "*Hypothesis:* This is Hypothesis 2.\n*Results & Analysis:* This is Results & Analysis 2.\n*Findings:* This is Findings 2.",
+                    "children": []
+                  },
+                  {
+                    "title": "Research Question 3",
+                    "level": 2,
+                    "content": "*Hypothesis:* This is Hypothesis 3.\n*Results & Analysis:* This is Results & Analysis 3.\n*Findings:* This is Findings 3.",
+                    "children": []
+                  },
+                  {
+                    "title": "Research Question 4",
+                    "level": 2,
+                    "content": "*Hypothesis:* This is Hypothesis 4.\n*Results & Analysis:* This is Results & Analysis 4.\n*Findings:* This is Findings 4.",
+                    "children": []
+                  }
+                ]
+              },
+              "status": "filled"
+            }
+          ]
+        },
+        {
+          "key": "archive",
+          "label": "Archive",
+          "fields": [
+            {
+              "key": "wandbReportIncludeTrainingAndEvaluationLogs",
+              "label": "WandB Report (include training and evaluation logs)",
+              "type": "link",
+              "value": {
+                "label": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA",
+                "url": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA",
+                "raw": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA"
+              },
+              "status": "filled"
+            },
+            {
+              "key": "huggingfaceCollectionIncludeModelCheckpoints",
+              "label": "HuggingFace Collection (include model checkpoints)",
+              "type": "link",
+              "value": {
+                "label": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA",
+                "url": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA",
+                "raw": "https://wandb.ai/ai2-llm/olmo-small/reports/Training-Logs-of-OLMo2-0425-1B--VmlldzoxMjUzOTUxNA"
+              },
+              "status": "filled"
+            }
+          ]
+        },
+        {
+          "key": "review",
+          "label": "Review",
+          "fields": [
+            {
+              "key": "reviewerAssessment",
+              "path": "reviewerAssessment",
+              "label": "Reviewer Assessment",
+              "type": "markdown",
+              "value": "This is Reviewer Assessment.",
+              "status": "filled"
+            },
+            {
+              "key": "mergeChecklist",
+              "path": "mergeChecklist",
+              "label": "Merge Checklist",
+              "type": "checkboxGroup",
+              "value": [
+                {
+                  "key": "theImplementationPrIsLinkedToAnInProgressArchitectureProposalIssue",
+                  "label": "The implementation PR is linked to an `in-progress` Architecture Proposal issue (#).",
+                  "checked": true
+                },
+                {
+                  "key": "theImplementationCorrectnessOfTheProposedArchitectureIsVerified",
+                  "label": "The implementation correctness of the proposed architecture is verified.",
+                  "checked": true
+                },
+                {
+                  "key": "theEffectivenessOfTheProposedArchitectureIsValidatedAt1b3bAnd8bModelScales",
+                  "label": "The effectiveness of the proposed architecture is validated at 1B, 3B, and 8B model scales.",
+                  "checked": true
+                },
+                {
+                  "key": "theArchiveInformationIsCompleteIncludingWandbReportsAndHuggingfaceCollectionsOfModelCheckpoints",
+                  "label": "The archive information is complete, including WandB reports and HuggingFace collections of model checkpoints.",
+                  "checked": true
+                }
+              ],
+              "status": "filled"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

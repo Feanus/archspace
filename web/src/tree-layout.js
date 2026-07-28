@@ -37,6 +37,14 @@ export function layoutTree(tree, options = {}) {
     if (includeNode(tree.byId.get(rootId))) place(rootId, 0);
   }
   const values = [...positions.values()];
+  if (!values.length) {
+    return Object.freeze({
+      positions,
+      width: config.originX + config.nodeWidth + config.margin,
+      height: config.originY + config.nodeHeight + config.margin,
+      config,
+    });
+  }
   return Object.freeze({
     positions,
     width: Math.max(...values.map((point) => point.x)) + config.nodeWidth + config.margin,

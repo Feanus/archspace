@@ -11,7 +11,7 @@ commit、Python symbol、实验和论文只作为详情或 evidence。
 
 ## 当前 Web 数据模式
 
-当前页面的数据刷新来源配置为 `JT-Ushio/template-test`，并使用
+当前页面的数据刷新来源配置为 `RmZeta2718/arch-test`，并使用
 `data/template-test-data.json` 中的离线 GitHub 快照展示模型谱系。Architecture Proposal
 Issue 生成模型节点；`parentIssue: null`
 表示根节点，Issue 引用连接父模型或

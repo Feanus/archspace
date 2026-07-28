@@ -48,15 +48,15 @@ jobs:
         env:
           SOURCE_REPOSITORY: ${{ github.event.client_payload.source_repository }}
         run: |
-          if [ "$SOURCE_REPOSITORY" != "JT-Ushio/template-test" ]; then
+          if [ "$SOURCE_REPOSITORY" != "RmZeta2718/arch-test" ]; then
             echo "::error::Unexpected snapshot source: $SOURCE_REPOSITORY"
             exit 1
           fi
 
-      - name: Fetch current template-test snapshot
+      - name: Fetch current architecture snapshot
         run: |
           node web/scripts/github-template-test-fetcher-v4.mjs \
-            JT-Ushio template-test \
+            RmZeta2718 arch-test \
             > "$RUNNER_TEMP/template-test-raw.json"
 
       - name: Build sanitized browser snapshot

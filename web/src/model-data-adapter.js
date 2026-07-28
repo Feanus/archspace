@@ -215,12 +215,6 @@ export function normalizeModelGraph(payload) {
   const admission = admitArchitectureProposalIssues(asArray(payload.issues));
   const issues = admission.issues;
   const pullRequests = asArray(payload.pullRequests);
-  if (!issues.length) {
-    throw new ModelDataError(
-      "The offline snapshot contains no admissible Architecture Proposal Issues",
-      admission.warnings,
-    );
-  }
 
   const issueByNumber = new Map(issues.map((issue) => [Number(issue.number), issue]));
   const pullRequestsByIssue = new Map(issues.map((issue) => [Number(issue.number), []]));

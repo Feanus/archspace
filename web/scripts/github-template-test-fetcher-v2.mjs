@@ -2,8 +2,8 @@
 
 import { fileURLToPath } from "node:url";
 
-const DEFAULT_OWNER = "JT-Ushio";
-const DEFAULT_REPO = "template-test";
+const DEFAULT_OWNER = "RmZeta2718";
+const DEFAULT_REPO = "arch-test";
 export const DEFAULT_ISSUE_LABEL = "architecture proposal";
 export const DEFAULT_PULL_REQUEST_LABEL = "architecture implementation";
 

@@ -7,7 +7,7 @@ import { renderModelDetail } from "../../src/model-detail-view.js";
 import { layoutTree, visibleFeatureIds } from "../../src/tree-layout.js";
 
 const payload = JSON.parse(
-  await readFile(new URL("../../../data/template-test-data.json", import.meta.url), "utf8"),
+  await readFile(new URL("../fixtures/template-test-data.json", import.meta.url), "utf8"),
 );
 
 function rootModels(graph) {

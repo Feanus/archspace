@@ -39,6 +39,7 @@ const elements = {
   searchResults: document.querySelector("#search-results"),
   zoomOutput: document.querySelector("#zoom-output"),
   empty: document.querySelector("#empty-state"),
+  emptyTitle: document.querySelector("#empty-state strong"),
   emptyMessage: document.querySelector("#empty-message"),
   categoryFilters: document.querySelector("#category-filters"),
   detail: document.querySelector("#detail-panel"),
@@ -484,6 +485,7 @@ function offlineDataUrl() {
 
 function showError(error) {
   elements.empty.hidden = false;
+  elements.emptyTitle.textContent = "Model lineage could not be loaded";
   elements.emptyMessage.textContent = error instanceof ModelDataError
     ? [error.message, ...error.details].join("; ")
     : error.message;
@@ -516,6 +518,12 @@ async function initialize() {
     renderDrawer();
     renderTree();
     fitTree();
+    if (!state.tree.models.some(isDisplayableModel)) {
+      elements.empty.hidden = false;
+      elements.emptyTitle.textContent = "No architecture proposals yet";
+      elements.emptyMessage.textContent =
+        "Add the architecture proposal label to an Issue in RmZeta2718/arch-test to display it here.";
+    }
     document.documentElement.dataset.ready = "true";
     document.documentElement.dataset.modelCount = String(state.tree.models.filter(isDisplayableModel).length);
     document.documentElement.dataset.pullRequestCount = String(state.tree.stats.pullRequests);
