@@ -48,7 +48,8 @@ jobs:
         env:
           SOURCE_REPOSITORY: ${{ github.event.client_payload.source_repository }}
         run: |
-          if [ "$SOURCE_REPOSITORY" != "RmZeta2718/arch-test" ]; then
+          normalized_source="${SOURCE_REPOSITORY%/}"
+          if [ "$normalized_source" != "RmZeta2718/arch-test" ]; then
             echo "::error::Unexpected snapshot source: $SOURCE_REPOSITORY"
             exit 1
           fi

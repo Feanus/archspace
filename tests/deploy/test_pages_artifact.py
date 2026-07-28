@@ -140,6 +140,7 @@ class PagesArtifactTests(unittest.TestCase):
         self.assertIn("node --test web/tests/unit/model-data-adapter.test.mjs", text)
         self.assertIn("RmZeta2718/arch-test", text)
         self.assertIn("RmZeta2718 arch-test", text)
+        self.assertIn('normalized_source="${SOURCE_REPOSITORY%/}"', text)
         self.assertNotIn("JT-Ushio/template-test", text)
         self.assertNotIn("concept_olmo", text)
         self.assertNotIn("secrets.", text)
